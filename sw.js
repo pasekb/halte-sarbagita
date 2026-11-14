@@ -1,16 +1,21 @@
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v1";
+var VERSION = "sarbagita-v2";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest",
   "icons/icon-32.png?v=2", "icons/icon-64.png?v=2", "icons/icon-192.png?v=2",
   "icons/icon-512.png?v=2", "icons/apple-touch-icon.png?v=2"
 ];
 /* Pustaka dan font dari luar: disimpan saat pertama kali dipakai. */
+/* Leaflet disimpan sejak awal (kalau gagal, pemasangan tetap lanjut). */
+var EXTRA = [
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+];
 var LIBS = ["cdnjs.cloudflare.com", "fonts.googleapis.com", "fonts.gstatic.com"];
 
 self.addEventListener("install", function (e) {
-  e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
+  e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(CORE).then(function () { return Promise.all(EXTRA.map(function (u) { return c.add(u).catch(function () {}); })); }); }).then(function () { return self.skipWaiting(); }));
 });
 
 self.addEventListener("activate", function (e) {
