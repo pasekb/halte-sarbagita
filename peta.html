@@ -86,6 +86,11 @@ button,input{font:inherit;color:inherit}
 .it small{display:inline-block;margin-top:3px;color:var(--mut);font-size:.68rem;background:var(--soft);padding:1px 7px;border-radius:6px}
 .it .ext{float:right;opacity:0;color:var(--mut);transition:opacity .15s}.it:hover .ext{opacity:1}
 .srcn{margin:10px 6px 4px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:.74rem;line-height:1.5;color:var(--mut)}.srcn a{color:var(--b);font-weight:700;text-decoration:none}
+.busn{display:flex;gap:10px;align-items:flex-start;margin:2px 4px 8px;padding:10px 12px;border-radius:12px;background:rgba(34,197,94,.12);font-size:.78rem;line-height:1.45;color:var(--tx)}.busn small{color:var(--mut);font-size:.7rem}
+.busn .bi,.bus{flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#16a34a,#22c55e)}
+.busn .bi{width:26px;height:26px;border-radius:8px}
+.bus{width:34px;height:34px;border-radius:11px;border:2.5px solid #fff;box-shadow:0 6px 16px -4px rgba(22,163,74,.75)}
+.busn svg,.bus svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .empty{padding:28px 12px;text-align:center;color:var(--mut);font-size:.88rem}
 
 /* Toolbar bawah, sama dengan halaman utama */
@@ -202,6 +207,35 @@ function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;
 function gm(s){return s[1]?"https://www.google.com/maps/search/?api=1&query="+s[1]+","+s[2]:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Halte "+s[0]+" Bali")}
 function fit(){var b=L.latLngBounds([]);D[cor].line.concat(D[cor]["l"+dir]||[]).forEach(function(sg){b.extend(sg)});
  var w=innerWidth>760,pad=w?{paddingTopLeft:[40,110],paddingBottomRight:[400,40]}:{paddingTopLeft:[24,130],paddingBottomRight:[24,innerHeight*.45]};map.fitBounds(b,pad)}
+/* === Perkiraan posisi bus Koridor 1 dari jadwal (BUKAN GPS) ===
+   Jadwal: [bus, berangkat GOR, tiba Sudirman, kembali di GOR], jam WITA.
+   GOR -> Sudirman memakai waktu jadwal; sisanya dibagi rata menurut jarak, dengan istirahat LAY menit di GWK. */
+var SJ=[["I","06:15","06:40","10:15"],["II","06:55","07:20","10:55"],["III","07:35","08:00","11:35"],["IV","08:15","08:55","12:30"],["V","08:55","09:20","12:55"],["VI","09:35","10:00","13:35"],["VII","10:15","10:40","14:15"],["VIII","10:55","11:20","14:55"],["IX","11:35","12:00","15:35"],["X","12:15","12:40","16:15"],["I","12:55","13:20","16:35"],["II","13:35","14:00","17:35"],["III","14:15","14:40","18:15"],["IV","14:55","15:20","18:55"],["V","15:35","16:00","19:35"],["VI","16:15","16:40","20:15"],["VII","16:40","17:05","20:40"],["VIII","16:55","17:20","20:55"],["IX","17:20","17:45","21:20"],["X","17:35","18:00","21:35"]];
+var LAY=10,bl=L.layerGroup().addTo(map),BM={};
+var BUS='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/><circle cx="8" cy="14.5" r=".6"/><circle cx="16" cy="14.5" r=".6"/></svg>';
+function hm(t){return +t.slice(0,2)*60+ +t.slice(3)}
+function dt(t){return t.replace(":",".")}
+function wita(){var n=new Date();return ((n.getUTCHours()+8)%24)*60+n.getUTCMinutes()+n.getUTCSeconds()/60}
+function path(k){var p=[],c=0;D.c1[k].forEach(function(s,i){if(!s[1])return;var ll=L.latLng(s[1],s[2]);if(p.length)c+=p[p.length-1].ll.distanceTo(ll);p.push({ll:ll,c:c,i:i})});return p}
+var PA=path("a"),PB=path("b"),LA=PA[PA.length-1].c,LB=PB[PB.length-1].c,DS=LA*.35;
+PA.some(function(x){if(/^Sudirman/.test(D.c1.a[x.i][0])){DS=x.c;return true}});
+function at(p,d){for(var j=1;j<p.length;j++)if(p[j].c>=d){var a=p[j-1],b=p[j],f=(d-a.c)/Math.max(1,b.c-a.c);return {ll:L.latLng(a.ll.lat+(b.ll.lat-a.ll.lat)*f,a.ll.lng+(b.ll.lng-a.ll.lng)*f),nx:b.i}}var e=p[p.length-1];return {ll:e.ll,nx:e.i}}
+function pos(r,m){var t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]);if(m<t0||m>=t3)return null;
+ if(m<t1)return {d:"a",p:at(PA,DS*(m-t0)/(t1-t0))};
+ var v=(LA-DS+LB)/Math.max(1,t3-t1-LAY),tg=t1+(LA-DS)/v;
+ if(m<tg)return {d:"a",p:at(PA,DS+(m-t1)*v)};
+ if(m<tg+LAY)return {d:"a",p:{ll:PA[PA.length-1].ll},w:1};
+ return {d:"b",p:at(PB,(m-tg-LAY)*v)}}
+function buses(){var e=$("busn"),m=wita(),n=0,seen={};if(!e)return;
+ if(cor==="c1")SJ.forEach(function(r,k){var b=pos(r,m);if(!b||(b.d!==dir&&!b.w))return;n++;seen[k]=1;
+  var h="<b>Bus "+r[0]+" &middot; rit "+(k+1)+"</b><small>"+(b.w?"Istirahat di GWK sebelum kembali":"Menuju "+esc(D.c1[b.d][b.p.nx][0]))+"<br>Berangkat GOR "+dt(r[1])+" &middot; kembali di GOR "+dt(r[3])+"<br><i>Perkiraan dari jadwal, bukan posisi GPS.</i></small>";
+  if(BM[k]){BM[k].setLatLng(b.p.ll).setPopupContent(h)}
+  else BM[k]=L.marker(b.p.ll,{zIndexOffset:1500,icon:L.divIcon({className:"",html:'<div class="bus">'+BUS+'</div>',iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-16]})}).bindPopup(h).addTo(bl)});
+ for(var k in BM)if(!seen[k]){bl.removeLayer(BM[k]);delete BM[k]}
+ if(cor!=="c1"){e.innerHTML="Perkiraan posisi bus baru tersedia untuk Koridor 1.";return}
+ var nx=SJ.filter(function(r){return hm(r[1])>m})[0];
+ e.innerHTML='<span class="bi">'+BUS+'</span><span>'+(n?"<b>"+n+" bus</b> di arah ini":"Belum ada bus di arah ini")+(nx?". Berangkat berikutnya dari GOR "+dt(nx[1])+" WITA":". Keberangkatan hari ini sudah selesai, besok mulai "+dt(SJ[0][1])+" WITA")+'.<br><small>Posisi bus adalah perkiraan dari jadwal, bukan GPS.</small></span>'}
+setInterval(buses,15000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
  var lc=dark?"#5cc8ff":"#0a78e6";
@@ -220,7 +254,7 @@ function draw(){
   ls.appendChild(d)});
  $("cnt").textContent=(q?n+" / ":"")+S.length+" halte";
  if(!n)ls.innerHTML='<div class="empty">Halte tidak ditemukan.<br><small>Coba kata kunci lain.</small></div>';
- ls.insertAdjacentHTML("beforeend",'<div class="srcn">Lokasi halte dari peta resmi Dishub Provinsi Bali: <a href="https://dishub.baliprov.go.id/rute-angkutan-umum-trans-sarbagita/" target="_blank" rel="noopener">halaman Dishub</a> · <a href="https://www.google.com/maps/d/viewer?mid=1xvSgvl1_KfyJjl4o5NNeQDh1TKYeQWw" target="_blank" rel="noopener">Google My Maps</a>. Halte bertanda &ldquo;lokasi perkiraan&rdquo; belum ada di peta Dishub.</div>')}
+ ls.insertAdjacentHTML("beforeend",'<div class="srcn">Lokasi halte dari peta resmi Dishub Provinsi Bali: <a href="https://dishub.baliprov.go.id/rute-angkutan-umum-trans-sarbagita/" target="_blank" rel="noopener">halaman Dishub</a> · <a href="https://www.google.com/maps/d/viewer?mid=1xvSgvl1_KfyJjl4o5NNeQDh1TKYeQWw" target="_blank" rel="noopener">Google My Maps</a>. Halte bertanda &ldquo;lokasi perkiraan&rdquo; belum ada di peta Dishub.</div>');ls.insertAdjacentHTML("afterbegin",'<div class="busn" id="busn"></div>');bl.clearLayers();BM={};buses()}
 function mark(i){sel=i;document.querySelectorAll(".it").forEach(function(e){var on=+e.dataset.i===i;e.classList.toggle("sel",on);if(on&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function seg(id,items,cur,fn){var c=$(id);c.innerHTML="";items.forEach(function(x){var b=document.createElement("button");b.type="button";b.textContent=x[1];b.className=cur==x[0]?"on":"";b.onclick=function(){fn(x[0])};c.appendChild(b)})}
 function tabs(){
