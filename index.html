@@ -9,9 +9,9 @@
 <meta name="author" content="Yoga Purnama (@yogasonry)">
 <meta name="copyright" content="© 2026 Yoga Purnama. All rights reserved.">
 <meta name="google-site-verification" content="JCwgBsWuAKsEAwOb-d8jxgnWId4ViWd99VB9eMFJ_n4" />
-<title>Bus Trans Sarbagita: Rute, Halte, dan Jam Operasi Bus Listrik Bali</title>
+<title>Bus Trans Sarbagita: Jadwal, Rute, dan Halte Bus Listrik Bali</title>
 <link rel="canonical" href="https://halte-sarbagita.pages.dev/">
-<meta name="description" content="Rute, halte, dan jam operasi Bus Trans Sarbagita di Bali. Bus listrik Koridor 1 GOR Ngurah Rai – GWK gratis selama masa uji coba, mulai 9 November 2026.">
+<meta name="description" content="Jadwal, rute, dan halte Bus Listrik Trans Sarbagita di Bali. Koridor 1 GOR Ngurah Rai – GWK, 20 keberangkatan mulai pukul 06.15 WITA, gratis selama masa uji coba.">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNK1FJ80QW"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-MNK1FJ80QW");</script>
@@ -142,6 +142,21 @@ select option{color:#0f172a;background:#fff}
 .det a .ic{width:15px;height:15px}
 .nb .ic,.chip .ic{width:15px;height:15px;vertical-align:-3px}.sum .ic{width:22px;height:22px;color:var(--b)}
 
+/* Jadwal */
+.nxt{margin:12px 14px 0;padding:16px}
+.nxh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.nxh b{font-size:.95rem;font-weight:800}.nxh small{color:var(--mut);font-size:.72rem;font-weight:600}
+.nxv{display:flex;align-items:baseline;gap:10px;margin-top:8px;flex-wrap:wrap}
+.nxv .t{font-size:2rem;font-weight:800;letter-spacing:-.02em;color:var(--b);line-height:1}
+.nxv .w{font-size:.9rem;font-weight:700;color:var(--or)}
+.nxs{margin-top:8px;color:var(--mut);font-size:.8rem;line-height:1.5}
+.nxs a{color:var(--b);font-weight:700;cursor:pointer}
+#sj summary{cursor:pointer;font-weight:700;color:var(--b);padding:8px 0;font-size:.9rem}
+.sjw{overflow-x:auto;margin-top:6px}
+#sjt{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+#sjt th{font-size:.66rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);text-align:left;padding:6px;font-weight:700}
+#sjt td{padding:7px 6px;border-top:1px solid var(--ln)}
+#sjt tr.nx td{background:var(--bs);font-weight:700;color:var(--b)}
 /* Bottom nav */
 #nav{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:10;pointer-events:none}
 #nav div{pointer-events:auto;display:flex;gap:4px;background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);border:1px solid var(--gb);border-radius:22px;padding:6px;box-shadow:0 12px 36px -8px rgba(15,23,42,.3),inset 0 1px 0 var(--gb)}
@@ -187,6 +202,7 @@ select option{color:#0f172a;background:#fff}
   <div class="ft"><div class="f"><label><i class="dt o"></i>Dari halte</label><select id="sf"></select></div><div class="f"><label><i class="dt bl"></i>Ke halte</label><select id="st"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
   <button class="go" id="go" type="button">Lihat Rute</button><div id="msg"></div>
  </div>
+ <div class="card nxt" id="nxt"><div class="nxh"><b>Bus berikutnya dari GOR Ngurah Rai</b><small>Koridor 1 · arah GWK</small></div><div id="nxb"></div></div>
  <div class="card inst" hidden><img src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div class="tx"><b>Pasang aplikasi</b><small>Buka lebih cepat dari layar utama, tanpa browser.</small></div><button class="instb" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M12 15l-4-4M12 15l4-4M5 20h14"/></svg> Pasang</button><div class="insth" role="status"></div></div>
  <div class="sh"><b><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta Rute</b><button id="all" type="button">Lihat semua halte</button></div>
  <div class="card mapc"><a class="full" id="full" href="peta"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta penuh</a><div class="lmap" id="lm1"></div><svg id="map1"></svg></div>
@@ -205,7 +221,8 @@ select option{color:#0f172a;background:#fff}
 </section>
 <section class="view" id="v-info">
  <div class="top"><img class="appicon" src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div><b>Informasi</b><small>Bus Trans Sarbagita</small></div></div>
- <div class="card info"><h2><svg class="ic" viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 1 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1zM14 5v14"/></svg> Tarif &amp; jadwal</h2><div class="facts"><div class="fact"><small>Tarif</small><b>Gratis</b></div><div class="fact"><small>Jam operasi</small><b>06.15 – 17.35 WITA</b></div></div><p>Bus listrik Trans Sarbagita rute GOR Ngurah Rai – GWK gratis selama masa uji coba, yang dimulai 9 November 2026. Jam di atas adalah keberangkatan pertama dan terakhir.</p><p>Saat naik, penumpang tetap diminta menempelkan kartu uang elektronik untuk pendataan. Kalau belum punya, kartu disediakan di dalam bus.</p><p class="src">Sumber: detikBali (9 Nov 2026) dan Kompas.com (10 Nov 2026). Tarif setelah masa uji coba belum diumumkan.</p></div>
+ <div class="card info"><h2><svg class="ic" viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 1 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1zM14 5v14"/></svg> Tarif &amp; jadwal</h2><div class="facts"><div class="fact"><small>Tarif</small><b>Gratis</b></div><div class="fact"><small>Jam operasi</small><b>06.15 – 17.35 WITA</b></div></div><p>Bus listrik Trans Sarbagita rute GOR Ngurah Rai – GWK gratis selama masa uji coba, yang dimulai 9 November 2026. Jam di atas adalah keberangkatan pertama dan terakhir dari GOR Ngurah Rai. Bus terakhir tiba kembali di GOR sekitar pukul 21.35.</p><p>Saat naik, penumpang tetap diminta menempelkan kartu uang elektronik untuk pendataan. Kalau belum punya, kartu disediakan di dalam bus.</p><p class="src">Sumber: detikBali (9 Nov 2026) dan Kompas.com (10 Nov 2026). Tarif setelah masa uji coba belum diumumkan.</p></div>
+ <div class="card info" id="sj"><h2><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Jadwal Bus Listrik Trans Sarbagita Koridor 1</h2><p>Rute GOR Ngurah Rai Denpasar – GWK via Jl. Hayam Wuruk. Ada 20 keberangkatan dari GOR, pertama pukul 06.15 dan terakhir pukul 17.35 WITA.</p><details id="sjd"><summary>Lihat jadwal lengkap</summary><div class="sjw"><table id="sjt"><thead><tr><th>Rit</th><th>Bus</th><th>Berangkat GOR</th><th>Tiba Sudirman</th><th>Kembali di GOR</th></tr></thead><tbody><tr><td>1</td><td>I</td><td>06.15</td><td>06.40</td><td>10.15</td></tr><tr><td>2</td><td>II</td><td>06.55</td><td>07.20</td><td>10.55</td></tr><tr><td>3</td><td>III</td><td>07.35</td><td>08.00</td><td>11.35</td></tr><tr><td>4</td><td>IV</td><td>08.15</td><td>08.55</td><td>12.30</td></tr><tr><td>5</td><td>V</td><td>08.55</td><td>09.20</td><td>12.55</td></tr><tr><td>6</td><td>VI</td><td>09.35</td><td>10.00</td><td>13.35</td></tr><tr><td>7</td><td>VII</td><td>10.15</td><td>10.40</td><td>14.15</td></tr><tr><td>8</td><td>VIII</td><td>10.55</td><td>11.20</td><td>14.55</td></tr><tr><td>9</td><td>IX</td><td>11.35</td><td>12.00</td><td>15.35</td></tr><tr><td>10</td><td>X</td><td>12.15</td><td>12.40</td><td>16.15</td></tr><tr><td>11</td><td>I</td><td>12.55</td><td>13.20</td><td>16.35</td></tr><tr><td>12</td><td>II</td><td>13.35</td><td>14.00</td><td>17.35</td></tr><tr><td>13</td><td>III</td><td>14.15</td><td>14.40</td><td>18.15</td></tr><tr><td>14</td><td>IV</td><td>14.55</td><td>15.20</td><td>18.55</td></tr><tr><td>15</td><td>V</td><td>15.35</td><td>16.00</td><td>19.35</td></tr><tr><td>16</td><td>VI</td><td>16.15</td><td>16.40</td><td>20.15</td></tr><tr><td>17</td><td>VII</td><td>16.40</td><td>17.05</td><td>20.40</td></tr><tr><td>18</td><td>VIII</td><td>16.55</td><td>17.20</td><td>20.55</td></tr><tr><td>19</td><td>IX</td><td>17.20</td><td>17.45</td><td>21.20</td></tr><tr><td>20</td><td>X</td><td>17.35</td><td>18.00</td><td>21.35</td></tr></tbody></table></div></details><p>Sumber: unggahan akun Instagram resmi Trans Sarbagita. Ini jadwal resmi, bukan posisi bus secara langsung, dan bisa berubah selama masa uji coba. Jam dalam WITA.</p></div>
  <div class="card info"><h2><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> Tentang aplikasi</h2><p>Koordinat halte diambil dari peta resmi Dishub Provinsi Bali. Beberapa halte belum punya koordinat, dan sebagian lokasinya masih perkiraan.</p><p class="warn">Koridor 1 memakai daftar titik henti bus listrik yang beroperasi sejak 9 November 2026 (46 ke arah GWK, 41 ke arah GOR, sumber detikBali). Koordinat ruas Denpasar diambil dari OpenStreetMap dan belum dikonfirmasi Dishub, dan garis rutenya di ruas itu ditarik lurus antar halte. Koridor 2 masih mengikuti brosur 2023.</p><p>Hubungi call centre untuk informasi terbaru.</p><a class="tel" href="tel:081138850900"><svg class="ic" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg> Call centre 081 138 50 900</a><p class="credit" style="margin:14px 0 0">This web app was vibe coded by <a href="https://www.instagram.com/yogasonry/" target="_blank" rel="noopener">@yogasonry</a><br>© 2026 Yoga Purnama. All rights reserved.</p></div>
  <div class="card inst" hidden><img src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div class="tx"><b>Pasang aplikasi</b><small>Buka lebih cepat dari layar utama, tanpa browser.</small></div><button class="instb" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M12 15l-4-4M12 15l4-4M5 20h14"/></svg> Pasang</button><div class="insth" role="status"></div></div>
 </section>
@@ -328,6 +345,21 @@ function instGo(){
  document.querySelectorAll(".insth").forEach(function(h){h.textContent=m})}
 document.querySelectorAll(".instb").forEach(function(b){b.onclick=instGo});instUI();
 fillSel();home();
+var SJ=[["I","06:15","06:40","10:15"],["II","06:55","07:20","10:55"],["III","07:35","08:00","11:35"],["IV","08:15","08:55","12:30"],["V","08:55","09:20","12:55"],["VI","09:35","10:00","13:35"],["VII","10:15","10:40","14:15"],["VIII","10:55","11:20","14:55"],["IX","11:35","12:00","15:35"],["X","12:15","12:40","16:15"],["I","12:55","13:20","16:35"],["II","13:35","14:00","17:35"],["III","14:15","14:40","18:15"],["IV","14:55","15:20","18:55"],["V","15:35","16:00","19:35"],["VI","16:15","16:40","20:15"],["VII","16:40","17:05","20:40"],["VIII","16:55","17:20","20:55"],["IX","17:20","17:45","21:20"],["X","17:35","18:00","21:35"]];
+function hm(t){return +t.slice(0,2)*60+ +t.slice(3)}
+function dr(m){var h=Math.floor(m/60),n=m%60;return h?h+" jam"+(n?" "+n+" menit":""):n+" menit"}
+function dt(t){return t.replace(":",".")}
+/* Bus berikutnya dari GOR: jam WITA (UTC+8), tidak bergantung zona waktu HP */
+function nextBus(){
+ var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,
+  i=SJ.findIndex(function(r){return hm(r[1])>=m}),h;
+ document.querySelectorAll("#sjt tbody tr").forEach(function(r,k){r.classList.toggle("nx",k===i)});
+ if(i<0)h='<div class="nxs">Keberangkatan terakhir hari ini sudah lewat. Besok bus pertama berangkat pukul <b>'+dt(SJ[0][1])+'</b> WITA. <a class="sjl">Lihat jadwal lengkap</a></div>';
+ else{var r=SJ[i],w=hm(r[1])-m,nx=SJ.slice(i+1,i+3).map(function(x){return dt(x[1])}).join(", ");
+  h='<div class="nxv"><span class="t">'+dt(r[1])+'</span><span class="w">'+(w===0?"berangkat sekarang":dr(w)+" lagi")+'</span></div><div class="nxs">Tiba di Sudirman sekitar '+dt(r[2])+(nx?". Setelahnya: "+nx:"")+'. <a class="sjl">Lihat jadwal lengkap</a></div>'}
+ $("nxb").innerHTML=h;
+ document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(){show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
+nextBus();setInterval(nextBus,30000);document.addEventListener("visibilitychange",nextBus);
 /* Leaflet dimuat setelah beranda tampil, supaya tidak menahan halaman. Jaringan lambat -> peta SVG dulu. */
 (function(){if(typeof L!=="undefined"){LP=false;return}
  var fin=function(){if(LP){LP=false;redraw()}};
