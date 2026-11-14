@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--
+  Bus Trans Sarbagita © 2026 Yoga Purnama (@yogasonry). Seluruh hak cipta dilindungi.
+  Kode, desain, dan tampilan aplikasi ini tidak boleh disalin, dimodifikasi, atau didistribusikan ulang tanpa izin tertulis dari pemilik.
+  ID: sgt-yg-fd69d51a
+-->
+<meta name="author" content="Yoga Purnama (@yogasonry)">
+<meta name="copyright" content="© 2026 Yoga Purnama (@yogasonry)">
 <title>Peta Trans Sarbagita</title>
+<link rel="canonical" href="https://halte-sarbagita.pages.dev/peta">
 <meta name="description" content="Peta rute dan halte Bus Trans Sarbagita di Bali, lengkap dengan koridor yang bisa dilihat langsung di peta.">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNK1FJ80QW"></script>
@@ -14,11 +22,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sarbagita">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script>try{if(localStorage.getItem("sarbagita-theme-v2")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <style>
-:root{color-scheme:light;--b:#0a78e6;--b2:#0e9ccf;--bs:rgba(10,120,230,.11);--or:#ff7a1a;--tx:#0f172a;--mut:#55647e;--ln:rgba(15,23,42,.09);--bg:#eef1f7;--card:rgba(255,255,255,.88);--soft:rgba(15,23,42,.06);--glass:rgba(255,255,255,.6);--gb:rgba(255,255,255,.8);--sh:0 1px 2px rgba(15,23,42,.05),0 16px 44px -12px rgba(15,23,42,.3)}
+:root{color-scheme:light;--sgt-id:"sgt-yg-fd69d51a";--b:#0a78e6;--b2:#0e9ccf;--bs:rgba(10,120,230,.11);--or:#ff7a1a;--tx:#0f172a;--mut:#55647e;--ln:rgba(15,23,42,.09);--bg:#eef1f7;--card:rgba(255,255,255,.88);--soft:rgba(15,23,42,.06);--glass:rgba(255,255,255,.6);--gb:rgba(255,255,255,.8);--sh:0 1px 2px rgba(15,23,42,.05),0 16px 44px -12px rgba(15,23,42,.3)}
 :root[data-theme="dark"]{color-scheme:dark;--b:#4db8ff;--b2:#4fe0e6;--bs:rgba(77,184,255,.17);--tx:#e9edf6;--mut:#9aa6be;--ln:rgba(255,255,255,.09);--bg:#090d17;--card:rgba(40,50,78,.85);--soft:rgba(255,255,255,.07);--glass:rgba(16,22,38,.58);--gb:rgba(255,255,255,.12);--sh:0 1px 2px rgba(0,0,0,.4),0 16px 44px -12px rgba(0,0,0,.75)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
@@ -111,7 +119,7 @@ button,input{font:inherit;color:inherit}
 </style></head><body>
 <div id="map"></div>
 <header id="bar" class="glass">
- <div class="brand"><a class="bk" href="index.html" aria-label="Kembali ke aplikasi" title="Kembali ke aplikasi"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><b>Trans Sarbagita</b><small>Peta rute &amp; halte</small></div></div>
+ <div class="brand"><a class="bk" href="./" aria-label="Kembali ke aplikasi" title="Kembali ke aplikasi"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><b>Trans Sarbagita</b><small>Peta rute &amp; halte</small></div></div>
  <div class="seg" id="ct"></div><div class="seg" id="tb"></div>
 </header>
 <aside id="side" class="glass">
