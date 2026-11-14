@@ -1,6 +1,6 @@
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v10";
+var VERSION = "sarbagita-v15";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest",
   "icons/icon-32.png?v=2", "icons/icon-64.png?v=2", "icons/icon-192.png?v=2",
@@ -12,7 +12,7 @@ var EXTRA = [
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
 ];
 /* Pustaka dan font dari luar: disimpan saat pertama kali dipakai. */
-var LIBS = ["cdnjs.cloudflare.com", "fonts.googleapis.com", "fonts.gstatic.com"];
+var LIBS = ["cdnjs.cloudflare.com", "fonts.googleapis.com", "fonts.gstatic.com", "res.cloudinary.com"];
 var TIMEOUT = 4000; /* ms: jaringan lambat -> pakai simpanan */
 
 /* Hosting seperti Cloudflare Pages mengalihkan peta.html -> /peta. Jawaban hasil pengalihan
@@ -79,7 +79,7 @@ self.addEventListener("fetch", function (e) {
     }));
   } else if (LIBS.indexOf(url.hostname) >= 0) {
     /* Leaflet dan font: pakai simpanan dulu. */
-    e.respondWith(caches.match(req).then(function (r) { return r || fetch(req).then(function (res) { return put(req, res); }); }));
+    e.respondWith(caches.match(req, { ignoreVary: true }).then(function (r) { return r || fetch(req).then(function (res) { return put(req, res); }); }));
   }
   /* Gambar peta (tile) tidak disimpan: selalu dari jaringan. */
 });
