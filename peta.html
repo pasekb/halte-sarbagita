@@ -55,7 +55,6 @@ button,input{font:inherit;color:inherit}
 .brand{display:flex;align-items:center;gap:10px;margin-right:auto;padding:0 6px 0 2px}
 .logo{width:38px;height:38px;flex:none;border-radius:11px;object-fit:contain;display:block;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
 .brand b{display:block;font-size:.98rem;font-weight:800;letter-spacing:-.01em;line-height:1.1}.brand small{color:var(--mut);font-size:.72rem}
-.bk{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--tx);background:var(--soft);text-decoration:none}.bk:hover{color:var(--b)}
 .seg{display:inline-flex;background:var(--soft);border-radius:13px;padding:3px;gap:2px}
 .seg button{border:0;border-radius:10px;padding:8px 13px;background:none;color:var(--mut);font-size:.8rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
 .seg button:hover{color:var(--tx)}
@@ -89,6 +88,14 @@ button,input{font:inherit;color:inherit}
 .srcn{margin:10px 6px 4px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:.74rem;line-height:1.5;color:var(--mut)}.srcn a{color:var(--b);font-weight:700;text-decoration:none}
 .empty{padding:28px 12px;text-align:center;color:var(--mut);font-size:.88rem}
 
+/* Toolbar bawah, sama dengan halaman utama */
+#nav{position:fixed;z-index:550;left:0;right:388px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none}
+#nav div{pointer-events:auto;display:flex;gap:4px;border-radius:22px;padding:6px}
+#nav a{text-decoration:none;display:flex;align-items:center;gap:7px;border-radius:16px;padding:11px 16px;color:var(--mut);font-size:.82rem;cursor:pointer;transition:background .25s,color .25s}
+#nav a:hover{color:var(--tx)}
+#nav a.on{background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;font-weight:700;cursor:default;box-shadow:0 18px 40px -12px rgba(10,120,230,.4)}
+#nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#nav a:not(.on) span{display:none}
 #toast{position:fixed;z-index:600;left:50%;top:calc(120px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:min(340px,calc(100% - 28px));padding:11px 15px;border-radius:14px;font-size:.84rem;font-weight:600;line-height:1.45;text-align:center}#toast[hidden]{display:none}
 /* Map controls & markers */
 #fab{position:fixed;z-index:500;left:14px;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}
@@ -121,22 +128,36 @@ button,input{font:inherit;color:inherit}
  #bar{max-width:none;padding:8px;gap:8px}
  .brand small{display:none}
  #bar .seg{flex:1 1 100%}#bar .seg button{flex:1;padding:8px 6px}
- #side{left:8px;right:8px;width:auto;top:auto;bottom:8px;height:42%;border-radius:24px;transition:height .3s cubic-bezier(.2,.8,.2,1)}
- #side.min{height:132px}#side.max{height:78%}
+ #nav{right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+ /* Panel menempel ke ujung bawah; toolbar mengambang di atasnya. Tinggi = isi yang terlihat + area toolbar (76px). */
+ #side{left:0;right:0;width:auto;top:auto;bottom:0;height:calc(42% + 76px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;border-bottom:0;transition:height .3s cubic-bezier(.2,.8,.2,1)}
+ #side.min{height:calc(132px + 76px + env(safe-area-inset-bottom,0px))}#side.max{height:calc(78% + 8px + env(safe-area-inset-bottom,0px))}
+ #ls{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+ #side.min #ls{visibility:hidden}
+ #nav div{background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(15,23,42,.08),0 12px 32px -6px rgba(15,23,42,.35),inset 0 1px 0 var(--gb)}
+ :root[data-theme="dark"] #nav div{background:rgba(30,39,64,.92);box-shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -6px rgba(0,0,0,.8),inset 0 1px 0 var(--gb)}
  .grab{display:block;width:100%;height:20px;border:0;background:none;cursor:grab;padding:8px 0 0}
  .grab::before{content:"";display:block;width:40px;height:5px;margin:0 auto;border-radius:9px;background:var(--mut);opacity:.4}
- .ph{padding-top:4px}
- #fab{left:auto;right:14px;bottom:calc(42% + 18px);transition:bottom .3s}
- body.smin #fab{bottom:150px}body.smax #fab{bottom:calc(78% + 18px)}
+ .ph{padding-top:4px;cursor:grab;user-select:none;-webkit-user-select:none}
+ /* Panel bawah dibuat lebih padat agar warnanya sama dengan aplikasi, tidak ikut warna peta. */
+ #side{background:rgba(250,251,254,.94)}:root[data-theme="dark"] #side{background:rgba(16,22,38,.93)}
+ #fab{left:auto;right:14px;bottom:calc(42% + 94px + env(safe-area-inset-bottom,0px));transition:bottom .3s}
+ body.smin #fab{bottom:calc(226px + env(safe-area-inset-bottom,0px))}body.smax #fab{opacity:0;pointer-events:none}
  .leaflet-top.leaflet-right{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <div id="map"></div>
 <header id="bar" class="glass">
- <div class="brand"><a class="bk" href="./" aria-label="Kembali ke aplikasi" title="Kembali ke aplikasi"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><b>Trans Sarbagita</b><small>Peta rute &amp; halte</small></div></div>
+ <div class="brand"><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><b>Trans Sarbagita</b><small>Peta rute &amp; halte</small></div></div>
  <div class="seg" id="ct"></div><div class="seg" id="tb"></div>
 </header>
+<nav id="nav"><div class="glass">
+<a href="./" aria-label="Beranda" title="Beranda"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span></a>
+<a href="./#halte" aria-label="Halte" title="Halte"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Halte</span></a>
+<a class="on" aria-current="page" aria-label="Peta penuh" title="Peta penuh"><svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg><span>Peta</span></a>
+<a href="./#info" aria-label="Info" title="Info"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Info</span></a>
+</div></nav>
 <aside id="side" class="glass">
  <button class="grab" id="grab" type="button" aria-label="Ubah ukuran panel"></button>
  <div class="ph">
@@ -209,7 +230,22 @@ function tabs(){
 /* bottom sheet (mobile) */
 var st=["min","mid","max"],cur=1;
 function size(s){cur=st.indexOf(s);var sd=$("side");sd.classList.remove("min","max");document.body.classList.remove("smin","smax");if(s!="mid"){sd.classList.add(s);document.body.classList.add("s"+s)}}
-$("grab").onclick=function(){size(st[(cur+1)%3])};
+/* Geser panel naik/turun: tarik bagian atas panel (garis, judul, rute), lalu panel menempel ke posisi terdekat. */
+(function(){var sd=$("side"),ph=sd.querySelector(".ph"),fb=$("fab"),y0=0,h0=0,t0=0,on=false,moved=false;
+ function hs(){var H=innerHeight,b=H-$("nav").getBoundingClientRect().top+10;return {min:132+b,mid:H*.42+b,max:H*.78-68+b}}
+ function down(e){if(innerWidth>760||e.button>0||e.target.closest("input,button:not(.grab),a"))return;
+  on=true;moved=false;y0=e.clientY;t0=Date.now();h0=sd.getBoundingClientRect().height;sd.style.transition="none";fb.style.transition="none"}
+ function move(e){if(!on)return;var dy=y0-e.clientY;if(!moved&&Math.abs(dy)<6)return;moved=true;
+  var r=hs(),h=Math.max(r.min-20,Math.min(r.max+20,h0+dy));sd.style.height=h+"px";fb.style.bottom=(innerHeight-sd.getBoundingClientRect().top+18)+"px";e.preventDefault()}
+ function up(e){if(!on)return;on=false;sd.style.transition=fb.style.transition="";if(!moved)return;
+  var r=hs(),h=sd.getBoundingClientRect().height,v=(y0-e.clientY)/Math.max(1,Date.now()-t0),best="mid",bd=1e9;
+  if(Math.abs(v)>.5){best=v>0?(h0<r.mid-10?"mid":"max"):(h0>r.mid+10?"mid":"min")}
+  else for(var k in r){var d=Math.abs(r[k]-h);if(d<bd){bd=d;best=k}}
+  sd.style.height="";fb.style.bottom="";size(best);moved=true;setTimeout(function(){moved=false},50)}
+ [$("grab"),ph].forEach(function(el){el.addEventListener("pointerdown",down);el.style.touchAction="none"});
+ addEventListener("pointermove",move,{passive:false});addEventListener("pointerup",up);addEventListener("pointercancel",up);
+ $("grab").onclick=function(){if(!moved)size(st[(cur+1)%3])};
+})();
 $("q").onfocus=function(){if(innerWidth<=760)size("max")};
 $("q").oninput=draw;$("fit").onclick=fit;
 $("th").onclick=function(){dark=!dark;var r=document.documentElement;if(dark)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");try{localStorage.setItem("sarbagita-theme-v2",dark?"dark":"light")}catch(e){}tiles();draw()};

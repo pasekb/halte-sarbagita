@@ -385,6 +385,8 @@ function nextBus(){
  $("nxb").innerHTML=h;
  document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
 nextBus();setInterval(nextBus,30000);document.addEventListener("visibilitychange",nextBus);
+/* Dibuka dari toolbar halaman peta: ./#halte atau ./#info langsung ke tab itu. */
+(function(){var v={"#halte":"stops","#info":"info"}[location.hash];if(!v)return;show(v);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}})();
 /* Leaflet dimuat setelah beranda tampil, supaya tidak menahan halaman. Jaringan lambat -> peta SVG dulu. */
 (function(){if(typeof L!=="undefined"){LP=false;return}
  var fin=function(){if(LP){LP=false;redraw()}};
