@@ -86,6 +86,7 @@ button,input{font:inherit;color:inherit}
 .it.f .n,.it.l .n{background:var(--or);border-color:var(--or);color:#fff}
 .it small{display:inline-block;margin-top:3px;color:var(--mut);font-size:.68rem;background:var(--soft);padding:1px 7px;border-radius:6px}
 .it .ext{float:right;opacity:0;color:var(--mut);transition:opacity .15s}.it:hover .ext{opacity:1}
+.srcn{margin:10px 6px 4px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:.74rem;line-height:1.5;color:var(--mut)}.srcn a{color:var(--b);font-weight:700;text-decoration:none}
 .empty{padding:28px 12px;text-align:center;color:var(--mut);font-size:.88rem}
 
 #toast{position:fixed;z-index:600;left:50%;top:calc(120px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:min(340px,calc(100% - 28px));padding:11px 15px;border-radius:14px;font-size:.84rem;font-weight:600;line-height:1.45;text-align:center}#toast[hidden]{display:none}
@@ -198,7 +199,8 @@ function draw(){
   d.onclick=function(){if(mk[i]){mark(i);map.flyTo(mk[i].getLatLng(),16,{duration:.8});mk[i].openPopup();if(innerWidth<=760)size("min")}else window.open(gm(s),"_blank","noopener")};
   ls.appendChild(d)});
  $("cnt").textContent=(q?n+" / ":"")+S.length+" halte";
- if(!n)ls.innerHTML='<div class="empty">Halte tidak ditemukan.<br><small>Coba kata kunci lain.</small></div>'}
+ if(!n)ls.innerHTML='<div class="empty">Halte tidak ditemukan.<br><small>Coba kata kunci lain.</small></div>';
+ ls.insertAdjacentHTML("beforeend",'<div class="srcn">Lokasi halte dari peta resmi Dishub Provinsi Bali: <a href="https://dishub.baliprov.go.id/rute-angkutan-umum-trans-sarbagita/" target="_blank" rel="noopener">halaman Dishub</a> · <a href="https://www.google.com/maps/d/viewer?mid=1xvSgvl1_KfyJjl4o5NNeQDh1TKYeQWw" target="_blank" rel="noopener">Google My Maps</a>. Halte bertanda &ldquo;lokasi perkiraan&rdquo; belum ada di peta Dishub.</div>')}
 function mark(i){sel=i;document.querySelectorAll(".it").forEach(function(e){var on=+e.dataset.i===i;e.classList.toggle("sel",on);if(on&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function seg(id,items,cur,fn){var c=$(id);c.innerHTML="";items.forEach(function(x){var b=document.createElement("button");b.type="button";b.textContent=x[1];b.className=cur==x[0]?"on":"";b.onclick=function(){fn(x[0])};c.appendChild(b)})}
 function tabs(){
