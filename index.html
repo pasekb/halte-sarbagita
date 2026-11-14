@@ -89,11 +89,12 @@ button,input,select{font:inherit;color:inherit}
 .ft{position:relative;background:var(--soft);border-radius:16px;padding:4px 14px}
 .ft .f{padding:8px 0;border-bottom:1px solid var(--ln)}.ft .f:last-of-type{border:0}
 .ft .f label{display:flex;align-items:center;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
-.field-head{display:flex;align-items:center;gap:8px}.field-head label{flex:1}
-.locpick{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid rgba(10,120,230,.24);border-radius:10px;background:var(--bs);background:linear-gradient(135deg,color-mix(in srgb,var(--b) 13%,transparent),color-mix(in srgb,var(--b2) 17%,transparent));color:var(--b);font-size:.66rem;font-weight:700;letter-spacing:0;text-transform:none;padding:6px 9px;cursor:pointer;white-space:nowrap}
-.locpick:hover{background:color-mix(in srgb,var(--b) 16%,transparent)}
-.locpick .ic{width:15px;height:15px;flex:none}.locpick:disabled{opacity:.62;cursor:wait;transform:none}
-@media(max-width:380px){.field-head{align-items:flex-start;flex-wrap:wrap}.field-head label{flex-basis:100%}.locpick{width:auto;align-self:flex-start;margin:2px 0 4px}}
+/* Tombol lokasi bergaya tautan: ringan, tidak bersaing dengan tombol Cari Rute. Area sentuh tetap 40px. */
+.locpick{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--b);font-size:.82rem;font-weight:600;letter-spacing:0;text-transform:none;padding:0 8px 0 0;min-height:40px;margin:0 0 -6px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.locpick:hover span{text-decoration:underline;text-underline-offset:3px}.locpick:focus-visible{outline:2px solid var(--b);outline-offset:2px;border-radius:8px}.locpick:disabled{opacity:.75}
+.locpick .ic{width:18px;height:18px;flex:none}.locpick:disabled{cursor:wait}
+.locpick.busy .ic{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.locn{font-size:.74rem;font-weight:600;color:var(--b);margin:0 52px 2px 0}
 select{width:calc(100% - 52px);border:0;background:none;font-weight:700;font-size:1rem;color:var(--tx);padding:4px 0;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;text-overflow:ellipsis}
 select option{color:#0f172a;background:#fff}
 .swap{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:14px;border:1px solid var(--gb);background:var(--card);box-shadow:var(--sh);color:var(--b);cursor:pointer;transition:transform .35s cubic-bezier(.3,1.4,.5,1);display:grid;place-items:center;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
@@ -236,7 +237,7 @@ select option{color:#0f172a;background:#fff}
  <div class="hero"><img alt="Bus Trans Sarbagita" src="https://res.cloudinary.com/dqqdjhb2x/image/upload/f_auto,q_auto,c_limit,w_960/v1794641569/b3e5f9bc-d646-4a1f-b0fe-bdf2fdd433e1_mjuufd.png" srcset="https://res.cloudinary.com/dqqdjhb2x/image/upload/f_auto,q_auto,c_limit,w_480/v1794641569/b3e5f9bc-d646-4a1f-b0fe-bdf2fdd433e1_mjuufd.png 480w, https://res.cloudinary.com/dqqdjhb2x/image/upload/f_auto,q_auto,c_limit,w_960/v1794641569/b3e5f9bc-d646-4a1f-b0fe-bdf2fdd433e1_mjuufd.png 960w" sizes="(min-width:460px) 460px, 100vw" width="460" height="280" fetchpriority="high" decoding="async" crossorigin="anonymous"><div class="ov"><div class="brandrow"><img class="appicon" src="icons/icon-64.png?v=2" alt="" width="44" height="44"><small>Selamat datang</small></div><h1>Bus Trans Sarbagita</h1><div class="chips"><span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Denpasar · Kuta · Nusa Dua · GWK</span></div></div></div>
  <div class="card srch">
   <div class="pills" id="hp"></div>
-  <div class="ft"><div class="f"><div class="field-head"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Gunakan lokasi Anda saat ini</span></button></div><select id="sf" aria-label="Lokasi Anda atau halte asal"></select></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
+  <div class="ft"><div class="f"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><select id="sf" aria-label="Lokasi Anda atau halte asal"></select><div class="locn" id="sfn" hidden></div><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Pakai lokasi saya</span></button></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
   <button class="go" id="go" type="button">Cari Rute</button><div id="msg" role="status" aria-live="polite"></div>
  </div>
  <div class="card nxt" id="nxt"><div class="nxh"><b>Bus berikutnya dari GOR Ngurah Rai</b><small>Koridor 1 · arah GWK</small></div><div id="nxb"></div></div>
@@ -327,7 +328,7 @@ function drawSvg(v,hi){v.innerHTML="";v.setAttribute("viewBox","0 0 "+W+" "+H);
  if(st.sel>=0&&L[st.sel][1]){var s=L[st.sel],x=X(s[2]),y=Y(s[1]);
   el("circle",{cx:x,cy:y,r:17,fill:"#0a78e6",opacity:.18},v);el("circle",{cx:x,cy:y,r:9,fill:"#0a78e6",stroke:"#fff","stroke-width":3},v);
   var t=el("text",{x:x>W*.55?x-18:x+18,y:y+5,"font-size":15,"font-weight":700,fill:"#14213d","text-anchor":x>W*.55?"end":"start","paint-order":"stroke",stroke:"#fff","stroke-width":5},v);t.textContent=s[0]}}
-function fillSel(){var n=names(st.cor),h="";n.forEach(function(x){h+="<option>"+x+"</option>"});$("sf").innerHTML=h;$("st").innerHTML=h;var a=D[st.cor].a;$("sf").value=a[0][0];$("st").value=a[a.length-1][0]}
+function fillSel(){var n=names(st.cor),h="";n.forEach(function(x){h+="<option>"+x+"</option>"});$("sf").innerHTML=h;$("st").innerHTML=h;var a=D[st.cor].a;$("sf").value=a[0][0];locNote("");$("st").value=a[a.length-1][0]}
 function setCor(c){st.cor=c;st.dir="a";st.sel=-1;st.rg=null;fillSel();routeMessage("","");home();if(st.view==="stops")stops()}
 function setDir(d){st.dir=d;st.sel=-1;stops()}
 function rowH(s,i,lo,hi){var h='<div class="stop'+(i===st.sel?" sel":"")+(i===lo?" f":"")+(i===hi?" l":"")+'" data-i="'+i+'"><span class="dot"></span><div class="sn">'+(i+1)+'. '+s[0]+'</div>'+(s[1]?(s[3]?"<small>lokasi perkiraan</small>":""):"<small>koordinat belum ada</small>");
@@ -358,15 +359,17 @@ document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(
 $("all").onclick=function(){st.rg=null;st.sel=-1;show("stops")};
 $("bk").onclick=function(){st.rg=null;st.sel=-1;show("home")};
 $("ls1").onclick=$("ls").onclick;$("q1").oninput=homeList;$("q").oninput=stops;
-$("sw").onclick=function(){var a=$("sf").value;$("sf").value=$("st").value;$("st").value=a;this.classList.toggle("r");routeMessage("","")};
-$("sf").onchange=function(){if($("msg").className==="ok")routeMessage("","")};
-$("useLocation").onclick=function(){var btn=this;btn.disabled=true;routeMessage("loading","Mencari lokasi dan halte terdekat…");
- if(!navigator.geolocation){btn.disabled=false;routeMessage("","Browser ini tidak mendukung akses lokasi.");return}
- try{navigator.geolocation.getCurrentPosition(function(pos){var best=nearestStop(pos.coords.latitude,pos.coords.longitude,st.cor);btn.disabled=false;
+$("sw").onclick=function(){locNote("");var a=$("sf").value;$("sf").value=$("st").value;$("st").value=a;this.classList.toggle("r");routeMessage("","")};
+$("sf").onchange=function(){locNote("");if($("msg").className==="ok")routeMessage("","")};
+function locNote(t){var n=$("sfn");n.hidden=!t;n.textContent=t||""}
+function locBusy(b){var btn=$("useLocation");btn.disabled=b;btn.classList.toggle("busy",b);btn.querySelector("span").textContent=b?"Mencari lokasi…":"Pakai lokasi saya"}
+$("useLocation").onclick=function(){locBusy(true);routeMessage("loading","Mencari lokasi dan halte terdekat…");
+ if(!navigator.geolocation){locBusy(false);routeMessage("","Browser ini tidak mendukung akses lokasi.");return}
+ try{navigator.geolocation.getCurrentPosition(function(pos){var best=nearestStop(pos.coords.latitude,pos.coords.longitude,st.cor);locBusy(false);
   if(!best){routeMessage("","Belum ada data koordinat halte untuk koridor ini.");return}
-  $("sf").value=best.stop[0];routeMessage("ok","Halte asal terdekat: "+best.stop[0]+" ("+distanceText(best.km)+") · "+RC[st.cor]+". Pilih tujuan, lalu cari rute.");
- },function(err){btn.disabled=false;var msg=err&&err.code===1?"Izin lokasi ditolak. Izinkan akses lokasi di browser untuk memakai fitur ini.":err&&err.code===3?"Pencarian lokasi melewati batas waktu. Coba lagi atau pilih halte asal.":"Lokasi tidak tersedia. Coba lagi atau pilih halte asal.";routeMessage("",msg)},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
- catch(e){btn.disabled=false;routeMessage("","Lokasi tidak dapat digunakan. Pilih halte asal secara manual.")}};
+  $("sf").value=best.stop[0];locNote("📍 Terdekat dari lokasi Anda · "+distanceText(best.km));routeMessage("ok","Halte asal terdekat: "+best.stop[0]+" ("+distanceText(best.km)+") · "+RC[st.cor]+". Pilih tujuan, lalu cari rute.");
+ },function(err){locBusy(false);var msg=err&&err.code===1?"Izin lokasi ditolak. Izinkan akses lokasi di browser untuk memakai fitur ini.":err&&err.code===3?"Pencarian lokasi melewati batas waktu. Coba lagi atau pilih halte asal.":"Lokasi tidak tersedia. Coba lagi atau pilih halte asal.";routeMessage("",msg)},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
+ catch(e){locBusy(false);routeMessage("","Lokasi tidak dapat digunakan. Pilih halte asal secara manual.")}};
 $("go").onclick=function(){var f=$("sf").value,t=$("st").value,m=$("msg");
  if(f===t){routeMessage("","Pilih halte tujuan yang berbeda dari halte asal.");return}
  var ds=["a","b"];for(var k=0;k<2;k++){var a=near(st.cor,ds[k],f),b=near(st.cor,ds[k],t);if(a>=0&&b>a){st.dir=ds[k];st.rg=[a,b];st.sel=-1;routeMessage("","");show("stops");return}}
