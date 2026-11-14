@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://halte-sarbagita.pages.dev/sitemap.xml
+Sitemap: https://halte-sarbagita.online/sitemap.xml
