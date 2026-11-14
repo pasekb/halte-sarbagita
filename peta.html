@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
-<script>try{if(localStorage.getItem("sarbagita-theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
+<script>try{if(localStorage.getItem("sarbagita-theme-v2")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <style>
 :root{color-scheme:light;--b:#0a78e6;--b2:#0e9ccf;--bs:rgba(10,120,230,.11);--or:#ff7a1a;--tx:#0f172a;--mut:#55647e;--ln:rgba(15,23,42,.09);--bg:#eef1f7;--card:rgba(255,255,255,.88);--soft:rgba(15,23,42,.06);--glass:rgba(255,255,255,.6);--gb:rgba(255,255,255,.8);--sh:0 1px 2px rgba(15,23,42,.05),0 16px 44px -12px rgba(15,23,42,.3)}
 :root[data-theme="dark"]{color-scheme:dark;--b:#4db8ff;--b2:#4fe0e6;--bs:rgba(77,184,255,.17);--tx:#e9edf6;--mut:#9aa6be;--ln:rgba(255,255,255,.09);--bg:#090d17;--card:rgba(40,50,78,.85);--soft:rgba(255,255,255,.07);--glass:rgba(16,22,38,.58);--gb:rgba(255,255,255,.12);--sh:0 1px 2px rgba(0,0,0,.4),0 16px 44px -12px rgba(0,0,0,.75)}
@@ -184,7 +184,7 @@ function size(s){cur=st.indexOf(s);var sd=$("side");sd.classList.remove("min","m
 $("grab").onclick=function(){size(st[(cur+1)%3])};
 $("q").onfocus=function(){if(innerWidth<=760)size("max")};
 $("q").oninput=draw;$("fit").onclick=fit;
-$("th").onclick=function(){dark=!dark;var r=document.documentElement;if(dark)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");try{localStorage.setItem("sarbagita-theme",dark?"dark":"light")}catch(e){}tiles();draw()};
+$("th").onclick=function(){dark=!dark;var r=document.documentElement;if(dark)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");try{localStorage.setItem("sarbagita-theme-v2",dark?"dark":"light")}catch(e){}tiles();draw()};
 $("loc").onclick=function(){if(!navigator.geolocation)return toast("Lokasi tidak didukung di perangkat ini.");
  navigator.geolocation.getCurrentPosition(function(p){var ll=[p.coords.latitude,p.coords.longitude];
   if(me)me.setLatLng(ll);else me=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[18,18]}),zIndexOffset:2000}).addTo(map).bindPopup("<b>Lokasi Anda</b>");
