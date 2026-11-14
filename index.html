@@ -71,9 +71,11 @@ button,input,select{font:inherit;color:inherit}
 
 /* Segmented control */
 .pills{display:flex;gap:4px;background:var(--soft);border-radius:14px;padding:4px;margin-bottom:12px}
-.pills button{flex:1;border:1px solid rgba(10,120,230,.28);border:1px solid color-mix(in srgb,var(--b) 32%,transparent);background:var(--bs);border-radius:11px;padding:9px 8px;font-size:.8rem;font-weight:600;color:var(--tx);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;white-space:nowrap}
-.pills button:hover{border-color:var(--b)}
-.pills button.on{background:var(--card);color:var(--b);font-weight:700;border-color:transparent;box-shadow:0 1px 2px rgba(15,23,42,.08),0 4px 12px -4px rgba(15,23,42,.15)}
+.pills button{flex:1;border:1px solid var(--ln);background:transparent;border-radius:11px;padding:9px 8px;font-size:.8rem;font-weight:500;color:var(--mut);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.pills button:hover{color:var(--tx);border-color:color-mix(in srgb,var(--b) 40%,transparent)}
+/* Yang dipilih: biru penuh + teks putih, sama seperti tombol aktif di toolbar bawah. */
+.pills button.on{background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;font-weight:700;border-color:transparent;box-shadow:var(--sh2)}
+:root[data-theme="dark"] .pills button.on{color:#06121f}
 /* Tab koridor di kartu pencarian: track transparan, teks tidak aktif putih */
 .srch .pills{background:transparent}
 .srch .pills button:not(.on){background:transparent;color:#f8fafc;border-color:rgba(255,255,255,.45);text-shadow:0 1px 3px rgba(15,23,42,.6)}
