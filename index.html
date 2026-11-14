@@ -12,6 +12,20 @@
 <title>Bus Trans Sarbagita: Jadwal, Rute, dan Halte Bus Listrik Bali</title>
 <link rel="canonical" href="https://halte-sarbagita.pages.dev/">
 <meta name="description" content="Jadwal, rute, dan halte Bus Listrik Trans Sarbagita di Bali. Koridor 1 GOR Ngurah Rai – GWK, 20 keberangkatan mulai pukul 06.15 WITA, gratis selama masa uji coba.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bus Trans Sarbagita">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Bus Trans Sarbagita: Jadwal, Rute, dan Halte Bus Listrik Bali">
+<meta property="og:description" content="Jadwal, rute, dan halte Bus Listrik Trans Sarbagita di Bali. Koridor 1 GOR Ngurah Rai – GWK, 20 keberangkatan mulai pukul 06.15 WITA, gratis selama masa uji coba.">
+<meta property="og:url" content="https://halte-sarbagita.pages.dev/">
+<meta property="og:image" content="https://res.cloudinary.com/dqqdjhb2x/image/upload/f_jpg,q_auto,c_fill,g_auto,w_1200,h_630/v1794641569/b3e5f9bc-d646-4a1f-b0fe-bdf2fdd433e1_mjuufd.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bus listrik Trans Sarbagita">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bus Trans Sarbagita: Jadwal, Rute, dan Halte Bus Listrik Bali">
+<meta name="twitter:description" content="Jadwal, rute, dan halte Bus Listrik Trans Sarbagita di Bali. Koridor 1 GOR Ngurah Rai – GWK, 20 keberangkatan mulai pukul 06.15 WITA, gratis selama masa uji coba.">
+<meta name="twitter:image" content="https://res.cloudinary.com/dqqdjhb2x/image/upload/f_jpg,q_auto,c_fill,g_auto,w_1200,h_630/v1794641569/b3e5f9bc-d646-4a1f-b0fe-bdf2fdd433e1_mjuufd.png">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNK1FJ80QW"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-MNK1FJ80QW");</script>
@@ -354,11 +368,11 @@ function nextBus(){
  var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,
   i=SJ.findIndex(function(r){return hm(r[1])>=m}),h;
  document.querySelectorAll("#sjt tbody tr").forEach(function(r,k){r.classList.toggle("nx",k===i)});
- if(i<0)h='<div class="nxs">Keberangkatan terakhir hari ini sudah lewat. Besok bus pertama berangkat pukul <b>'+dt(SJ[0][1])+'</b> WITA. <a class="sjl">Lihat jadwal lengkap</a></div>';
+ if(i<0)h='<div class="nxs">Keberangkatan terakhir hari ini sudah lewat. Besok bus pertama berangkat pukul <b>'+dt(SJ[0][1])+'</b> WITA. <a class="sjl" href="#sj">Lihat jadwal lengkap</a></div>';
  else{var r=SJ[i],w=hm(r[1])-m,nx=SJ.slice(i+1,i+3).map(function(x){return dt(x[1])}).join(", ");
-  h='<div class="nxv"><span class="t">'+dt(r[1])+'</span><span class="w">'+(w===0?"berangkat sekarang":dr(w)+" lagi")+'</span></div><div class="nxs">Tiba di Sudirman sekitar '+dt(r[2])+(nx?". Setelahnya: "+nx:"")+'. <a class="sjl">Lihat jadwal lengkap</a></div>'}
+  h='<div class="nxv"><span class="t">'+dt(r[1])+'</span><span class="w">'+(w===0?"berangkat sekarang":dr(w)+" lagi")+'</span></div><div class="nxs">Tiba di Sudirman sekitar '+dt(r[2])+(nx?". Setelahnya: "+nx:"")+'. <a class="sjl" href="#sj">Lihat jadwal lengkap</a></div>'}
  $("nxb").innerHTML=h;
- document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(){show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
+ document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
 nextBus();setInterval(nextBus,30000);document.addEventListener("visibilitychange",nextBus);
 /* Leaflet dimuat setelah beranda tampil, supaya tidak menahan halaman. Jaringan lambat -> peta SVG dulu. */
 (function(){if(typeof L!=="undefined"){LP=false;return}
