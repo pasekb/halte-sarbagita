@@ -178,7 +178,7 @@ html[lang="en"] .period{display:none}
 .nxv .t{font-size:2rem;font-weight:800;letter-spacing:-.02em;color:var(--b);line-height:1}
 .jt{white-space:nowrap}.jt .period{font-size:.68em;font-weight:600;letter-spacing:0;text-transform:lowercase;color:var(--mut)}.nxv .t .period{font-size:.42em;letter-spacing:0;color:var(--mut)}.fact .period{display:inline;font-size:.72em;letter-spacing:0;text-transform:lowercase}
 .nxv .w{font-size:.9rem;font-weight:700;color:var(--or)}
-.nxs{margin-top:8px;color:var(--mut);font-size:.8rem;line-height:1.5}
+.nxs{margin-top:8px;color:var(--mut);font-size:.8rem;line-height:1.5}.nxtip{margin-top:6px;padding-top:8px;border-top:1px solid var(--ln);font-size:.74rem}
 .nxs a{color:var(--b);font-weight:700;cursor:pointer}
 .info summary{cursor:pointer;font-weight:700;color:var(--b);padding:8px 0;font-size:.9rem}
 .sjw{overflow-x:auto;margin-top:6px}
@@ -247,7 +247,7 @@ html[lang="en"] .period{display:none}
   <div class="ft"><div class="f"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><select id="sf" aria-label="Lokasi Anda atau halte asal"></select><div class="locn" id="sfn" hidden></div><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Pakai lokasi saya</span></button></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
   <button class="go" id="go" type="button">Cari Rute</button><div id="msg" role="status" aria-live="polite"></div>
  </div>
- <div class="card nxt" id="nxt"><div class="nxh"><b>Bus berikutnya dari GOR Ngurah Rai</b><small>Koridor 1 · arah GWK</small></div><div id="nxb"></div></div>
+ <div class="card nxt" id="nxt"><div class="nxh"><b id="nxt1">Bus berikutnya dari GOR Ngurah Rai</b><small id="nxt2">Halte awal · Koridor 1 · arah GWK</small></div><div id="nxb"></div></div>
  <div class="card inst" hidden><img src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div class="tx"><b>Pasang aplikasi</b><small>Buka lebih cepat dari layar utama, tanpa browser.</small></div><button class="instb" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M12 15l-4-4M12 15l4-4M5 20h14"/></svg> Pasang</button><div class="insth" role="status"></div></div>
  <div class="sh"><b><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta Rute</b><button id="all" type="button">Lihat semua halte</button></div>
  <div class="card mapc"><a class="full" id="full" href="peta"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta penuh</a><div class="lmap" id="lm1"></div><svg id="map1"></svg></div>
@@ -370,18 +370,18 @@ document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(
 $("all").onclick=function(){st.rg=null;st.sel=-1;show("stops")};
 $("bk").onclick=function(){st.rg=null;st.sel=-1;show("home")};
 $("ls1").onclick=$("ls").onclick;$("q1").oninput=homeList;$("q").oninput=stops;
-$("sw").onclick=function(){locNote("");var a=$("sf").value;$("sf").value=$("st").value;$("st").value=a;this.classList.toggle("r");routeMessage("","")};
-$("sf").onchange=function(){locNote("");if($("msg").className==="ok")routeMessage("","")};
+$("sw").onclick=function(){locNote("");var a=$("sf").value;$("sf").value=$("st").value;$("st").value=a;this.classList.toggle("r");routeMessage("","");st.hd=null;st.dt=1;nextBus()};
+$("sf").onchange=function(){locNote("");st.hd=null;if($("msg").className==="ok")routeMessage("","");if(typeof SJ!=="undefined")nextBus()};
 function locNote(t){var n=$("sfn");n.hidden=!t;n.textContent=t||""}
 function locBusy(b){var btn=$("useLocation");btn.disabled=b;btn.classList.toggle("busy",b);btn.querySelector("span").textContent=b?"Mencari lokasi…":"Pakai lokasi saya"}
 $("useLocation").onclick=function(){locBusy(true);routeMessage("loading","Mencari lokasi dan halte terdekat…");
  if(!navigator.geolocation){locBusy(false);routeMessage("","Browser ini tidak mendukung akses lokasi.");return}
  try{navigator.geolocation.getCurrentPosition(function(pos){var best=nearestStop(pos.coords.latitude,pos.coords.longitude,st.cor);locBusy(false);
   if(!best){routeMessage("","Belum ada data koordinat halte untuk koridor ini.");return}
-  $("sf").value=best.stop[0];locNote("📍 Terdekat dari lokasi Anda · "+distanceText(best.km));routeMessage("ok","Halte asal terdekat: "+best.stop[0]+" ("+distanceText(best.km)+") · "+RC[st.cor]+". Pilih tujuan, lalu cari rute.");
+  $("sf").value=best.stop[0];st.hd=best.dir;nextBus();locNote("📍 Terdekat dari lokasi Anda · "+distanceText(best.km));routeMessage("ok","Halte asal terdekat: "+best.stop[0]+" ("+distanceText(best.km)+") · "+RC[st.cor]+". Pilih tujuan, lalu cari rute.");
  },function(err){locBusy(false);var msg=err&&err.code===1?"Izin lokasi ditolak. Izinkan akses lokasi di browser untuk memakai fitur ini.":err&&err.code===3?"Pencarian lokasi melewati batas waktu. Coba lagi atau pilih halte asal.":"Lokasi tidak tersedia. Coba lagi atau pilih halte asal.";routeMessage("",msg)},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
  catch(e){locBusy(false);routeMessage("","Lokasi tidak dapat digunakan. Pilih halte asal secara manual.")}};
-$("go").onclick=function(){var f=$("sf").value,t=$("st").value,m=$("msg");
+$("go").onclick=function(){var f=$("sf").value,t=$("st").value,m=$("msg");st.dt=1;nextBus();
  if(f===t){routeMessage("","Pilih halte tujuan yang berbeda dari halte asal.");return}
  var ds=["a","b"];for(var k=0;k<2;k++){var a=near(st.cor,ds[k],f),b=near(st.cor,ds[k],t);if(a>=0&&b>a){st.dir=ds[k];st.rg=[a,b];st.sel=-1;routeMessage("","");show("stops");return}}
  routeMessage("","Tidak ada rute langsung dari "+f+" ke "+t+" di "+CN[st.cor]+(D.c2?". Coba tukar tujuan atau pilih koridor lain.":". Coba tukar asal dan tujuan."))};
@@ -414,17 +414,48 @@ function dr(m){var h=Math.floor(m/60),n=m%60;return h?h+" jam"+(n?" "+n+" menit"
 function period(t){var h=+t.slice(0,2);return h<4||h>=19?"malam":h<11?"pagi":h<15?"siang":"sore"}
 function timeHtml(t){return '<time class="jt" datetime="'+t+'"><span>'+t.replace(":",".")+'</span><small class="period"> '+period(t)+'</small></time>'}
 document.querySelectorAll("#sjt tbody tr").forEach(function(tr,i){var r=SJ[i];if(!r)return;[2,3,4].forEach(function(c,k){tr.cells[c].innerHTML=timeHtml(r[k+1])})});
-/* Bus berikutnya dari GOR: jam WITA (UTC+8), tidak bergantung zona waktu HP */
+/* Kartu bus berikutnya (jam WITA, tidak bergantung zona waktu HP).
+   Halte asal GOR Ngurah Rai: jam berangkat resmi. Halte lain: perkiraan jam bus lewat,
+   memakai model yang sama dengan ikon bus di peta (GOR -> Sudirman sesuai jadwal, sisanya menurut jarak). */
+function sCum(d){var Ls=D.c1[d],c=[],last=null,acc=0,i;
+ Ls.forEach(function(s,k){if(s[1]){if(last)acc+=distanceKm(last[1],last[2],s[1],s[2])*1000;last=s;c[k]=acc}});
+ for(i=0;i<Ls.length;i++)if(c[i]==null){var p=i-1,n=i+1;while(n<Ls.length&&c[n]==null)n++;var cp=p>=0?c[p]:0,cn=n<Ls.length?c[n]:cp;c[i]=cp+(cn-cp)*(i-p)/(n-p)}
+ return c}
+var EC=null;
+function ecInit(){if(EC)return EC;var A=sCum("a"),B=sCum("b"),la=A[A.length-1],ds=la*.35;
+ D.c1.a.some(function(s,i){if(/^Sudirman/.test(s[0])&&s[1]){ds=A[i];return true}});
+ return EC={A:A,B:B,LA:la,LB:B[B.length-1],DS:ds}}
+function eta(r,d,i){var E=ecInit(),t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]),bl=typeof BLAY==="number"?BLAY:10,v=(E.LA-E.DS+E.LB)/Math.max(1,t3-t1-bl);
+ if(d==="a"){var c=E.A[i];return c<=E.DS?t0+(t1-t0)*c/E.DS:t1+(c-E.DS)/v}
+ return t1+(E.LA-E.DS)/v+bl+E.B[i]/v}
+function mt(x){x=((Math.round(x)%1440)+1440)%1440;var h=Math.floor(x/60),n=x%60;return (h<10?"0":"")+h+":"+(n<10?"0":"")+n}
+/* Halte & arah untuk kartu: dari rute asal-tujuan (hanya jika tujuan sudah dipilih pengguna),
+   lalu arah hasil lokasi, lalu arah tempat halte itu bukan halte terakhir */
+function cardStop(){var f=$("sf").value,t=$("st").value,ds=["a","b"],k,i;
+ if(st.dt)for(k=0;k<2;k++){var a=near("c1",ds[k],f),b=near("c1",ds[k],t);if(a>=0&&b>a)return {d:ds[k],i:a,n:D.c1[ds[k]][a][0],f:f}}
+ var o=st.hd?[st.hd,st.hd==="a"?"b":"a"]:ds;
+ for(k=0;k<2;k++){i=ix("c1",o[k],f);if(i>=0&&i<D.c1[o[k]].length-1)return {d:o[k],i:i,n:f}}
+ return {d:"a",i:0,n:D.c1.a[0][0]}}
 function nextBus(){
- var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,
-  i=SJ.findIndex(function(r){return hm(r[1])>=m}),h;
+ var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,cs=cardStop(),gor=cs.d==="a"&&cs.i===0,h,
+  T=SJ.map(function(r){return gor?hm(r[1]):eta(r,cs.d,cs.i)}),
+  i=T.findIndex(function(x){return Math.round(x)>=m}),jl=' <a class="sjl" href="#sj">Lihat jadwal lengkap</a>';
+ $("nxt1").textContent=gor?"Bus berikutnya dari GOR Ngurah Rai":"Perkiraan bus lewat di "+cs.n;
+ $("nxt2").textContent=(gor?"Halte awal · ":"")+(cs.f&&cs.f!==cs.n?"Seberang "+cs.f+" · ":"")+"Koridor 1 · arah "+(cs.d==="a"?"GWK":"Kota");
  document.querySelectorAll("#sjt tbody tr").forEach(function(r,k){r.classList.toggle("nx",k===i)});
- if(i<0)h='<div class="nxs">Keberangkatan terakhir hari ini sudah lewat. Besok bus pertama berangkat pukul <b>'+timeHtml(SJ[0][1])+'</b> WITA. <a class="sjl" href="#sj">Lihat jadwal lengkap</a></div>';
- else{var r=SJ[i],w=hm(r[1])-m,nx=SJ.slice(i+1,i+3).map(function(x){return timeHtml(x[1])}).join(", ");
-  h='<div class="nxv"><span class="t">'+timeHtml(r[1])+'</span><span class="w">'+(w===0?"berangkat sekarang":dr(w)+" lagi")+'</span></div><div class="nxs">Tiba di Sudirman sekitar '+timeHtml(r[2])+(nx?". Setelahnya: "+nx:"")+'. <a class="sjl" href="#sj">Lihat jadwal lengkap</a></div>'}
+ if(gor){
+  if(i<0)h='<div class="nxs">Keberangkatan terakhir hari ini sudah lewat. Besok bus pertama berangkat pukul <b>'+timeHtml(SJ[0][1])+'</b> WITA.'+jl+'</div>';
+  else{var r=SJ[i],w=hm(r[1])-m,nx=SJ.slice(i+1,i+3).map(function(x){return timeHtml(x[1])}).join(", ");
+   h='<div class="nxv"><span class="t">'+timeHtml(r[1])+'</span><span class="w">'+(w===0?"berangkat sekarang":dr(w)+" lagi")+'</span></div><div class="nxs">Tiba di Sudirman sekitar '+timeHtml(r[2])+(nx?". Setelahnya: "+nx:"")+'.'+jl+'</div>'}
+  h+='<div class="nxs nxtip">Ini jam berangkat dari halte awal. Di halte lain bus lewat lebih lambat; pilih halte asal di atas untuk melihat perkiraannya.</div>'}
+ else{
+  if(i<0)h='<div class="nxs">Bus terakhir hari ini sudah lewat di halte ini. Besok bus pertama lewat sekitar <b>'+timeHtml(mt(T[0]))+'</b> WITA.'+jl+'</div>';
+  else{var w2=Math.round(T[i])-m,nx2=T.slice(i+1,i+3).map(function(x){return timeHtml(mt(x))}).join(", ");
+   h='<div class="nxv"><span class="t">'+timeHtml(mt(T[i]))+'</span><span class="w">'+(w2<=0?"segera tiba":"sekitar "+dr(w2)+" lagi")+'</span></div><div class="nxs">Berangkat dari GOR '+timeHtml(SJ[i][1])+(nx2?". Setelahnya sekitar: "+nx2:"")+'.'+jl+'</div>'}
+  h+='<div class="nxs nxtip">Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.</div>'}
  $("nxb").innerHTML=h;
  document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
-nextBus();setInterval(nextBus,30000);document.addEventListener("visibilitychange",nextBus);
+nextBus();setInterval(nextBus,30000);$("st").addEventListener("change",function(){st.dt=1;nextBus()});document.addEventListener("visibilitychange",nextBus);
 /* === Perkiraan posisi bus Koridor 1 dari jadwal (BUKAN GPS), sama seperti di peta.html ===
    GOR -> Sudirman memakai waktu jadwal; sisanya dibagi menurut jarak, istirahat BLAY menit di GWK. */
 var BLAY=10,BP=null,BICO='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/></svg>';
@@ -499,7 +530,7 @@ var LK="sarbagita-lang",ON=false,TI=document.title,
  ["Mencari lokasi dan halte terdekat…","Finding your location and nearest stop…"],["Mencari lokasi","Finding location"],
  ["Anda cukup jauh dari rute ini (","You're quite far from this route ("],["📍 Terdekat dari lokasi Anda · ","📍 Nearest to you · "],["Terdekat: ","Nearest: "],
  ["Lihat jadwal lengkap (20 keberangkatan)","See full timetable (20 departures)"],["Lihat jadwal lengkap","See full timetable"],
- ["Bus berikutnya dari ","Next bus from "],["Tiba di Sudirman sekitar","Arrives at Sudirman around"],[". Setelahnya:",". Then:"],["berangkat sekarang","leaving now"],
+ ["Bus berikutnya dari ","Next bus from "],["Perkiraan bus lewat di ","Estimated bus at "],["Halte awal · ","First stop · "],[/^Seberang (.+?) · /,"Across from $1 · "],["Ini jam berangkat dari halte awal. Di halte lain bus lewat lebih lambat; pilih halte asal di atas untuk melihat perkiraannya.","This is the departure time from the first stop. Buses reach other stops later; pick your starting stop above to see an estimate."],["Bus terakhir hari ini sudah lewat di halte ini. Besok bus pertama lewat sekitar","Today's last bus has passed this stop. Tomorrow's first bus comes around"],["Berangkat dari GOR ","Leaves GOR at "],[". Setelahnya sekitar: ",". Then around: "],["Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.","Estimated from the timetable, not GPS; may be a few minutes off."],["segera tiba","arriving soon"],[/^sekitar (.+) lagi$/,"in about $1"],["Tiba di Sudirman sekitar","Arrives at Sudirman around"],[". Setelahnya:",". Then:"],["berangkat sekarang","leaving now"],
  ["Istirahat di GWK sebelum kembali","Resting at GWK before heading back"],["Perkiraan dari jadwal, bukan posisi GPS.","Estimated from the timetable, not GPS."],
  ["Berangkat GOR","Leaves GOR"],["Tiba Sudirman","At Sudirman"],["Kembali di GOR","Back at GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
  ["Asal / lokasi Anda","From / your location"],["Lokasi Anda atau halte asal","Your location or starting stop"],["Pakai lokasi saya","Use my location"],["Tujuan halte","Destination stop"],["Cari Rute","Find route"],["Cari halte","Search stops"],
