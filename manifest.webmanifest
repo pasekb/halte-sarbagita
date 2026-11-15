@@ -1,7 +1,7 @@
 {
-  "name": "Bus Trans Sarbagita",
+  "name": "Bus Listrik Trans Sarbagita",
   "short_name": "Sarbagita",
-  "description": "Rute dan halte Bus Trans Sarbagita, Bali",
+  "description": "Jadwal, rute, dan halte Bus Listrik Trans Sarbagita Koridor 1 GOR – GWK, Bali",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",
