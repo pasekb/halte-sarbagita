@@ -322,6 +322,8 @@ function instGo(){
  toast(m)}
 document.querySelectorAll(".instb").forEach(function(b){b.onclick=instGo});instUI();
 tabs();draw();fit();
+/* Buka halte tertentu dari tautan beranda: peta?d=a&s=12 */
+try{var SI=QS&&QS.get("s");if(SI!==null&&SI!==""&&mk[+SI]){mark(+SI);map.setView(mk[+SI].getLatLng(),16);setTimeout(function(){mk[+SI].openPopup()},300)}}catch(e){}
 </script><script>
 /* === Bahasa Inggris (EN): menerjemahkan teks di layar tanpa mengubah kode lain.
    Nama halte tidak diterjemahkan. Pilihan disimpan di localStorage "sarbagita-lang". === */

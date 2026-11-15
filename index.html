@@ -171,7 +171,7 @@ html[lang="en"] .period{display:none}
 .nb .ic,.chip .ic{width:15px;height:15px;vertical-align:-3px}.sum .ic{width:22px;height:22px;color:var(--b)}
 
 /* Jadwal */
-.nxt{margin:12px 14px 0;padding:16px}
+.nxt{margin:12px 14px 0;padding:16px}.near{margin:12px 14px 0;padding:12px 16px 14px}.nrh{display:flex;justify-content:space-between;align-items:center}.nrh b{display:flex;align-items:center;gap:6px;font-size:.95rem}.nrh b .ic{width:18px;height:18px;color:var(--or)}.nrx{border:0;background:none;color:var(--mut);font-size:1.4rem;line-height:1;width:36px;height:36px;margin-right:-8px;border-radius:10px;cursor:pointer}.nri{padding:10px 0 4px;border-top:1px solid var(--ln);margin-top:8px}.nrt{font-size:.92rem;margin-bottom:8px;line-height:1.5}.nrt b{font-weight:800}.nrt small{color:var(--mut)}.nrd{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b);background:var(--bs);padding:2px 8px;border-radius:999px;margin-right:6px;vertical-align:1px}.nra a{display:inline-flex;align-items:center;gap:4px;margin:2px 6px 4px 0;padding:8px 12px;background:var(--b);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:.8rem}.nra a .ic{width:15px;height:15px}.nra a.alt{background:var(--bs);color:var(--b)}.nrn{font-size:.76rem;color:var(--mut);padding-top:8px;margin-top:6px;border-top:1px solid var(--ln)}
 .nxh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .nxh b{font-size:.95rem;font-weight:800}.nxh small{color:var(--mut);font-size:.72rem;font-weight:600}
 .nxv{display:flex;align-items:baseline;gap:10px;margin-top:8px;flex-wrap:wrap}
@@ -245,16 +245,13 @@ html[lang="en"] .period{display:none}
  <div class="card srch">
   <div class="pills" id="hp"></div>
   <div class="ft"><div class="f"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><select id="sf" aria-label="Lokasi Anda atau halte asal"></select><div class="locn" id="sfn" hidden></div><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Pakai lokasi saya</span></button></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
-  <button class="go" id="go" type="button">Cari Rute</button><div id="msg" role="status" aria-live="polite"></div>
+  <button class="go" id="go" type="button">Lihat rute</button><div id="msg" role="status" aria-live="polite"></div>
  </div>
+ <div class="card near" id="near" hidden></div>
  <div class="card nxt" id="nxt"><div class="nxh"><b id="nxt1">Bus berikutnya dari GOR Ngurah Rai</b><small id="nxt2">Halte awal · Koridor 1 · arah GWK</small></div><div id="nxb"></div></div>
  <div class="card inst" hidden><img src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div class="tx"><b>Pasang aplikasi</b><small>Buka lebih cepat dari layar utama, tanpa browser.</small></div><button class="instb" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M12 15l-4-4M12 15l4-4M5 20h14"/></svg> Pasang</button><div class="insth" role="status"></div></div>
  <div class="sh"><b><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta Rute</b><button id="all" type="button">Lihat semua halte</button></div>
  <div class="card mapc"><a class="full" id="full" href="peta"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta penuh</a><div class="lmap" id="lm1"></div><svg id="map1"></svg></div>
- <div class="sh"><b><svg class="ic" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Daftar Halte</b><span id="hc"></span></div>
- <div class="pills" id="dp1" style="margin:0 14px 10px"></div>
- <div class="sbar" style="margin-top:0"><input id="q1" type="search" placeholder="Cari halte" aria-label="Cari halte"></div>
- <div class="card list" id="ls1" style="margin:0 14px"></div>
  <div class="card info"><h2>Rute, halte, dan jam operasi Bus Listrik Trans Sarbagita</h2><p>Bus listrik Trans Sarbagita Koridor 1 melayani rute GOR Ngurah Rai – GWK di Bali dan gratis selama masa uji coba yang dimulai 9 November 2026. Layanan dioperasikan Perum DAMRI di bawah koordinasi Dishub Provinsi Bali. Bus beroperasi pukul 06.15 <small class="period">pagi</small> – 17.35 <small class="period">sore</small> WITA. Pilih halte asal dan tujuan di atas untuk melihat rute, atau buka peta penuh untuk melihat semua halte.</p></div>
  <div class="credit">This web app was vibe coded by <a href="https://www.instagram.com/yogasonry/" target="_blank" rel="noopener">@yogasonry</a><br>© 2026 Yoga Purnama. All rights reserved.</div>
 </section>
@@ -344,11 +341,7 @@ function setCor(c){st.cor=c;st.dir="a";st.sel=-1;st.rg=null;fillSel();routeMessa
 function setDir(d){st.dir=d;st.sel=-1;stops()}
 function rowH(s,i,lo,hi){var h='<div class="stop'+(i===st.sel?" sel":"")+(i===lo?" f":"")+(i===hi?" l":"")+'" data-i="'+i+'" tabindex="0" role="button" aria-expanded="'+(i===st.sel)+'"><span class="dot"></span><div class="sn">'+(i+1)+'. '+s[0]+'</div>'+(s[1]?(s[3]?"<small>lokasi perkiraan</small>":""):"<small>koordinat belum ada</small>");
  if(i===st.sel)h+='<div class="det">'+nbLine(st.dir,i)+(!s[1]?"Halte ini belum ada di peta Dishub. Tombol di bawah mencarinya lewat nama di Google Maps.":(s[3]===2?"Lokasi perkiraan dari OpenStreetMap, belum ada di peta Dishub.":s[3]?"Lokasi perkiraan: memakai titik halte di seberang jalan pada peta Dishub.":"Lokasi sesuai peta resmi Dishub Bali."))+'<br>'+(s[1]?'<a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination='+s[1]+','+s[2]+'"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg> Petunjuk arah</a>':"")+'<a '+(s[1]?'class="alt" ':"")+'target="_blank" rel="noopener" href="'+gm(s)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> Buka di Google Maps</a></div>';return h+'</div>'}
-function homeList(){var L=D[st.cor][st.dir],q=($("q1").value||"").toLowerCase(),h="";
- pills("dp1",[["a",DN[st.cor][0]],["b",DN[st.cor][1]]],st.dir,function(d){st.dir=d;st.sel=-1;home()});
- $("hc").textContent=L.length+" halte";
- L.forEach(function(s,i){if(!q||s[0].toLowerCase().indexOf(q)>=0)h+=rowH(s,i,0,L.length-1)});
- $("ls1").innerHTML=h||'<div class="det" style="padding:12px">Halte tidak ditemukan.</div>'}
+function homeList(){}
 function home(){var hc=[["c1","Koridor 1 · GWK"],["c2","Koridor 2 · Nusa Dua"]].filter(function(x){return D[x[0]]});$("hp").hidden=hc.length<2;pills("hp",hc,st.cor,setCor);drawMap($("map1"),null);homeList()}
 function stops(){var L=D[st.cor][st.dir],r=st.rg,lo=r?r[0]:0,hi=r?r[1]:L.length-1,q=($("q").value||"").toLowerCase(),h="";
  var di=st.dir==="a"?0:1;
@@ -362,19 +355,19 @@ function stops(){var L=D[st.cor][st.dir],r=st.rg,lo=r?r[0]:0,hi=r?r[1]:L.length-
   if(i===st.sel)h+='<div class="det">'+nbLine(st.dir,i)+(!s[1]?"Halte ini belum ada di peta Dishub. Tombol di bawah mencarinya lewat nama di Google Maps.":(s[3]===2?"Lokasi perkiraan dari OpenStreetMap, belum ada di peta Dishub.":s[3]?"Lokasi perkiraan: memakai titik halte di seberang jalan pada peta Dishub.":"Lokasi sesuai peta resmi Dishub Bali."))+'<br>'+(s[1]?'<a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination='+s[1]+','+s[2]+'"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg> Petunjuk arah</a>':"")+'<a '+(s[1]?'class="alt" ':"")+'target="_blank" rel="noopener" href="'+gm(s)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> Buka di Google Maps</a></div>';
   h+='</div>'}
  $("ls").innerHTML=h||'<div class="det" style="padding:12px">Halte tidak ditemukan.</div>';drawMap($("map2"),r)}
-function pick(i){st.sel=st.sel===i?-1:i;var h=st.view==="home";if(h)home();else stops();var e=document.querySelector((h?"#ls1":"#ls")+" .stop.sel");if(e&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})}
+function pick(i){if(st.view==="home"){st.sel=i;st.rg=null;show("stops");var e0=document.querySelector("#ls .stop.sel");if(e0&&e0.scrollIntoView)e0.scrollIntoView({block:"center"});return}
+ st.sel=st.sel===i?-1:i;var h=false;stops();var e=document.querySelector((h?"#ls1":"#ls")+" .stop.sel");if(e&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})}
 function show(v){st.view=v;["home","stops","info"].forEach(function(x){$("v-"+x).className="view"+(x===v?" on":"")});
  document.querySelectorAll("#nav button").forEach(function(b){b.className=b.dataset.v===v?"on":""});window.scrollTo(0,0);if(v==="stops")stops();if(v==="home")home()}
 $("ls").onclick=function(e){if(e.target.tagName==="A")return;var s=e.target.closest(".stop");if(s)pick(+s.dataset.i)};
 document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(){st.rg=null;if(b.dataset.v==="stops")st.sel=-1;show(b.dataset.v)}});
 $("all").onclick=function(){st.rg=null;st.sel=-1;show("stops")};
 $("bk").onclick=function(){st.rg=null;st.sel=-1;show("home")};
-$("ls1").onclick=$("ls").onclick;
 /* Garis neon tipis: menyala sekali saat kolom halte dipilih/diganti, lalu hilang sendiri */
 function glowF(el){var f=el.closest(".f");if(!f)return;f.classList.remove("glow");void f.offsetWidth;f.classList.add("glow")}
 ["sf","st"].forEach(function(id){var e=$(id);e.addEventListener("change",function(){glowF(e)});e.addEventListener("focus",function(){glowF(e)});e.closest(".f").addEventListener("animationend",function(ev){if(ev.animationName==="sweep"||ev.animationName==="fadeln")this.classList.remove("glow")})});
 /* Daftar halte bisa dipakai dengan keyboard (Enter / Spasi) */
-$("ls").onkeydown=$("ls1").onkeydown=function(e){if(e.key!=="Enter"&&e.key!==" ")return;var s=e.target.closest&&e.target.closest(".stop");if(!s||e.target!==s)return;e.preventDefault();var i=+s.dataset.i;pick(i);var n=this.querySelector('.stop[data-i="'+i+'"]');if(n)n.focus({preventScroll:true})};$("q1").oninput=homeList;$("q").oninput=stops;
+$("ls").onkeydown=function(e){if(e.key!=="Enter"&&e.key!==" ")return;var s=e.target.closest&&e.target.closest(".stop");if(!s||e.target!==s)return;e.preventDefault();var i=+s.dataset.i;pick(i);var n=this.querySelector('.stop[data-i="'+i+'"]');if(n)n.focus({preventScroll:true})};$("q").oninput=stops;
 $("sw").onclick=function(){locNote("");var a=$("sf").value;$("sf").value=$("st").value;$("st").value=a;this.classList.toggle("r");routeMessage("","");st.hd=null;st.dt=1;nextBus();glowF($("sf"));glowF($("st"))};
 $("sf").onchange=function(){locNote("");st.hd=null;if($("msg").className==="ok")routeMessage("","");if(typeof SJ!=="undefined")nextBus()};
 function locNote(t){var n=$("sfn");n.hidden=!t;n.textContent=t||""}
@@ -383,7 +376,7 @@ $("useLocation").onclick=function(){locBusy(true);routeMessage("loading","Mencar
  if(!navigator.geolocation){locBusy(false);routeMessage("","Browser ini tidak mendukung akses lokasi. Pilih halte asal secara manual.");return}
  try{navigator.geolocation.getCurrentPosition(function(pos){var best=nearestStop(pos.coords.latitude,pos.coords.longitude,st.cor);locBusy(false);
   if(!best){routeMessage("","Belum ada data koordinat halte untuk koridor ini.");return}
-  $("sf").value=best.stop[0];st.hd=best.dir;nextBus();glowF($("sf"));locNote("📍 Terdekat dari lokasi Anda · "+distanceText(best.km));routeMessage("ok","Halte asal terdekat: "+best.stop[0]+" ("+distanceText(best.km)+") · "+RC[st.cor]+". Pilih tujuan, lalu cari rute.");
+  $("sf").value=best.stop[0];st.hd=best.dir;nextBus();glowF($("sf"));locNote("📍 Terdekat dari lokasi Anda · "+distanceText(best.km));st.nr=[pos.coords.latitude,pos.coords.longitude];nearCard();routeMessage("ok","Halte terdekat ditemukan di bawah. Pilih tujuan jika ingin melihat rute.");var nc=$("near");if(nc.scrollIntoView)setTimeout(function(){nc.scrollIntoView({block:"nearest",behavior:"smooth"})},150);
  },function(err){locBusy(false);var msg=err&&err.code===1?"Izin lokasi ditolak. Izinkan akses lokasi di browser, atau pilih halte asal secara manual.":err&&err.code===3?"Pencarian lokasi melewati batas waktu. Coba lagi atau pilih halte asal.":"Lokasi tidak tersedia. Coba lagi atau pilih halte asal.";routeMessage("",msg)},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})}
  catch(e){locBusy(false);routeMessage("","Lokasi tidak dapat digunakan. Pilih halte asal secara manual.")}};
 
@@ -442,6 +435,17 @@ function nbLine(d,i){if(typeof SJ==="undefined"||st.cor!=="c1"||!D.c1[d][i])retu
  if(k<0)return '<div class="nbl">Bus hari ini sudah habis. Besok bus pertama '+vb+'<b>'+timeHtml(mt(T[0]))+'</b></div>';
  var w=Math.round(T[k])-m;
  return '<div class="nbl">Bus berikutnya '+vb+'<b>'+timeHtml(mt(T[k]))+'</b>'+(w<=0?" (sekarang)":" ("+dr(w)+" lagi)")+(first?"":'<br><small>perkiraan dari jadwal, bukan GPS</small>')+'</div>'}
+/* Kartu halte terdekat (satu per arah) setelah "Pakai lokasi saya" */
+function nearCard(){var c=$("near");if(!st.nr||typeof SJ==="undefined"){c.hidden=true;return}
+ var la=st.nr[0],lo=st.nr[1],far=1e9,h='<div class="nrh"><b><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Halte terdekat dari Anda</b><button class="nrx" type="button" aria-label="Tutup">×</button></div>';
+ ["a","b"].forEach(function(d){var L=D.c1[d],best=-1,bk=1e9;
+  L.forEach(function(s,i){if(!s[1]||i===L.length-1)return;var km=distanceKm(la,lo,s[1],s[2]);if(km<bk){bk=km;best=i}});
+  if(best<0)return;far=Math.min(far,bk);var s=L[best];
+  h+='<div class="nri"><div class="nrt"><span class="nrd">Arah '+(d==="a"?"GWK":"Kota")+'</span><b>'+s[0]+'</b> <small>· '+distanceText(bk)+'</small></div>'+nbLine(d,best)
+   +'<div class="nra"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination='+s[1]+','+s[2]+'"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg> Petunjuk arah</a><a class="alt" href="peta?c=c1&amp;d='+d+'&amp;s='+best+'"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Lihat di peta</a></div></div>'});
+ if(far>5)h+='<div class="nrn">Anda cukup jauh dari rute ini ('+distanceText(far)+').</div>';
+ h+='<div class="nrn">Mau ke halte tertentu? Pilih tujuan di atas, lalu tekan Lihat rute.</div>';
+ c.innerHTML=h;c.hidden=false;c.querySelector(".nrx").onclick=function(){st.nr=null;c.hidden=true}}
 function mt(x){x=((Math.round(x)%1440)+1440)%1440;var h=Math.floor(x/60),n=x%60;return (h<10?"0":"")+h+":"+(n<10?"0":"")+n}
 /* Halte & arah untuk kartu: dari rute asal-tujuan (hanya jika tujuan sudah dipilih pengguna),
    lalu arah hasil lokasi, lalu arah tempat halte itu bukan halte terakhir */
@@ -468,6 +472,7 @@ function nextBus(){
    h='<div class="nxv"><span class="t">'+timeHtml(mt(T[i]))+'</span><span class="w">'+(w2<=0?"segera tiba":"sekitar "+dr(w2)+" lagi")+'</span></div><div class="nxs">Berangkat dari GOR '+timeHtml(SJ[i][1])+(nx2?". Setelahnya sekitar: "+nx2:"")+'.'+jl+'</div>'}
   h+='<div class="nxs nxtip">Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.</div>'}
  $("nxb").innerHTML=h;
+ if(st.nr&&!$("near").hidden)nearCard();
  document.querySelectorAll(".stop.sel .nbl").forEach(function(e){var t=document.createElement("div");t.innerHTML=nbLine(st.dir,st.sel);if(t.firstChild)e.replaceWith(t.firstChild)});
  document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
 nextBus();setInterval(nextBus,30000);$("st").addEventListener("change",function(){st.dt=1;nextBus()});document.addEventListener("visibilitychange",nextBus);
@@ -513,7 +518,7 @@ setInterval(busTick,15000);document.addEventListener("visibilitychange",busTick)
    Nama halte tidak diterjemahkan. Pilihan disimpan di localStorage "sarbagita-lang". === */
 (function(){
 var LK="sarbagita-lang",ON=false,TI=document.title,
- EX={"Halte":"Stops","Peta":"Map","Beranda":"Home","Pasang":"Install","dan":"and","Tarif":"Fare","Gratis":"Free","Rit":"Trip","Tiba":"Arrive","Berangkat":"Depart","Informasi":"Information","Tukar":"Swap","Kembali":"Back","Jadwal:":"Timetable:","Tarif gratis:":"Free fare:","Sumber lainnya":"Other sources","tanpa keterangan":"no label","Selamat datang":"Welcome","Semua Halte":"All stops"},
+ EX={"Tutup":"Close","Halte":"Stops","Peta":"Map","Beranda":"Home","Pasang":"Install","dan":"and","Tarif":"Fare","Gratis":"Free","Rit":"Trip","Tiba":"Arrive","Berangkat":"Depart","Informasi":"Information","Tukar":"Swap","Kembali":"Back","Jadwal:":"Timetable:","Tarif gratis:":"Free fare:","Sumber lainnya":"Other sources","tanpa keterangan":"no label","Selamat datang":"Welcome","Semua Halte":"All stops"},
  T=[
  [/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar tujuan atau pilih koridor lain\./,"No direct route from $1 to $2 on $3. Try swapping the destination or picking another corridor."],[/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar asal dan tujuan\./,"No direct route from $1 to $2 on $3. Try swapping the start and destination."],
  [/Halte asal terdekat: (.+?) \((.+?)\) · (.+?)\. Pilih tujuan, lalu cari rute\./,"Nearest starting stop: $1 ($2) · $3. Pick a destination, then find the route."],
@@ -548,7 +553,7 @@ var LK="sarbagita-lang",ON=false,TI=document.title,
  ["Bus berikutnya dari ","Next bus from "],["Bus berikutnya berangkat pukul ","Next bus leaves at "],["Bus berikutnya lewat sekitar ","Next bus passes around "],["Bus berikutnya tiba sekitar ","Next bus arrives around "],["Bus berikutnya berangkat sekitar ","Next bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat sekitar ","No more buses today. Tomorrow's first bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat pukul ","No more buses today. Tomorrow's first bus leaves at "],["Bus hari ini sudah habis. Besok bus pertama lewat sekitar ","No more buses today. Tomorrow's first bus passes around "],["Bus hari ini sudah habis. Besok bus pertama tiba sekitar ","No more buses today. Tomorrow's first bus arrives around "],[/^ \((.+) lagi\)/," (in $1)"],[" (sekarang)"," (now)"],["perkiraan dari jadwal, bukan GPS","estimated from the timetable, not GPS"],["Perkiraan bus lewat di ","Estimated bus at "],["Halte awal · ","First stop · "],[/^Seberang (.+?) · /,"Across from $1 · "],["Ini jam berangkat dari halte awal. Di halte lain bus lewat lebih lambat; pilih halte asal di atas untuk melihat perkiraannya.","This is the departure time from the first stop. Buses reach other stops later; pick your starting stop above to see an estimate."],["Bus terakhir hari ini sudah lewat di halte ini. Besok bus pertama lewat sekitar","Today's last bus has passed this stop. Tomorrow's first bus comes around"],["Berangkat dari GOR ","Leaves GOR at "],[". Setelahnya sekitar: ",". Then around: "],["Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.","Estimated from the timetable, not GPS; may be a few minutes off."],["segera tiba","arriving soon"],[/^sekitar (.+) lagi$/,"in about $1"],["Tiba di Sudirman sekitar","Arrives at Sudirman around"],[". Setelahnya:",". Then:"],["berangkat sekarang","leaving now"],
  ["Istirahat di GWK sebelum kembali","Resting at GWK before heading back"],["Perkiraan dari jadwal, bukan posisi GPS.","Estimated from the timetable, not GPS."],
  ["Berangkat GOR","Leaves GOR"],["Tiba Sudirman","At Sudirman"],["Kembali di GOR","Back at GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
- ["Asal / lokasi Anda","From / your location"],["Lokasi Anda atau halte asal","Your location or starting stop"],["Pakai lokasi saya","Use my location"],["Tujuan halte","Destination stop"],["Cari Rute","Find route"],["Cari halte","Search stops"],
+ ["Halte terdekat ditemukan di bawah. Pilih tujuan jika ingin melihat rute.","Nearest stops are shown below. Pick a destination if you want to see a route."],["Halte terdekat dari Anda","Nearest stops to you"],["Mau ke halte tertentu? Pilih tujuan di atas, lalu tekan Lihat rute.","Going somewhere specific? Pick a destination above, then tap See route."],["Arah GWK","Towards GWK"],["Arah Kota","Towards City"],["Lihat di peta","View on map"],["Asal / lokasi Anda","From / your location"],["Lokasi Anda atau halte asal","Your location or starting stop"],["Pakai lokasi saya","Use my location"],["Tujuan halte","Destination stop"],["Lihat rute","See route"],["Cari halte","Search stops"],
  ["Pasang aplikasi","Install the app"],["Buka lebih cepat dari layar utama, tanpa browser.","Open it faster from your home screen, no browser needed."],
  ["Peta Rute","Route map"],["Lihat semua halte","See all stops"],["Peta penuh","Full map"],["perkiraan dari jadwal","estimated from timetable"],
  ["Daftar Halte","Stop list"],["lokasi perkiraan","approx. location"],["koordinat belum ada","no coordinates yet"],["Halte terdekat","Nearest stop"],
