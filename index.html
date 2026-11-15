@@ -212,6 +212,11 @@ select option{color:#0f172a;background:#fff}
 :root[data-theme="dark"] .lmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9)}
 .leaflet-container{font-family:inherit;background:transparent}
 .leaflet-control-attribution{font-size:9px!important;background:var(--glass)!important;color:var(--mut)!important;border-radius:8px 0 0 0}.leaflet-control-attribution a{color:var(--mut)!important}
+.bus{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#16a34a,#22c55e);border:2px solid #fff;box-shadow:0 5px 14px -4px rgba(22,163,74,.75)}
+.bus svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bus.sm{width:18px;height:18px;border-radius:6px;border-width:1.5px;box-shadow:none;margin-right:5px}.bus.sm svg{width:11px;height:11px}
+.bnote{display:flex;align-items:center;background:var(--card);color:var(--mut);font-size:.66rem;font-weight:600;padding:3px 8px 3px 3px;border-radius:9px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
+.bpop .leaflet-popup-content{margin:10px 12px;font-size:.78rem;line-height:1.45}.bpop small{color:#5b6b85}
 .leaflet-tooltip.lt{background:var(--card);color:var(--tx);border:0;border-radius:9px;padding:3px 9px;font-weight:700;font-size:.72rem;box-shadow:0 6px 16px -6px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}.leaflet-tooltip.lt::before{display:none}
 .full{position:absolute;z-index:2;top:18px;left:18px;display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:11px;font-size:.75rem;font-weight:700;color:var(--tx);text-decoration:none;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--gb);box-shadow:var(--sh)}
 .full .ic{width:15px;height:15px;color:var(--b);vertical-align:0}
@@ -317,7 +322,8 @@ function drawLeaf(id,el,hi){
  if(top)top.bringToFront();
  var key=st.cor+st.dir+(hi?hi.join("-"):"");
  if(m.key!==key){m.key=key;var b=L.latLngBounds(hi&&pts.length>1?pts:[]);if(!b.isValid())segs().forEach(function(sg){b.extend(sg)});var pd=el.offsetWidth<220?8:20;m.map.fitBounds(b,{padding:[pd,pd],animate:false})}
- else if(st.sel>=0&&Ls[st.sel][1])m.map.panTo([Ls[st.sel][1],Ls[st.sel][2]])}
+ else if(st.sel>=0&&Ls[st.sel][1])m.map.panTo([Ls[st.sel][1],Ls[st.sel][2]]);
+ busDraw(m)}
 window.addEventListener("offline",redraw);window.addEventListener("online",function(){tileFail=false;TERR=0;redraw()});
 function drawSvg(v,hi){v.innerHTML="";v.setAttribute("viewBox","0 0 "+W+" "+H);
  segs().forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:"#c9d5f5","stroke-width":9,"stroke-linecap":"round","stroke-linejoin":"round"},v)});
@@ -414,6 +420,35 @@ function nextBus(){
  $("nxb").innerHTML=h;
  document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
 nextBus();setInterval(nextBus,30000);document.addEventListener("visibilitychange",nextBus);
+/* === Perkiraan posisi bus Koridor 1 dari jadwal (BUKAN GPS), sama seperti di peta.html ===
+   GOR -> Sudirman memakai waktu jadwal; sisanya dibagi menurut jarak, istirahat BLAY menit di GWK. */
+var BLAY=10,BP=null,BICO='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/></svg>';
+function bdt(t){return t.replace(":",".")}
+function wita(){var n=new Date();return ((n.getUTCHours()+8)%24)*60+n.getUTCMinutes()+n.getUTCSeconds()/60}
+function bpath(k){var p=[],c=0;D.c1[k].forEach(function(s,i){if(!s[1])return;var ll=L.latLng(s[1],s[2]);if(p.length)c+=p[p.length-1].ll.distanceTo(ll);p.push({ll:ll,c:c,i:i})});return p}
+function binit(){if(BP)return BP;var A=bpath("a"),B=bpath("b"),la=A[A.length-1].c,ds=la*.35;
+ A.some(function(x){if(/^Sudirman/.test(D.c1.a[x.i][0])){ds=x.c;return true}});
+ return BP={A:A,B:B,LA:la,LB:B[B.length-1].c,DS:ds}}
+function bat(p,d){for(var j=1;j<p.length;j++)if(p[j].c>=d){var a=p[j-1],b=p[j],f=(d-a.c)/Math.max(1,b.c-a.c);return {ll:L.latLng(a.ll.lat+(b.ll.lat-a.ll.lat)*f,a.ll.lng+(b.ll.lng-a.ll.lng)*f),nx:b.i}}var e=p[p.length-1];return {ll:e.ll,nx:e.i}}
+function bpos(r,m){var P=binit(),t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]);if(m<t0||m>=t3)return null;
+ if(m<t1)return {d:"a",p:bat(P.A,P.DS*(m-t0)/(t1-t0))};
+ var v=(P.LA-P.DS+P.LB)/Math.max(1,t3-t1-BLAY),tg=t1+(P.LA-P.DS)/v;
+ if(m<tg)return {d:"a",p:bat(P.A,P.DS+(m-t1)*v)};
+ if(m<tg+BLAY)return {d:"a",p:{ll:P.A[P.A.length-1].ll},w:1};
+ return {d:"b",p:bat(P.B,(m-tg-BLAY)*v)}}
+function busDraw(m){if(typeof SJ==="undefined"||typeof L==="undefined")return;
+ if(!m.bus){m.bus=L.layerGroup().addTo(m.map);m.bm={};
+  m.note=L.control({position:"bottomleft"});m.note.onAdd=function(){var d=L.DomUtil.create("div","bnote");d.innerHTML='<span class="bus sm">'+BICO+'</span>perkiraan dari jadwal';return d}}
+ var t=wita(),seen={},n=0;
+ if(st.cor==="c1")SJ.forEach(function(r,k){var b=bpos(r,t);if(!b||(b.d!==st.dir&&!b.w))return;n++;seen[k]=1;
+  var h="<b>Bus "+r[0]+" &middot; rit "+(k+1)+"</b><br>"+(b.w?"Istirahat di GWK sebelum kembali":"Menuju "+D.c1[b.d][b.p.nx][0])+"<br><small>Berangkat GOR "+bdt(r[1])+" &middot; kembali di GOR "+bdt(r[3])+"<br><i>Perkiraan dari jadwal, bukan posisi GPS.</i></small>";
+  if(m.bm[k])m.bm[k].setLatLng(b.p.ll).setPopupContent(h);
+  else m.bm[k]=L.marker(b.p.ll,{zIndexOffset:1500,icon:L.divIcon({className:"",html:'<div class="bus">'+BICO+'</div>',iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-14]})}).bindPopup(h,{className:"bpop"}).addTo(m.bus)});
+ for(var k in m.bm)if(!seen[k]){m.bus.removeLayer(m.bm[k]);delete m.bm[k]}
+ if(n&&!m.note._map)m.note.addTo(m.map);else if(!n&&m.note._map)m.note.remove()}
+function busTick(){if(document.hidden||!live())return;for(var id in LM)if(LM[id].map._container.offsetWidth)busDraw(LM[id])}
+setInterval(busTick,15000);document.addEventListener("visibilitychange",busTick);
+
 /* Dibuka dari toolbar halaman peta: ./#halte atau ./#info langsung ke tab itu. */
 (function(){var v={"#halte":"stops","#info":"info"}[location.hash];if(!v)return;show(v);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}})();
 /* Leaflet dimuat setelah beranda tampil, supaya tidak menahan halaman. Jaringan lambat -> peta SVG dulu. */
