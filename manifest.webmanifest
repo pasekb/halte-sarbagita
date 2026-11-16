@@ -3,8 +3,8 @@
   "short_name": "Sarbagita",
   "description": "Jadwal, rute, dan halte Bus Listrik Trans Sarbagita Koridor 1 GOR – GWK, Bali",
   "lang": "id",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f3f5fa",
   "theme_color": "#0a78e6",
@@ -28,7 +28,7 @@
       "purpose": "maskable"
     }
   ],
-  "id": "./index.html",
+  "id": "/",
   "categories": [
     "travel",
     "navigation"
@@ -37,7 +37,7 @@
     {
       "name": "Peta halte",
       "short_name": "Peta",
-      "url": "./peta.html",
+      "url": "/peta",
       "icons": [
         {
           "src": "icons/icon-192.png?v=2",
