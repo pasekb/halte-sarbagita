@@ -312,7 +312,7 @@ function drawLeaf(id,el,hi){
  if(!el.offsetWidth)return;
  var m=LM[id];
  if(!m){var mp=L.map(el,{zoomControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile});mp.attributionControl.setPrefix(false);
-  var tl=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(mp);
+  var tl=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,crossOrigin:"anonymous",attribution:"&copy; OpenStreetMap"}).addTo(mp);
   tl.on("tileload",function(){TOK++});tl.on("tileerror",function(){TERR++;if(TERR>=3&&!TOK&&!tileFail){tileFail=true;redraw()}});
   m=LM[id]={map:mp,g:L.layerGroup().addTo(mp),key:""}}
  m.map.invalidateSize();m.g.clearLayers();

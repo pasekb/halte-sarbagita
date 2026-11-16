@@ -201,7 +201,7 @@ if((PROVIDER==="stadia"||PROVIDER==="maptiler")&&!KEY)PROVIDER="carto";
 var TL=null;
 function tiles(){var TILES={
  carto:{u:"https://{s}.basemaps.cartocdn.com/"+(dark?"dark_all":"light_all")+"/{z}/{x}/{y}{r}.png",o:{maxZoom:19,subdomains:"abcd",attribution:"&copy; OpenStreetMap &copy; CARTO"}},
- osm:{u:"https://tile.openstreetmap.org/{z}/{x}/{y}.png",o:{maxZoom:19,attribution:"&copy; OpenStreetMap"}},
+ osm:{u:"https://tile.openstreetmap.org/{z}/{x}/{y}.png",o:{maxZoom:19,crossOrigin:"anonymous",attribution:"&copy; OpenStreetMap"}},
  stadia:{u:"https://tiles.stadiamaps.com/tiles/"+(dark?"alidade_smooth_dark":"alidade_smooth")+"/{z}/{x}/{y}{r}.png?api_key="+KEY,o:{maxZoom:20,attribution:"&copy; Stadia Maps &copy; OpenMapTiles &copy; OpenStreetMap"}},
  maptiler:{u:"https://api.maptiler.com/maps/"+(dark?"streets-v2-dark":"streets-v2")+"/256/{z}/{x}/{y}.png?key="+KEY,o:{maxZoom:20,attribution:"&copy; MapTiler &copy; OpenStreetMap"}}
  },T=TILES[PROVIDER];if(TL&&PROVIDER==="osm")return;if(TL)map.removeLayer(TL);TL=L.tileLayer(T.u,T.o).addTo(map)}

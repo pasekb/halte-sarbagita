@@ -1,7 +1,7 @@
 /* Bus Trans Sarbagita © 2026 Yoga Purnama. All rights reserved. ID: sgt-yg-fd69d51a */
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v84";
+var VERSION = "sarbagita-v85";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest",
   "icons/icon-32.png?v=2", "icons/icon-64.png?v=2", "icons/icon-192.png?v=2",
@@ -14,6 +14,11 @@ var EXTRA = [
 ];
 /* Pustaka dan font dari luar: disimpan saat pertama kali dipakai. */
 var LIBS = ["cdnjs.cloudflare.com", "fonts.googleapis.com", "fonts.gstatic.com", "res.cloudinary.com"];
+/* Ubin peta: hanya ubin yang PERNAH DILIHAT pengguna yang disimpan (bukan unduh massal,
+   sesuai aturan pemakaian tile OpenStreetMap). Disimpan terpisah agar tidak hilang saat update. */
+var TILES = "sarbagita-tiles";
+var TILE_HOSTS = ["tile.openstreetmap.org"];
+var TILE_MAX = 600; /* kira-kira 6-10 MB */
 var TIMEOUT = 4000; /* ms: jaringan lambat -> pakai simpanan */
 
 /* Hosting seperti Cloudflare Pages mengalihkan peta.html -> /peta. Jawaban hasil pengalihan
@@ -40,7 +45,7 @@ self.addEventListener("install", function (e) {
 
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== VERSION; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k !== VERSION && k !== TILES; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 
@@ -82,5 +87,35 @@ self.addEventListener("fetch", function (e) {
     /* Leaflet dan font: pakai simpanan dulu. */
     e.respondWith(caches.match(req, { ignoreVary: true }).then(function (r) { return r || fetch(req).then(function (res) { return put(req, res); }); }));
   }
-  /* Gambar peta (tile) tidak disimpan: selalu dari jaringan. */
+  else if (TILE_HOSTS.indexOf(url.hostname) >= 0) {
+    /* Ubin peta: jaringan dulu (selalu terbaru), simpanan dipakai saat offline/lambat. */
+    e.respondWith(new Promise(function (resolve, reject) {
+      var done = false;
+      var timer = setTimeout(function () {
+        caches.match(req, { cacheName: TILES }).then(function (r) { if (r && !done) { done = true; resolve(r); } });
+      }, TIMEOUT);
+      fetch(req).then(function (res) {
+        clearTimeout(timer);
+        if (res && res.ok) { /* hanya respons CORS; respons "opaque" memakan kuota besar */
+          var copy = res.clone();
+          caches.open(TILES).then(function (c) { return c.put(req, copy).then(function () { return trim(c); }); }).catch(function () {});
+        }
+        if (!done) { done = true; resolve(res); }
+      }, function () {
+        clearTimeout(timer); if (done) return;
+        caches.match(req, { cacheName: TILES }).then(function (r) { done = true; if (r) resolve(r); else reject(new TypeError("offline")); });
+      });
+    }));
+  }
 });
+
+/* Batasi jumlah ubin: yang paling lama disimpan dibuang lebih dulu. */
+var trimming = false;
+function trim(c) {
+  if (trimming) return Promise.resolve();
+  trimming = true;
+  return c.keys().then(function (k) {
+    var extra = k.length - TILE_MAX;
+    return Promise.all(k.slice(0, Math.max(0, extra)).map(function (r) { return c.delete(r); }));
+  }).then(function () { trimming = false; }, function () { trimming = false; });
+}
