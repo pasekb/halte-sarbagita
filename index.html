@@ -502,7 +502,7 @@ nextBus();setInterval(nextBus,30000);
  var ab=$("abar"),hr=document.querySelector(".hero");function hx(){if(!ab||!hr)return;var a=ab.offsetHeight,w=hr.offsetWidth||innerWidth;document.documentElement.style.setProperty("--abh",a+"px");document.documentElement.style.setProperty("--hh",(Math.min(w*320/375,400)+a)+"px");hr.classList.add("ext")}
  hx();addEventListener("resize",hx);
  /* Toolbar transparan + teks putih selama masih di atas foto hero */
- var tq=false;window.abTop=function(){tq=false;if(!ab||!hr)return;var sc=$("sf")&&$("sf").closest(".card"),lim=sc?sc.getBoundingClientRect().top:hr.getBoundingClientRect().bottom,on=hr.offsetParent!==null&&lim>ab.offsetHeight+4;ab.classList.toggle("ontop",on)};
+ var tq=false;window.abTop=function(){tq=false;if(!ab||!hr)return;var ov=hr.querySelector(".ov"),lim=ov?ov.getBoundingClientRect().top:hr.getBoundingClientRect().bottom,on=hr.offsetParent!==null&&lim>ab.offsetHeight+6;ab.classList.toggle("ontop",on)};
  addEventListener("scroll",function(){if(!tq){tq=true;requestAnimationFrame(abTop)}},{passive:true});addEventListener("resize",abTop);abTop();if(window.ResizeObserver)new ResizeObserver(hx).observe(ab);document.addEventListener("visibilitychange",tick);
  new MutationObserver(tick).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
  var toastT;function toast(t){var e=$("atoast");e.textContent=t;e.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){e.classList.remove("on")},2200)}
