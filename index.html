@@ -116,7 +116,7 @@ select option{color:#0f172a;background:#fff}
 .mapc{margin:0 14px;padding:10px}
 #map1,#map2{display:block;width:100%;height:auto}
 #map1{max-height:340px}
-.mapbox{position:sticky;top:10px;z-index:5;margin-bottom:10px;padding:6px;border-radius:20px;background-image:radial-gradient(var(--ln) 1px,transparent 1px);background-size:12px 12px}
+.mapbox{position:sticky;top:calc(var(--abh,64px) + 8px);z-index:5;margin-bottom:10px;padding:6px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);border:1px solid var(--gb);box-shadow:0 12px 26px -18px rgba(8,14,40,.45)}
 #map2{max-height:240px}
 
 /* Top bar (subpages) */
