@@ -728,46 +728,73 @@ $("lg").onclick=function(){set(!ON)};
 if(pref==="en")set(true);
 })();
 
-/* === Live GPS Status Banner untuk Beranda === */
+/* === Live GPS Status Banner untuk Beranda (Direct Satellite) === */
 (function() {
-  var LIVE_API = (function() {
+  var AES_KEY = "Tr4N5m3tR0B4l1csNusAnt4r41n0vas1";
+  var gpsDirectToken = null;
+
+  async function aesEncrypt(plaintext) {
+    var enc = new TextEncoder();
+    var keyData = enc.encode(AES_KEY);
+    var iv = keyData.slice(0, 16);
+    var cryptoKey = await crypto.subtle.importKey("raw", keyData, { name: "AES-CBC" }, false, ["encrypt"]);
+    var encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv: iv }, cryptoKey, enc.encode(plaintext));
+    var binary = "";
+    var bytes = new Uint8Array(encrypted);
+    for (var i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  async function aesDecrypt(b64) {
+    var enc = new TextEncoder();
+    var keyData = enc.encode(AES_KEY);
+    var iv = keyData.slice(0, 16);
+    var cryptoKey = await crypto.subtle.importKey("raw", keyData, { name: "AES-CBC" }, false, ["decrypt"]);
+    var binary = atob(b64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    var decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv: iv }, cryptoKey, bytes);
+    return new TextDecoder().decode(decrypted);
+  }
+
+  async function pollDirectGps() {
     try {
-      return localStorage.getItem("LIVE_GPS_API") || window.LIVE_GPS_API || "http://localhost:3000";
-    } catch(e) {
-      return window.LIVE_GPS_API || "http://localhost:3000";
-    }
-  })();
-  window.promptGpsApi = function() {
-    var cur = localStorage.getItem("LIVE_GPS_API") || LIVE_API;
-    var next = prompt("URL Backend Proxy GPS (kosongkan untuk default):", cur);
-    if (next !== null) {
-      if (next.trim() === "") localStorage.removeItem("LIVE_GPS_API");
-      else localStorage.setItem("LIVE_GPS_API", next.trim().replace(/\/+$/, ""));
-      location.reload();
-    }
-  };
-  try {
-    var es = new EventSource(LIVE_API + "/api/buses/stream");
-    es.onmessage = function(ev) {
-      try {
-        var data = JSON.parse(ev.data);
-        if (data && data.buses) {
-          var live = data.buses.filter(function(b) { return b.pref === "14"; });
-          var sub = $("homeGpsSub");
-          if (sub) {
-            sub.innerHTML = "● " + live.length + " Bus Sarbagita Aktif (Satelit) · Buka Peta →";
-            sub.style.color = "#16a34a";
-          }
-        }
-      } catch(e) {}
-    };
-    es.onerror = function() {
-      var sub = $("homeGpsSub");
-      if (sub) {
-        sub.innerHTML = "● Buka Peta Realtime Satelit (60 FPS) →";
+      if (!gpsDirectToken) {
+        var userJson = JSON.stringify({ id: "0", email: "" });
+        var encBody = await aesEncrypt(userJson);
+        var authRes = await fetch("https://gps.brtnusantara.com:6013/api/authToken", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ value: encBody })
+        });
+        var cipher = await authRes.text();
+        var parsed = JSON.parse(await aesDecrypt(cipher));
+        gpsDirectToken = parsed.data.token;
       }
-    };
-  } catch(e) {}
+      var findEnc = await aesEncrypt(JSON.stringify({ key: "NGIxBali", pref: "14" }));
+      var res = await fetch("https://gps.brtnusantara.com:6013/api/findAll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": gpsDirectToken },
+        body: JSON.stringify({ value: findEnc })
+      });
+      if (res.status === 401 || res.status === 403) {
+        gpsDirectToken = null;
+        return;
+      }
+      var json = await res.json();
+      if (json && json.data) {
+        var live = json.data.filter(function(b) { return b.pref === "14" && b.lat && b.lng; });
+        var sub = $("homeGpsSub");
+        if (sub) {
+          sub.innerHTML = "● " + live.length + " Bus Sarbagita Aktif (Satelit) · Buka Peta →";
+          sub.style.color = "#16a34a";
+        }
+      }
+    } catch(e) {}
+  }
+
+  pollDirectGps();
+  setInterval(pollDirectGps, 10000);
 })();
 </script>
 </body></html>

@@ -264,19 +264,126 @@ function pos0(r,m){var t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]);if(m<t0||m>=t3)return
  if(m<tg+LAY)return {d:"a",p:{ll:PA[PA.length-1].ll},w:1};
  return {d:"b",p:at(PB,(m-tg-LAY)*v)}}
 
-/* === Integrasi GPS Realtime Trans Sarbagita + Animasi 60 FPS === */
-var LIVE_API = (function() {
-  try {
-    return localStorage.getItem("LIVE_GPS_API") || window.LIVE_GPS_API || "http://localhost:3000";
-  } catch(e) {
-    return window.LIVE_GPS_API || "http://localhost:3000";
-  }
-})();
+/* === Integrasi GPS Realtime Trans Sarbagita (Direct Satellite & 60 FPS) === */
+var AES_KEY = "Tr4N5m3tR0B4l1csNusAnt4r41n0vas1";
+var gpsDirectToken = null;
 var liveSarbagitaBuses = null;
 var isLiveGps = false;
 var lastLivePush = Date.now();
-var liveInterval = 6000;
+var liveInterval = 5500;
 var liveAnimStates = new Map();
+
+async function aesEncrypt(plaintext) {
+  var enc = new TextEncoder();
+  var keyData = enc.encode(AES_KEY);
+  var iv = keyData.slice(0, 16);
+  var cryptoKey = await crypto.subtle.importKey("raw", keyData, { name: "AES-CBC" }, false, ["encrypt"]);
+  var encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv: iv }, cryptoKey, enc.encode(plaintext));
+  var binary = "";
+  var bytes = new Uint8Array(encrypted);
+  for (var i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+async function aesDecrypt(b64) {
+  var enc = new TextEncoder();
+  var keyData = enc.encode(AES_KEY);
+  var iv = keyData.slice(0, 16);
+  var cryptoKey = await crypto.subtle.importKey("raw", keyData, { name: "AES-CBC" }, false, ["decrypt"]);
+  var binary = atob(b64);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  var decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv: iv }, cryptoKey, bytes);
+  return new TextDecoder().decode(decrypted);
+}
+
+async function getDirectGpsToken() {
+  if (gpsDirectToken) return gpsDirectToken;
+  var userJson = JSON.stringify({ id: "0", email: "" });
+  var encBody = await aesEncrypt(userJson);
+  var res = await fetch("https://gps.brtnusantara.com:6013/api/authToken", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value: encBody })
+  });
+  var cipher = await res.text();
+  var parsed = JSON.parse(await aesDecrypt(cipher));
+  gpsDirectToken = parsed.data.token;
+  return gpsDirectToken;
+}
+
+async function pollDirectGps() {
+  try {
+    var token = await getDirectGpsToken();
+    var encBody = await aesEncrypt(JSON.stringify({ key: "NGIxBali", pref: "14" }));
+    var res = await fetch("https://gps.brtnusantara.com:6013/api/findAll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": token },
+      body: JSON.stringify({ value: encBody })
+    });
+    if (res.status === 401 || res.status === 403) {
+      gpsDirectToken = null;
+      return;
+    }
+    var json = await res.json();
+    if (json && json.data) {
+      var now = Date.now();
+      var dt = now - lastLivePush;
+      if (dt >= 2000 && dt <= 15000) liveInterval = dt;
+      lastLivePush = now;
+      isLiveGps = true;
+      liveSarbagitaBuses = json.data
+        .filter(function(b) { return b.pref === "14" && b.lat && b.lng; })
+        .map(function(b) {
+          return {
+            id: b.id,
+            lat: b.lat,
+            lng: b.lng,
+            angle: Number(b.angle) || 0,
+            speed: b.speed || 0,
+            corridor: b.kor || "S1",
+            toward: b.toward || "",
+            plate: b.plate_number || "",
+            name: b.name || "",
+            updated: b.dt_tracker || ""
+          };
+        });
+      buses();
+    }
+  } catch (err) {
+    console.warn("Direct GPS:", err);
+  }
+}
+
+function initLiveGPS() {
+  var customApi = null;
+  try { customApi = localStorage.getItem("LIVE_GPS_API"); } catch(e){}
+  if (customApi) {
+    try {
+      var es = new EventSource(customApi + "/api/buses/stream");
+      es.onopen = function() { isLiveGps = true; };
+      es.onmessage = function(ev) {
+        try {
+          var data = JSON.parse(ev.data);
+          if (data && data.buses) {
+            isLiveGps = true;
+            var now = Date.now();
+            var dt = now - lastLivePush;
+            if (dt >= 2000 && dt <= 15000) liveInterval = dt;
+            lastLivePush = now;
+            liveSarbagitaBuses = data.buses.filter(function(b) { return b.pref === "14"; });
+            buses();
+          }
+        } catch(e) {}
+      };
+      es.onerror = function() { pollDirectGps(); };
+      return;
+    } catch(e) {}
+  }
+  // Mode Utama: Langsung ke GPS Satelit tanpa server backend proxy!
+  pollDirectGps();
+  setInterval(pollDirectGps, 5000);
+}
 
 function lerpAngle(fromA, toA, t) {
   var diff = ((toA - fromA + 540) % 360) - 180;
@@ -323,35 +430,9 @@ function liveBusIcon(angle) {
   });
 }
 
-function initLiveGPS() {
-  try {
-    var es = new EventSource(LIVE_API + "/api/buses/stream");
-    es.onopen = function() { isLiveGps = true; };
-    es.onmessage = function(ev) {
-      try {
-        var data = JSON.parse(ev.data);
-        if (data && data.buses) {
-          isLiveGps = true;
-          var now = Date.now();
-          var dt = now - lastLivePush;
-          if (dt >= 3000 && dt <= 15000) liveInterval = dt;
-          lastLivePush = now;
-          liveSarbagitaBuses = data.buses.filter(function(b) { return b.pref === "14"; });
-          buses();
-        }
-      } catch (err) {}
-    };
-    es.onerror = function() {
-      isLiveGps = false;
-      buses();
-    };
-  } catch (err) {
-    isLiveGps = false;
-  }
-}
 window.promptGpsApi = function() {
-  var cur = localStorage.getItem("LIVE_GPS_API") || LIVE_API;
-  var next = prompt("URL Backend Proxy GPS (kosongkan untuk default):", cur);
+  var cur = localStorage.getItem("LIVE_GPS_API") || "";
+  var next = prompt("Status GPS: Terhubung Langsung ke Satelit.\n\nJika ingin memakai server proxy sendiri, masukkan URL (atau kosongkan untuk mode satelit langsung):", cur);
   if (next !== null) {
     if (next.trim() === "") localStorage.removeItem("LIVE_GPS_API");
     else localStorage.setItem("LIVE_GPS_API", next.trim().replace(/\/+$/, ""));
