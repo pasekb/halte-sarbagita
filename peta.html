@@ -167,7 +167,10 @@ button,input{font:inherit;color:inherit}
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-[hidden]{display:none!important}</style></head><body>
+[hidden]{display:none!important}</style><style>
+.busn.is-closed{background:linear-gradient(135deg,rgba(100,116,139,.12),rgba(71,85,105,.06));border:1px solid rgba(100,116,139,.22)}
+.busn .bi.closed{background:#64748b}
+</style></head><body>
 <div id="map"></div>
 <header id="bar" class="glass">
  <div class="brand"><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><h1>Bus Listrik Trans Sarbagita</h1><small>Peta halte · Koridor 1 GOR – GWK</small></div></div>
@@ -233,6 +236,7 @@ function fit(){var b=L.latLngBounds([]);D[cor].line.concat(D[cor]["l"+dir]||[],D
 var SJ=[["I","06:15","06:40","10:15"],["II","06:55","07:20","10:55"],["III","07:35","08:00","11:35"],["IV","08:15","08:55","12:30"],["V","08:55","09:20","12:55"],["VI","09:35","10:00","13:35"],["VII","10:15","10:40","14:15"],["VIII","10:55","11:20","14:55"],["IX","11:35","12:00","15:35"],["X","12:15","12:40","16:15"],["I","12:55","13:20","16:35"],["II","13:35","14:00","17:35"],["III","14:15","14:40","18:15"],["IV","14:55","15:20","18:55"],["V","15:35","16:00","19:35"],["VI","16:15","16:40","20:15"],["VII","16:40","17:05","20:40"],["VIII","16:55","17:20","20:55"],["IX","17:20","17:45","21:20"],["X","17:35","18:00","21:35"]];
 var LAY=10,bl=L.layerGroup().addTo(map),BM={};
 var BUS='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/><circle cx="8" cy="14.5" r=".6"/><circle cx="16" cy="14.5" r=".6"/></svg>';
+var CLOSED_ICON='<svg viewBox="0 0 24 24"><path d="M3 9h18v11H3zM4 9l1.5-5h13L20 9M7 13h10M7 16h10M10 20v-4h4v4"/></svg>';
 function hm(t){return +t.slice(0,2)*60+ +t.slice(3)}
 function dt(t){return t.replace(":",".")}
 function wita(){var n=new Date();return ((n.getUTCHours()+8)%24)*60+n.getUTCMinutes()+n.getUTCSeconds()/60}
@@ -445,9 +449,10 @@ function buses(){
   if(serviceClosedNow()){
     liveAnimStates.forEach(function(s){bl.removeLayer(s.marker)});liveAnimStates.clear();
     for(var k in BM){bl.removeLayer(BM[k]);delete BM[k]}
-    if(e)e.innerHTML='<span class="bi">'+BUS+'</span><span><b>Di luar jam layanan</b><br><small>Lokasi bus disembunyikan sampai layanan dimulai.</small></span>';
+    if(e){var t=dt(SJ[0][1]),afterHours=wita()>=NIGHT_HIDE_AT,title=afterHours?"Layanan bus hari ini sudah berakhir":"Bus mulai beroperasi hari ini pukul "+t+" WITA",detail=afterHours?"Mulai lagi besok pukul "+t+" WITA. Lokasi halte dan jadwal tetap bisa dicek.":"Posisi bus realtime tersedia mulai pukul "+t+" WITA. Lokasi halte dan jadwal tetap bisa dicek.";e.classList.add("is-closed");e.innerHTML='<span class="bi closed">'+CLOSED_ICON+'</span><span><b>'+title+'</b><br><small>'+detail+'</small></span>'}
     return;
   }
+  if(e)e.classList.remove("is-closed");
   var gpsFresh=isLiveGps&&Array.isArray(liveSarbagitaBuses)&&Date.now()-lastLivePush<LIVE_GPS_TTL;
 
   // Data baru dari GPS, termasuk respons valid yang berisi nol bus.
@@ -635,7 +640,7 @@ try{var SI=QS&&QS.get("s");if(SI!==null&&SI!==""&&mk[+SI]){mark(+SI);map.setView
 var LK="sarbagita-lang",ON=false,TI=document.title,
  EX={"Halte":"Stops","Peta":"Map","Beranda":"Home","dan":"and","Daftar Halte":"Stop list","Lokasi Anda":"Your location","Halte awal":"First stop","Halte akhir":"Last stop","Coba kata kunci lain.":"Try another keyword."},
  T=[
- ["Belum ada bus terdeteksi","No buses detected"],[/^([0-9]+) bus Sarbagita aktif$/,"$1 active Sarbagita buses"],[" di rute ini"," on this route"],["Di luar jam layanan","Outside service hours"],["Lokasi bus disembunyikan sampai layanan dimulai.","Bus locations are hidden until service starts."],["Posisi GPS bus sudah usang","GPS bus position is stale"],["Bus disembunyikan karena pembaruan lebih dari 10 menit.","Bus hidden because the last update is over 10 minutes old."],["Tujuan:","Destination:"],["Kecepatan:","Speed:"],["● GPS aktif · posisi diperbarui berkala","● GPS active · positions update periodically"],["Data GPS tidak diperbarui","GPS data is out of date"],["Mencoba menyambungkan ulang…","Trying to reconnect…"],["Menghubungkan ke GPS bus","Connecting to bus GPS"],["Mengambil posisi bus…","Loading bus positions…"],["GPS realtime","Live GPS"],
+ ["Belum ada bus terdeteksi","No buses detected"],[/^([0-9]+) bus Sarbagita aktif$/,"$1 active Sarbagita buses"],[" di rute ini"," on this route"],["Di luar jam layanan","Outside service hours"],["Lokasi bus disembunyikan sampai layanan dimulai.","Bus locations are hidden until service starts."],["Layanan bus hari ini sudah berakhir","Bus service has ended for today"],["Bus mulai beroperasi hari ini pukul","Bus service starts today at"],[/^Posisi bus realtime tersedia mulai pukul (.+) WITA\. Lokasi halte dan jadwal tetap bisa dicek\.$/,"Live bus locations will be available from $1 WITA. Stops and timetable remain available."],[/^Mulai lagi besok pukul (.+) WITA\. Lokasi halte dan jadwal tetap bisa dicek\.$/,"Service resumes tomorrow at $1 WITA. Stops and timetable remain available."],["Posisi GPS bus sudah usang","GPS bus position is stale"],["Bus disembunyikan karena pembaruan lebih dari 10 menit.","Bus hidden because the last update is over 10 minutes old."],["Tujuan:","Destination:"],["Kecepatan:","Speed:"],["● GPS aktif · posisi diperbarui berkala","● GPS active · positions update periodically"],["Data GPS tidak diperbarui","GPS data is out of date"],["Mencoba menyambungkan ulang…","Trying to reconnect…"],["Menghubungkan ke GPS bus","Connecting to bus GPS"],["Mengambil posisi bus…","Loading bus positions…"],["GPS realtime","Live GPS"],
  ["jalur perkiraan","approximate path"], ["Bus berikutnya berangkat pukul ","Next bus leaves at "],["Bus berikutnya lewat sekitar ","Next bus passes around "],["Bus berikutnya tiba sekitar ","Next bus arrives around "],["Bus berikutnya berangkat sekitar ","Next bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat sekitar ","No more buses today. Tomorrow's first bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat pukul ","No more buses today. Tomorrow's first bus leaves at "],["Bus hari ini sudah habis. Besok bus pertama lewat sekitar ","No more buses today. Tomorrow's first bus passes around "],["Bus hari ini sudah habis. Besok bus pertama tiba sekitar ","No more buses today. Tomorrow's first bus arrives around "],[/^ \((.+) lagi\)/," (in $1)"],[" (sekarang)"," (now)"],["perkiraan dari jadwal, bukan GPS","estimated from the timetable, not GPS"],[/(\d+) jam/g,"$1 h"],[/(\d+) menit/g,"$1 min"],
  ["Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Lokasi halte mengacu pada peta resmi","Map of Trans Sarbagita electric bus stops in Bali: Corridor 1 GOR Ngurah Rai–GWK. Stop locations follow the official map of"],
  [". Titik bertanda “lokasi perkiraan” belum dikonfirmasi Dishub.",". Points marked “approx. location” aren't confirmed by Dishub."],
