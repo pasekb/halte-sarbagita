@@ -253,14 +253,14 @@ html[lang="en"] .period{display:none}
   <div class="ft"><div class="f"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><select id="sf" aria-label="Lokasi Anda atau halte asal"></select><div class="locn" id="sfn" hidden></div><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Pakai lokasi saya</span></button></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
   <button class="go" id="go" type="button">Lihat rute</button><div id="msg" role="status" aria-live="polite"></div>
  </div>
- <div class="card gps-home-banner" id="homeGps" onclick="location.href='peta'" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin:12px 0; border-radius:18px; background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(16,185,129,.08)); border:1px solid rgba(34,197,94,.28); box-shadow:0 4px 14px -4px rgba(22,163,74,.2);">
+ <div class="card gps-home-banner" id="homeGps" onclick="location.href='peta'" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin:12px 14px 0; border-radius:18px; background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(16,185,129,.08)); border:1px solid rgba(34,197,94,.28); box-shadow:0 4px 14px -4px rgba(22,163,74,.2);">
    <div style="display:flex; align-items:center; gap:12px;">
      <span style="display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:#16a34a; color:#fff; flex:none;">
        <svg style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M3 11h18"/></svg>
      </span>
      <div>
-       <b style="display:block; font-size:.88rem; font-weight:800; color:var(--tx)">Live Tracking GPS Bus Sarbagita</b>
-       <small id="homeGpsSub" style="color:#16a34a; font-weight:700; font-size:.74rem">● Buka Peta Realtime Satelit (60 FPS) →</small>
+       <b style="display:block; font-size:.88rem; font-weight:800; color:var(--tx)">Pantau Bus Sarbagita</b>
+       <small id="homeGpsSub" style="color:#16a34a; font-weight:700; font-size:.74rem">● Memuat posisi bus · Lihat peta →</small>
      </div>
    </div>
    <button style="border:none; background:none; font-size:1.15rem; cursor:pointer; padding:6px; opacity:.8;" title="Pengaturan URL Server GPS" onclick="event.stopPropagation(); promptGpsApi();">⚙️</button>
@@ -676,6 +676,7 @@ setInterval(busTick,15000);document.addEventListener("visibilitychange",busTick)
 var LK="sarbagita-lang",ON=false,TI=document.title,
  EX={"Tutup":"Close","Halte":"Stops","Peta":"Map","Beranda":"Home","Pasang":"Install","dan":"and","Tarif":"Fare","Gratis":"Free","Rit":"Trip","Tiba":"Arrive","Berangkat":"Depart","Informasi":"Information","Tukar":"Swap","Kembali":"Back","Telepon":"Call","Titik halte Udayana 4A, Nirmala, Fakultas Pertanian, Rumah Berdaya, Bandung Collection, Prima Medika, dan Grand Sudirman dicocokkan dari peta aplikasi Trans Metro Dewata dan OpenStreetMap (selisih ±20–40 m).":"Stop positions for Udayana 4A, Nirmala, Fakultas Pertanian, Rumah Berdaya, Bandung Collection, Prima Medika and Grand Sudirman were cross-checked against the Trans Metro Dewata app map and OpenStreetMap (±20–40 m).","Penjelasan waktu":"About these times","Data cuaca: ":"Weather data: ",", berdasarkan koordinat halte.":", based on stop coordinates.","Chat WhatsApp":"Chat on WhatsApp","Hubungi call centre":"Contact call centre","Pakai kuota internet":"Uses mobile data","Pakai pulsa, untuk keadaan darurat":"Phone credit, for emergencies","Hari operasi":"Service days","Setiap hari":"Every day","Jam berangkat":"Departures","Jadwal:":"Timetable:","Tarif gratis:":"Free fare:","Sumber lainnya":"Other sources","tanpa keterangan":"no label","Selamat datang":"Welcome","Semua Halte":"All stops"},
  T=[
+ ["Pantau Bus Sarbagita","Track Sarbagita buses"],["Memuat posisi bus · Lihat peta →","Loading bus locations · View map →"],[/^● (\d+) bus terdeteksi · Lihat peta →$/,"● $1 buses detected · View map →"],["● Belum ada bus terdeteksi · Lihat peta →","● No buses detected · View map →"],
  [/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar tujuan atau pilih koridor lain\./,"No direct route from $1 to $2 on $3. Try swapping the destination or picking another corridor."],[/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar asal dan tujuan\./,"No direct route from $1 to $2 on $3. Try swapping the start and destination."],
  [/Halte asal terdekat: (.+?) \((.+?)\) · (.+?)\. Pilih tujuan, lalu cari rute\./,"Nearest starting stop: $1 ($2) · $3. Pick a destination, then find the route."],
  ["Bus listrik Trans Sarbagita Koridor 1 melayani rute GOR Ngurah Rai – GWK di Bali dan gratis selama masa uji coba yang dimulai 9 November 2026. Layanan dioperasikan Perum DAMRI di bawah koordinasi Dishub Provinsi Bali. Bus beroperasi pukul","The Trans Sarbagita Corridor 1 electric bus runs between GOR Ngurah Rai and GWK in Bali and is free during the trial period that started on 9 November 2026. It is operated by Perum DAMRI under the Bali Provincial Transport Agency. Buses run from"],
@@ -801,7 +802,9 @@ if(pref==="en")set(true);
         var live = json.data.filter(function(b) { return b.pref === "14" && b.lat && b.lng; });
         var sub = $("homeGpsSub");
         if (sub) {
-          sub.innerHTML = "● " + live.length + " Bus Sarbagita Aktif (Satelit) · Buka Peta →";
+          sub.textContent = live.length
+            ? "● " + live.length + " bus terdeteksi · Lihat peta →"
+            : "● Belum ada bus terdeteksi · Lihat peta →";
           sub.style.color = "#16a34a";
         }
       }
