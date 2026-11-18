@@ -437,7 +437,7 @@ $("th").onclick=function(){var r=document.documentElement,d=r.getAttribute("data
 function autoTheme(){var r=document.documentElement,dk=sgtTheme();if(dk!==(r.getAttribute("data-theme")==="dark")){if(dk)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");tcol();redraw()}}setInterval(autoTheme,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)autoTheme()});
 /* === PWA: service worker + tombol pasang === */
 var dp=null,isApp=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
-if("serviceWorker" in navigator&&location.protocol!=="file:")window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+if("serviceWorker" in navigator&&location.protocol!=="file:")window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(function(){})});
 function instUI(){document.querySelectorAll(".inst").forEach(function(e){e.hidden=isApp})}
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;instUI()});
 window.addEventListener("appinstalled",function(){isApp=true;dp=null;instUI()});
@@ -498,6 +498,7 @@ function renderGpsEta(){
  var box=$("gpsEta");if(!box)return;
  var en=document.documentElement.lang==="en",cs=cardStop(),fresh=homeGpsState==="ready"&&Date.now()-homeGpsReceivedAt<25000;
  function msg(main,detail,stale){box.classList.toggle("stale",!!stale);box.innerHTML='<span class="gdot"></span><span>'+main+(detail?'<small>'+detail+'</small>':"")+'</span>'}
+ if(homeServiceClosedNow()){msg(en?"Bus tracking is paused outside service hours.":"Pelacakan bus dijeda di luar jam layanan.",en?"Locations return tomorrow at 06:15 WITA.":"Posisi bus muncul kembali besok pukul 06.15 WITA.",true);return}
  if(!fresh){var reason=homeGpsState==="loading"?(en?"Waiting for bus GPS data. The timetable above is the temporary reference.":"Menunggu data GPS bus. Jadwal di atas menjadi acuan sementara."):homeGpsState==="error"?(en?"GPS data is unavailable. The timetable above remains the reference.":"Data GPS sedang tidak tersedia. Jadwal di atas tetap menjadi acuan."):(en?"The latest GPS data is stale. The timetable above remains the reference.":"Data GPS terakhir sudah usang. Jadwal di atas tetap menjadi acuan.");msg(reason,"",true);return}
  if(!homeLiveBuses.length){msg(en?"No active bus GPS data. The timetable above remains the reference.":"Belum ada bus GPS aktif. Jadwal di atas menjadi acuan.","",true);return}
  var matches=homeLiveBuses.map(function(b){return gpsEtaCandidate(b,cs)}).filter(Boolean),moving=matches.filter(function(x){return x.speed>=2}).sort(function(a,b){return a.remaining/Math.max(a.speed,2)-b.remaining/Math.max(b.speed,2)}),stopped=matches.filter(function(x){return x.speed<2}).sort(function(a,b){return a.remaining-b.remaining}),when="";
@@ -679,6 +680,8 @@ function shOpen(o){shbg.hidden=!o;document.body.style.overflow=o?"hidden":"";if(
 $("st").addEventListener("change",function(){st.dt=1;nextBus()});document.addEventListener("visibilitychange",nextBus);
 /* Waktu istirahat bus di GWK dipakai pada estimasi jam bus di halte. */
 var BLAY=10,homeLiveBuses=[],homeGpsState="loading",homeGpsReceivedAt=0;
+function homeWitaMinutes(){var n=new Date();return ((n.getUTCHours()*60+n.getUTCMinutes()+480)%1440)}
+function homeServiceClosedNow(){var m=homeWitaMinutes();return m>=hm(SJ[SJ.length-1][3])+10||m<hm(SJ[0][1])}
 
 /* Dibuka dari toolbar halaman peta: ./#halte atau ./#info langsung ke tab itu. */
 (function(){var v={"#halte":"stops","#info":"info"}[location.hash];if(!v)return;show(v);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}})();
@@ -780,6 +783,23 @@ if(pref==="en")set(true);
     sub.style.color = color;
   }
 
+  function syncServiceHours() {
+    if (!homeServiceClosedNow()) {
+      if (homeGpsState === "closed") {
+        homeGpsState = "loading";
+        showGpsStatus("● Memuat posisi bus · Lihat peta →", "#64748b");
+        renderGpsEta();
+      }
+      return false;
+    }
+    homeLiveBuses = [];
+    homeGpsState = "closed";
+    homeGpsReceivedAt = Date.now();
+    showGpsStatus(document.documentElement.lang === "en" ? "● Bus service has ended for today · View map →" : "● Layanan bus berakhir hari ini · Lihat peta →", "#64748b");
+    renderGpsEta();
+    return true;
+  }
+
   async function aesEncrypt(plaintext) {
     var enc = new TextEncoder();
     var keyData = enc.encode(AES_KEY);
@@ -805,6 +825,7 @@ if(pref==="en")set(true);
   }
 
   async function pollDirectGps() {
+    if (syncServiceHours()) return;
     if (gpsPollBusy) return;
     gpsPollBusy = true;
     try {
@@ -833,6 +854,7 @@ if(pref==="en")set(true);
       }
       if (!res.ok) throw new Error("GPS service unavailable");
       var json = await res.json();
+      if (syncServiceHours()) return;
       if (!json || !Array.isArray(json.data)) throw new Error("Invalid GPS response");
       var live = json.data.filter(function(b) {
         var lat=Number(b.lat),lng=Number(b.lng);
@@ -848,6 +870,7 @@ if(pref==="en")set(true);
       else showGpsStatus("● Belum ada bus terdeteksi · Lihat peta →", "#64748b");
       renderGpsEta();
     } catch(e) {
+      if (syncServiceHours()) return;
       homeGpsState="error";
       homeLiveBuses=[];
       showGpsStatus("● Data GPS belum tersedia · Lihat peta →", "#b45309");
@@ -858,7 +881,8 @@ if(pref==="en")set(true);
   }
 
   pollDirectGps();
-  setInterval(pollDirectGps, 10000);
+  setInterval(function(){if(!syncServiceHours())pollDirectGps()}, 10000);
+  document.addEventListener("visibilitychange",function(){if(!document.hidden&&!syncServiceHours())pollDirectGps()});
 })();
 </script>
 </body></html>

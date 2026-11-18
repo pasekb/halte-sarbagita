@@ -124,8 +124,19 @@ button,input{font:inherit;color:inherit}
 #th .sun,:root[data-theme="dark"] #th .moon{display:none}:root[data-theme="dark"] #th .sun{display:block}
 .leaflet-popup-content-wrapper{border-radius:16px;box-shadow:var(--sh);background:var(--card);color:var(--tx)}
 .leaflet-popup-tip{background:var(--card)}
+:root[data-theme="dark"] .leaflet-popup-content-wrapper,:root[data-theme="dark"] .leaflet-popup-tip{background:#18233a}
 .leaflet-popup-content{margin:14px 16px;font-size:.88rem;line-height:1.45}
 .leaflet-popup-content b{display:block;font-size:.95rem;font-weight:800;margin-bottom:2px}
+.leaflet-popup-content .bus-pop{min-width:185px;line-height:1.45;color:var(--tx)!important}
+.leaflet-popup-content .bus-pop-head{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.leaflet-popup-content .bus-pop-plate{font-size:.9rem;color:var(--tx)!important}
+.leaflet-popup-content .bus-pop-name,.leaflet-popup-content .bus-pop-live{color:#16a34a!important}
+.leaflet-popup-content .bus-pop-name{font-size:.72rem;font-weight:700;margin-bottom:4px}
+.leaflet-popup-content .bus-pop-detail{font-size:.78rem;color:var(--tx)!important;margin-bottom:2px}
+.leaflet-popup-content .bus-pop-detail b{display:inline;font-size:inherit;margin:0;color:inherit}
+.leaflet-popup-content .bus-pop-meta{font-size:.7rem;color:var(--mut)!important;margin-top:4px;border-top:1px solid var(--ln);padding-top:4px}
+:root[data-theme="dark"] .leaflet-popup-content .bus-pop,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-head,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-plate,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-detail,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-detail b{color:#f1f5f9!important}
+:root[data-theme="dark"] .leaflet-popup-content .bus-pop-meta{color:#cbd5e1!important}
 .leaflet-popup-content small{color:var(--mut)}.dleg{display:flex;align-items:center;gap:6px;background:var(--card);color:var(--b);font-size:.7rem;font-weight:600;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}.dleg span{color:var(--mut)}.nbp{margin-top:8px;padding:7px 10px;border-radius:10px;background:var(--bs);font-size:.8rem;line-height:1.45}.nbp strong{color:var(--b);font-weight:800}
 .leaflet-popup-content a.gm.alt{background:var(--bs);color:var(--b)!important}.gm .ic{width:14px;height:14px}.gm{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--b);color:#fff!important;text-decoration:none;font-weight:600;font-size:.8rem}
 .leaflet-control-zoom{border:1px solid var(--ln)!important;border-radius:14px!important;overflow:hidden;box-shadow:var(--sh)!important}
@@ -449,16 +460,16 @@ function buses(){
       n++;
       seen[b.id] = 1;
       var angle = Number(b.angle) || 0;
-      var h = '<div class="bus-pop" style="font-family:inherit;min-width:185px;line-height:1.45;color:var(--tx)">' +
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">' +
+      var h = '<div class="bus-pop">' +
+        '<div class="bus-pop-head">' +
           '<span style="font-size:1.1rem">⚡🚌</span>' +
-          '<b style="font-size:.9rem;color:var(--tx)">' + esc(b.plate || b.name || "Bus Sarbagita") + '</b>' +
+          '<b class="bus-pop-plate">' + esc(b.plate || b.name || "Bus Sarbagita") + '</b>' +
         '</div>' +
-        '<div style="font-size:.72rem;font-weight:700;color:#16a34a;margin-bottom:4px">Bus Listrik Trans Sarbagita ' + esc(b.name ? "· " + b.name : "") + '</div>' +
-        '<div style="font-size:.78rem;color:var(--tx);margin-bottom:2px"><b>Tujuan:</b> ' + esc(b.toward || "-") + '</div>' +
-        '<div style="font-size:.78rem;color:var(--tx);margin-bottom:2px"><b>Kecepatan:</b> ' + (b.speed || 0) + ' km/jam</div>' +
-        '<div style="font-size:.7rem;color:var(--mut);margin-top:4px;border-top:1px solid var(--ln);padding-top:4px">' +
-          '<span style="color:#16a34a;font-weight:700">● GPS realtime</span> &middot; ' + trackerDisplay(b.updated) +
+        '<div class="bus-pop-name">Bus Listrik Trans Sarbagita ' + esc(b.name ? "· " + b.name : "") + '</div>' +
+        '<div class="bus-pop-detail"><b>Tujuan:</b> ' + esc(b.toward || "-") + '</div>' +
+        '<div class="bus-pop-detail"><b>Kecepatan:</b> ' + (b.speed || 0) + ' km/jam</div>' +
+        '<div class="bus-pop-meta">' +
+          '<span class="bus-pop-live">● GPS realtime</span> &middot; ' + trackerDisplay(b.updated) +
         '</div>' +
       '</div>';
 
@@ -602,7 +613,7 @@ $("loc").onclick=function(){if(!navigator.geolocation)return toast("Lokasi tidak
  },function(){toast("Izin lokasi tidak tersedia. Aktifkan izin lokasi di browser, atau ketuk halte di daftar untuk melihat jam bus berikutnya.")},{timeout:10000})};
 /* === PWA: service worker + tombol pasang === */
 var dp=null,isApp=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
-if("serviceWorker" in navigator&&location.protocol!=="file:")window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+if("serviceWorker" in navigator&&location.protocol!=="file:")window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(function(){})});
 function instUI(){document.querySelectorAll(".inst").forEach(function(e){e.hidden=isApp||!dp})}
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;instUI()});
 window.addEventListener("appinstalled",function(){isApp=true;dp=null;instUI()});
