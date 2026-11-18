@@ -1,9 +1,9 @@
 /* Bus Trans Sarbagita © 2026 Yoga Purnama. All rights reserved. ID: sgt-yg-fd69d51a */
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v115";
+var VERSION = "sarbagita-v116";
 var CORE = [
-  "./", "index.html", "peta.html", "manifest.webmanifest",
+  "./", "index.html", "peta.html", "all-stops.js", "manifest.webmanifest",
   "icons/icon-32.png?v=2", "icons/icon-64.png?v=2", "icons/icon-192.png?v=2",
   "icons/icon-512.png?v=2", "icons/apple-touch-icon.png?v=2"
 ];
