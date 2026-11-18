@@ -154,6 +154,15 @@ button,input{font:inherit;color:inherit}
  body.smin #fab{bottom:calc(226px + env(safe-area-inset-bottom,0px))}body.smax #fab{opacity:0;pointer-events:none}
  .leaflet-top.leaflet-right{display:none}
 }
+
+/* Floating GPS Status Pill */
+.gps-floating{position:fixed;z-index:520;top:calc(76px + env(safe-area-inset-top,0px));left:14px;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;font-size:.8rem;font-weight:700;color:var(--tx);cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.15);transition:transform .2s,background .2s;user-select:none}
+.gps-floating:hover{transform:translateY(-1px)}
+.gps-floating .gps-dot{width:9px;height:9px;border-radius:50%;background:#f59e0b;flex:none}
+.gps-floating.is-live .gps-dot{background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.3);animation:gpsPulse 2s infinite}
+.gps-floating.is-offline .gps-dot{background:#94a3b8}
+@keyframes gpsPulse{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(22,163,74,.7)}70%{transform:scale(1);box-shadow:0 0 0 6px rgba(22,163,74,0)}100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+@media (max-width:760px){.gps-floating{top:calc(104px + env(safe-area-inset-top,0px));font-size:.74rem;padding:6px 12px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 [hidden]{display:none!important}</style></head><body>
 <div id="map"></div>
@@ -161,6 +170,11 @@ button,input{font:inherit;color:inherit}
  <div class="brand"><img class="logo" src="icons/icon-64.png?v=2" alt="" width="38" height="38"><div><h1>Bus Listrik Trans Sarbagita</h1><small>Peta halte · Koridor 1 GOR – GWK</small></div></div>
  <div class="seg" id="ct"></div><div class="seg" id="tb"></div>
 </header>
+<div id="gps-banner" class="gps-floating is-offline glass" onclick="promptGpsApi()" title="Klik untuk hubungkan server GPS">
+ <span class="gps-dot"></span>
+ <span id="gps-status-text">Memeriksa GPS satelit...</span>
+ <span style="font-size:.9rem;opacity:.7">⚙️</span>
+</div>
 <nav id="nav"><div class="glass">
 <a href="./" aria-label="Beranda" title="Beranda"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Beranda</span></a>
 <a href="./#halte" aria-label="Halte" title="Halte"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Halte</span></a>
@@ -348,10 +362,13 @@ initLiveGPS();
 
 function buses(){
   var e=$("busn"),m=wita(),n=0,seen={};
-  if(!e)return;
+  var gPill = $("gps-banner");
+  var gTxt = $("gps-status-text");
 
   // JALUR 1: Jika server GPS Realtime terhubung & ada data armada
   if(isLiveGps && liveSarbagitaBuses && liveSarbagitaBuses.length > 0) {
+    if (gPill) gPill.className = "gps-floating is-live glass";
+    if (gTxt) gTxt.innerHTML = "● " + liveSarbagitaBuses.length + " Bus Satelit Aktif";
     var now = performance.now();
     liveSarbagitaBuses.forEach(function(b) {
       if(!b.lat || !b.lng) return;
@@ -403,21 +420,23 @@ function buses(){
       }
     }
 
-    e.innerHTML = '<span class="bi" style="background:#16a34a">' + BUS + '</span>' +
+    if(e) e.innerHTML = '<span class="bi" style="background:#16a34a">' + BUS + '</span>' +
       '<span>' + (n ? '<b>' + n + ' bus Sarbagita aktif</b> di rute ini' : 'Belum ada bus Sarbagita terdeteksi di rute ini') +
       '.<br><small style="color:#16a34a;font-weight:700;cursor:pointer" onclick="promptGpsApi()" title="Klik untuk atur server GPS">● GPS Realtime Aktif (Satelit) ⚙️</small></span>';
     return;
   }
 
   // JALUR 2: Fallback ke simulasi jadwal jika backend belum terhubung
+  if (gPill) gPill.className = "gps-floating is-offline glass";
+  if (gTxt) gTxt.innerHTML = "Posisi jadwal · Hubungkan GPS ⚙️";
   if(cor==="c1")SJ.forEach(function(r,k){var b=pos(r,m);if(!b||(b.d!==dir&&!b.w))return;n++;seen[k]=1;
   var h="<b>Bus "+r[0]+" &middot; rit "+(k+1)+"</b><small>"+(b.w?"Istirahat di GWK sebelum kembali":"Menuju "+esc(D.c1[b.d][b.p.nx][0]))+"<br>Berangkat GOR "+dt(r[1])+" &middot; kembali di GOR "+dt(r[3])+"<br><i>Perkiraan dari jadwal, bukan posisi GPS.</i></small>";
   if(BM[k]){BM[k].setLatLng(b.p.ll).setPopupContent(h)}
   else BM[k]=L.marker(b.p.ll,{zIndexOffset:1500,icon:L.divIcon({className:"",html:'<div class="bus">'+BUS+'</div>',iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-16]})}).bindPopup(h).addTo(bl)});
  for(var k in BM)if(!seen[k]){bl.removeLayer(BM[k]);delete BM[k]}
- if(cor!=="c1"){e.innerHTML="Perkiraan posisi bus baru tersedia untuk Koridor 1.";return}
+ if(cor!=="c1"){if(e) e.innerHTML="Perkiraan posisi bus baru tersedia untuk Koridor 1.";return}
  var nx=SJ.filter(function(r){return hm(r[1])>m})[0];
- e.innerHTML='<span class="bi">'+BUS+'</span><span>'+(n?"<b>"+n+" bus</b> di arah ini":"Belum ada bus di arah ini")+(nx?". Berangkat berikutnya dari GOR "+dt(nx[1])+" WITA":". Keberangkatan hari ini sudah selesai, besok mulai "+dt(SJ[0][1])+" WITA")+'.<br><small style="cursor:pointer" onclick="promptGpsApi()" title="Klik untuk hubungkan server GPS">Posisi perkiraan jadwal (bukan GPS). Hubungkan GPS ⚙️</small></span>'}
+ if(e) e.innerHTML='<span class="bi">'+BUS+'</span><span>'+(n?"<b>"+n+" bus</b> di arah ini":"Belum ada bus di arah ini")+(nx?". Berangkat berikutnya dari GOR "+dt(nx[1])+" WITA":". Keberangkatan hari ini sudah selesai, besok mulai "+dt(SJ[0][1])+" WITA")+'.<br><small style="cursor:pointer" onclick="promptGpsApi()" title="Klik untuk hubungkan server GPS">Posisi perkiraan jadwal (bukan GPS). Hubungkan GPS ⚙️</small></span>'}
 setInterval(buses,15000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
