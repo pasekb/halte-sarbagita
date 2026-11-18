@@ -225,6 +225,11 @@ var BUS='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3
 function hm(t){return +t.slice(0,2)*60+ +t.slice(3)}
 function dt(t){return t.replace(":",".")}
 function wita(){var n=new Date();return ((n.getUTCHours()+8)%24)*60+n.getUTCMinutes()+n.getUTCSeconds()/60}
+var NIGHT_HIDE_AT=hm(SJ[SJ.length-1][3])+10,NIGHT_SHOW_AT=hm(SJ[0][1]),TRACKER_TTL=10*60*1000;
+function serviceClosedNow(){var m=wita();return m>=NIGHT_HIDE_AT||m<NIGHT_SHOW_AT}
+function trackerTimestamp(v){if(v==null||v==="")return 0;if(typeof v==="number"||/^\d{10,13}$/.test(String(v))){var n=Number(v);return n<1e12?n*1000:n}var s=String(v).trim();if(/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d(?::\d\d(?:\.\d+)?)?$/.test(s))s=s.replace(" ","T")+"Z";else s=s.replace(" ","T");var t=Date.parse(s);return Number.isFinite(t)?t:0}
+function trackerIsFresh(v){var t=trackerTimestamp(v);if(!t)return true;var age=Date.now()-t;return age>=-120000&&age<=TRACKER_TTL}
+function trackerDisplay(v){var t=trackerTimestamp(v);if(!t)return esc(v||"");try{return new Intl.DateTimeFormat(document.documentElement.lang==="en"?"en-GB":"id-ID",{timeZone:"Asia/Makassar",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date(t))+" WITA"}catch(e){return esc(v||"")}}
 function path(k){var p=[],c=0;D.c1[k].forEach(function(s,i){if(!s[1])return;var ll=L.latLng(s[1],s[2]);if(p.length)c+=p[p.length-1].ll.distanceTo(ll);p.push({ll:ll,c:c,i:i})});return p}
 var PA=path("a"),PB=path("b"),LA=PA[PA.length-1].c,LB=PB[PB.length-1].c,DS=LA*.35;
 PA.some(function(x){if(/^Sudirman/.test(D.c1.a[x.i][0])){DS=x.c;return true}});
@@ -251,7 +256,7 @@ function pos0(r,m){var t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]);if(m<t0||m>=t3)return
  if(m<tg+LAY)return {d:"a",p:{ll:PA[PA.length-1].ll},w:1};
  return {d:"b",p:at(PB,(m-tg-LAY)*v)}}
 
-/* === Integrasi GPS Realtime Trans Sarbagita (Direct Satellite & 60 FPS) === */
+/* === Integrasi GPS realtime Trans Sarbagita === */
 var AES_KEY = "Tr4N5m3tR0B4l1csNusAnt4r41n0vas1";
 var gpsDirectToken = null;
 var liveSarbagitaBuses = null;
@@ -259,6 +264,8 @@ var isLiveGps = false;
 var lastLivePush = Date.now();
 var liveInterval = 5500;
 var liveAnimStates = new Map();
+var liveGpsPollBusy = false;
+var LIVE_GPS_TTL = 20000;
 
 async function aesEncrypt(plaintext) {
   var enc = new TextEncoder();
@@ -293,6 +300,7 @@ async function getDirectGpsToken() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ value: encBody })
   });
+  if (!res.ok) throw new Error("GPS authentication unavailable");
   var cipher = await res.text();
   var parsed = JSON.parse(await aesDecrypt(cipher));
   gpsDirectToken = parsed.data.token;
@@ -300,6 +308,8 @@ async function getDirectGpsToken() {
 }
 
 async function pollDirectGps() {
+  if (liveGpsPollBusy) return;
+  liveGpsPollBusy = true;
   try {
     var token = await getDirectGpsToken();
     var encBody = await aesEncrypt(JSON.stringify({ key: "NGIxBali", pref: "14" }));
@@ -310,10 +320,11 @@ async function pollDirectGps() {
     });
     if (res.status === 401 || res.status === 403) {
       gpsDirectToken = null;
-      return;
+      throw new Error("GPS token expired");
     }
+    if (!res.ok) throw new Error("GPS service unavailable");
     var json = await res.json();
-    if (json && json.data) {
+    if (json && Array.isArray(json.data)) {
       var now = Date.now();
       var dt = now - lastLivePush;
       if (dt >= 2000 && dt <= 15000) liveInterval = dt;
@@ -336,14 +347,16 @@ async function pollDirectGps() {
           };
         });
       buses();
-    }
+    } else throw new Error("Invalid GPS response");
   } catch (err) {
     console.warn("Direct GPS:", err);
+  } finally {
+    liveGpsPollBusy = false;
   }
 }
 
 function initLiveGPS() {
-  // Langsung terhubung ke satelit GPS resmi tanpa proxy backend!
+  // Ambil posisi bus langsung dari API GPS.
   pollDirectGps();
   setInterval(pollDirectGps, 5000);
 }
@@ -414,33 +427,38 @@ function liveBusIcon(angle) {
   });
 }
 
-window.promptGpsApi = function() {
-  alert("Pelacakan Bus Realtime aktif langsung via Satelit GPS Resmi Trans Sarbagita.");
-};
 initLiveGPS();
 
 function buses(){
-  var e=$("busn"),m=wita(),n=0,seen={};
+  var e=$("busn"),n=0,staleGps=0,seen={};
+  if(serviceClosedNow()){
+    liveAnimStates.forEach(function(s){bl.removeLayer(s.marker)});liveAnimStates.clear();
+    for(var k in BM){bl.removeLayer(BM[k]);delete BM[k]}
+    if(e)e.innerHTML='<span class="bi">'+BUS+'</span><span><b>Di luar jam layanan</b><br><small>Lokasi bus disembunyikan sampai layanan dimulai.</small></span>';
+    return;
+  }
+  var gpsFresh=isLiveGps&&Array.isArray(liveSarbagitaBuses)&&Date.now()-lastLivePush<LIVE_GPS_TTL;
 
-  // JALUR 1: Jika server GPS Realtime terhubung & ada data armada
-  if(isLiveGps && liveSarbagitaBuses && liveSarbagitaBuses.length > 0) {
+  // Data baru dari GPS, termasuk respons valid yang berisi nol bus.
+  if(gpsFresh) {
     var now = performance.now();
     liveSarbagitaBuses.forEach(function(b) {
       if(!b.lat || !b.lng) return;
+      if(!trackerIsFresh(b.updated)){staleGps++;return;}
 
       n++;
       seen[b.id] = 1;
       var angle = Number(b.angle) || 0;
-      var h = '<div class="bus-pop" style="font-family:inherit;min-width:185px;line-height:1.45">' +
+      var h = '<div class="bus-pop" style="font-family:inherit;min-width:185px;line-height:1.45;color:var(--tx)">' +
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">' +
           '<span style="font-size:1.1rem">⚡🚌</span>' +
-          '<b style="font-size:.9rem;color:#0f172a">' + esc(b.plate || b.name || "Bus Sarbagita") + '</b>' +
+          '<b style="font-size:.9rem;color:var(--tx)">' + esc(b.plate || b.name || "Bus Sarbagita") + '</b>' +
         '</div>' +
         '<div style="font-size:.72rem;font-weight:700;color:#16a34a;margin-bottom:4px">Bus Listrik Trans Sarbagita ' + esc(b.name ? "· " + b.name : "") + '</div>' +
-        '<div style="font-size:.78rem;color:#334155;margin-bottom:2px"><b>Tujuan:</b> ' + esc(b.toward || "-") + '</div>' +
-        '<div style="font-size:.78rem;color:#334155;margin-bottom:2px"><b>Kecepatan:</b> ' + (b.speed || 0) + ' km/jam</div>' +
-        '<div style="font-size:.7rem;color:#64748b;margin-top:4px;border-top:1px solid #e2e8f0;padding-top:4px">' +
-          '<span style="color:#16a34a;font-weight:700">● Satelit Realtime</span> &middot; ' + esc(b.updated || "") +
+        '<div style="font-size:.78rem;color:var(--tx);margin-bottom:2px"><b>Tujuan:</b> ' + esc(b.toward || "-") + '</div>' +
+        '<div style="font-size:.78rem;color:var(--tx);margin-bottom:2px"><b>Kecepatan:</b> ' + (b.speed || 0) + ' km/jam</div>' +
+        '<div style="font-size:.7rem;color:var(--mut);margin-top:4px;border-top:1px solid var(--ln);padding-top:4px">' +
+          '<span style="color:#16a34a;font-weight:700">● GPS realtime</span> &middot; ' + trackerDisplay(b.updated) +
         '</div>' +
       '</div>';
 
@@ -500,16 +518,18 @@ function buses(){
     }
 
     if(e) e.innerHTML = '<span class="bi" style="background:#16a34a">' + BUS + '</span>' +
-      '<span>' + (n ? '<b>' + n + ' bus Sarbagita aktif</b> di rute ini' : 'Belum ada bus Sarbagita terdeteksi di rute ini') +
-      '.<br><small style="color:#16a34a;font-weight:700">● GPS Realtime Satelit Aktif (60 FPS)</small></span>';
+      '<span>' + (n ? '<b>' + n + ' bus Sarbagita aktif</b> di rute ini' : staleGps ? '<b>Posisi GPS bus sudah usang</b><br><small>Bus disembunyikan karena pembaruan lebih dari 10 menit.</small>' : '<b>Belum ada bus terdeteksi</b>') +
+      (staleGps&&!n?'':'.<br><small style="color:#16a34a;font-weight:700">● GPS aktif · posisi diperbarui berkala</small>') + '</span>';
     return;
   }
 
-  // JALUR 2: Jika server GPS belum terhubung atau tidak ada armada aktif di jalan
+  // Hapus titik lama saat feed GPS kosong atau tidak lagi diperbarui.
+  liveAnimStates.forEach(function(s){bl.removeLayer(s.marker)});
+  liveAnimStates.clear();
   for(var k in BM){bl.removeLayer(BM[k]);delete BM[k]}
-  if(e) e.innerHTML = '<span class="bi">' + BUS + '</span><span><b>Tracking Bus Satelit</b><br><small>Menghubungkan ke satelit GPS realtime...</small></span>';
+  if(e) e.innerHTML = '<span class="bi">' + BUS + '</span><span><b>' + (isLiveGps?'Data GPS tidak diperbarui':'Menghubungkan ke GPS bus') + '</b><br><small>' + (isLiveGps?'Mencoba menyambungkan ulang…':'Mengambil posisi bus…') + '</small></span>';
 }
-setInterval(buses,15000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
+setInterval(buses,5000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
  var lc=dark?"#5cc8ff":"#0a78e6";
@@ -545,7 +565,7 @@ function draw(){
   ls.appendChild(d)});
  $("cnt").textContent=(q?n+" / ":"")+S.length+" halte";
  if(!n)ls.innerHTML='<div class="empty">Halte tidak ditemukan.<br><small>Coba kata kunci lain.</small></div>';
- ls.insertAdjacentHTML("beforeend",'<div class="srcn">Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Titik koordinat 100% presisi resmi satelit Dishub Bali / BRT Nusantara.</div>');ls.insertAdjacentHTML("afterbegin",'<div class="busn" id="busn"></div>');bl.clearLayers();BM={};liveAnimStates.clear();buses()}
+ ls.insertAdjacentHTML("beforeend",'<div class="srcn">Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Beberapa koordinat halte merupakan perkiraan; lihat bagian sumber data untuk rinciannya.</div>');ls.insertAdjacentHTML("afterbegin",'<div class="busn" id="busn"></div>');bl.clearLayers();BM={};liveAnimStates.clear();buses()}
 function mark(i){sel=i;document.querySelectorAll(".it").forEach(function(e){var on=+e.dataset.i===i;e.classList.toggle("sel",on);if(on&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})})}
 function seg(id,items,cur,fn){var c=$(id);c.innerHTML="";items.forEach(function(x){var b=document.createElement("button");b.type="button";b.textContent=x[1];b.className=cur==x[0]?"on":"";b.setAttribute("aria-pressed",cur==x[0]);b.onclick=function(){fn(x[0])};c.appendChild(b)})}
 function tabs(){
@@ -604,6 +624,7 @@ try{var SI=QS&&QS.get("s");if(SI!==null&&SI!==""&&mk[+SI]){mark(+SI);map.setView
 var LK="sarbagita-lang",ON=false,TI=document.title,
  EX={"Halte":"Stops","Peta":"Map","Beranda":"Home","dan":"and","Daftar Halte":"Stop list","Lokasi Anda":"Your location","Halte awal":"First stop","Halte akhir":"Last stop","Coba kata kunci lain.":"Try another keyword."},
  T=[
+ ["Belum ada bus terdeteksi","No buses detected"],[/^([0-9]+) bus Sarbagita aktif$/,"$1 active Sarbagita buses"],[" di rute ini"," on this route"],["Di luar jam layanan","Outside service hours"],["Lokasi bus disembunyikan sampai layanan dimulai.","Bus locations are hidden until service starts."],["Posisi GPS bus sudah usang","GPS bus position is stale"],["Bus disembunyikan karena pembaruan lebih dari 10 menit.","Bus hidden because the last update is over 10 minutes old."],["Tujuan:","Destination:"],["Kecepatan:","Speed:"],["● GPS aktif · posisi diperbarui berkala","● GPS active · positions update periodically"],["Data GPS tidak diperbarui","GPS data is out of date"],["Mencoba menyambungkan ulang…","Trying to reconnect…"],["Menghubungkan ke GPS bus","Connecting to bus GPS"],["Mengambil posisi bus…","Loading bus positions…"],["GPS realtime","Live GPS"],
  ["jalur perkiraan","approximate path"], ["Bus berikutnya berangkat pukul ","Next bus leaves at "],["Bus berikutnya lewat sekitar ","Next bus passes around "],["Bus berikutnya tiba sekitar ","Next bus arrives around "],["Bus berikutnya berangkat sekitar ","Next bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat sekitar ","No more buses today. Tomorrow's first bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat pukul ","No more buses today. Tomorrow's first bus leaves at "],["Bus hari ini sudah habis. Besok bus pertama lewat sekitar ","No more buses today. Tomorrow's first bus passes around "],["Bus hari ini sudah habis. Besok bus pertama tiba sekitar ","No more buses today. Tomorrow's first bus arrives around "],[/^ \((.+) lagi\)/," (in $1)"],[" (sekarang)"," (now)"],["perkiraan dari jadwal, bukan GPS","estimated from the timetable, not GPS"],[/(\d+) jam/g,"$1 h"],[/(\d+) menit/g,"$1 min"],
  ["Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Lokasi halte mengacu pada peta resmi","Map of Trans Sarbagita electric bus stops in Bali: Corridor 1 GOR Ngurah Rai–GWK. Stop locations follow the official map of"],
  [". Titik bertanda “lokasi perkiraan” belum dikonfirmasi Dishub.",". Points marked “approx. location” aren't confirmed by Dishub."],
@@ -614,7 +635,7 @@ var LK="sarbagita-lang",ON=false,TI=document.title,
  ["Perkiraan posisi bus baru tersedia untuk Koridor 1.","Estimated bus positions are only available for Corridor 1."],
  ["Perkiraan dari jadwal, bukan posisi GPS.","Estimated from the timetable, not GPS."],["Istirahat di GWK sebelum kembali","Resting at GWK before heading back"],
  ["Berangkat GOR","Leaves GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
- ["koordinat belum ada · buka di Google Maps","no coordinates yet · open in Google Maps"],["lokasi perkiraan","approx. location"],["Halte tidak ditemukan.","No stops found."],
+ ["Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Beberapa koordinat halte merupakan perkiraan; lihat bagian sumber data untuk rinciannya.","Map of Trans Sarbagita electric bus stops in Bali: Corridor 1 GOR Ngurah Rai–GWK. Some stop coordinates are approximate; see data sources for details."],["koordinat belum ada · buka di Google Maps","no coordinates yet · open in Google Maps"],["lokasi perkiraan","approx. location"],["Halte tidak ditemukan.","No stops found."],
  ["Dishub Provinsi Bali","Bali Provincial Transport Agency (Dishub)"],["Buka di Google Maps","Open in Google Maps"],["Petunjuk arah","Directions"],["Halte awal","First stop"],["Halte akhir","Last stop"],
  ["Izin lokasi tidak tersedia. Aktifkan izin lokasi di browser, atau ketuk halte di daftar untuk melihat jam bus berikutnya.","Location permission unavailable. Enable location access in your browser, or tap a stop in the list to see the next bus time."],
  ["Buka menu browser, lalu pilih “Instal aplikasi” atau “Tambahkan ke layar utama”.","Open the browser menu, then choose “Install app” or “Add to Home screen”."],
