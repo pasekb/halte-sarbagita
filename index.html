@@ -185,6 +185,7 @@ html[lang="en"] .period{display:none}
 .nxv .w{font-size:.9rem;font-weight:700;color:var(--or)}
 .sjl{display:inline-block;padding:10px 4px;margin:-10px -4px}.nxs{margin-top:8px;color:var(--mut);font-size:.8rem;line-height:1.5}.nxt{position:relative}.nxt .nxh{padding-right:34px}.nxtip{display:none;margin-top:10px;padding:9px 11px;border-radius:12px;background:var(--soft);font-size:.76rem;color:var(--mut)}.nxt.tip .nxtip{display:block;animation:fade .2s ease}.nxib{position:absolute;top:12px;right:12px;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:10px;background:none;color:var(--mut);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s}.nxib svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.nxib:focus{outline:none}.nxib:focus-visible,.nxt.tip .nxib{background:var(--soft);color:var(--b)}@media (hover:hover){.nxib:hover{background:var(--soft)}}
 .nxs a{color:var(--b);font-weight:700;cursor:pointer}
+.gpseta{display:flex;align-items:flex-start;gap:8px;margin-top:10px;padding:10px 11px;border-radius:12px;background:rgba(34,197,94,.1);color:var(--tx);font-size:.76rem;line-height:1.45}.gpseta.stale{background:var(--soft)}.gpseta[hidden]{display:none}.gpseta .gdot{width:8px;height:8px;flex:none;margin-top:5px;border-radius:50%;background:#16a34a}.gpseta.stale .gdot{background:#94a3b8}.gpseta b{font-weight:800}.gpseta small{display:block;margin-top:3px;color:var(--mut);font-size:.68rem}
 .info summary{cursor:pointer;font-weight:700;color:var(--b);padding:8px 0;font-size:.9rem}
 .sjw{overflow-x:auto;margin-top:6px}
 #sjt{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
@@ -253,7 +254,7 @@ html[lang="en"] .period{display:none}
   <div class="ft"><div class="f"><label for="sf"><i class="dt o"></i>Asal / lokasi Anda</label><select id="sf" aria-label="Lokasi Anda atau halte asal"></select><div class="locn" id="sfn" hidden></div><button class="locpick" id="useLocation" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Pakai lokasi saya</span></button></div><div class="f"><label for="st"><i class="dt bl"></i>Tujuan halte</label><select id="st" aria-label="Tujuan halte"></select></div><button class="swap" id="sw" type="button" aria-label="Tukar"><svg class="ic" viewBox="0 0 24 24"><path d="M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></button></div>
   <button class="go" id="go" type="button">Lihat rute</button><div id="msg" role="status" aria-live="polite"></div>
  </div>
- <div class="card gps-home-banner" id="homeGps" onclick="location.href='peta'" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin:12px 14px 0; border-radius:18px; background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(16,185,129,.08)); border:1px solid rgba(34,197,94,.28); box-shadow:0 4px 14px -4px rgba(22,163,74,.2);">
+ <a class="card gps-home-banner" id="homeGps" href="peta" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin:12px 14px 0; border-radius:18px; background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(16,185,129,.08)); border:1px solid rgba(34,197,94,.28); box-shadow:0 4px 14px -4px rgba(22,163,74,.2); color:var(--tx); text-decoration:none;">
    <div style="display:flex; align-items:center; gap:12px;">
      <span style="display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:#16a34a; color:#fff; flex:none;">
        <svg style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M3 11h18"/></svg>
@@ -263,10 +264,9 @@ html[lang="en"] .period{display:none}
        <small id="homeGpsSub" style="color:#16a34a; font-weight:700; font-size:.74rem">● Memuat posisi bus · Lihat peta →</small>
      </div>
    </div>
-   <button style="border:none; background:none; font-size:1.15rem; cursor:pointer; padding:6px; opacity:.8;" title="Pengaturan URL Server GPS" onclick="event.stopPropagation(); promptGpsApi();">⚙️</button>
- </div>
+ </a>
  <div class="card near" id="near" hidden></div>
- <div class="card nxt" id="nxt"><button class="nxib" id="nxib" type="button" aria-label="Penjelasan waktu" aria-expanded="false" aria-controls="nxb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".9" fill="currentColor" stroke="none"/></svg></button><div class="nxh"><b id="nxt1">Bus berikutnya dari GOR Ngurah Rai</b><small id="nxt2">Halte awal · Koridor 1 · arah GWK</small></div><div id="nxb"></div><div class="wxl" id="wx" hidden aria-live="polite"></div></div>
+ <div class="card nxt" id="nxt"><button class="nxib" id="nxib" type="button" aria-label="Penjelasan waktu" aria-expanded="false" aria-controls="nxb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".9" fill="currentColor" stroke="none"/></svg></button><div class="nxh"><b id="nxt1">Jadwal bus berikutnya dari GOR Ngurah Rai</b><small id="nxt2">Halte awal · Koridor 1 · arah GWK</small></div><div id="nxb"></div><div class="gpseta stale" id="gpsEta" role="status" aria-live="off"><span class="gdot"></span><span>GPS bus sedang dimuat…</span></div><div class="wxl" id="wx" hidden aria-live="polite"></div></div>
  <div class="card inst" hidden><img src="icons/icon-64.png?v=2" alt="" width="44" height="44"><div class="tx"><b>Pasang aplikasi</b><small>Buka lebih cepat dari layar utama, tanpa browser.</small></div><button class="instb" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v11M12 15l-4-4M12 15l4-4M5 20h14"/></svg> Pasang</button><div class="insth" role="status"></div></div>
  <div class="sh"><b><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta Rute</b></div>
  <div class="card mapc"><a class="full" id="full" href="peta"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg> Peta penuh</a><div class="lmap" id="lm1"></div><svg id="map1"></svg><button class="allb" id="all" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Lihat semua halte</span><span class="allc" id="allc"></span></button></div>
@@ -371,7 +371,7 @@ function rowH(s,i,lo,hi){
   '<div class="sn"><b>'+(i+1)+'.</b> '+esc(s[0])+'</div>'+
   '<div style="font-size:.76rem;opacity:.8;margin-top:2px"><b style="color:var(--b)">Sarbagita · S1B</b> · Arah: '+arahNama+(statusBadge?' · <i>'+statusBadge+'</i>':'')+'</div>';
  if(i===st.sel)h+='<div class="det">'+nbLine(st.dir,i)+
-  '<div style="margin:5px 0 8px 0;font-size:.78rem"><span style="display:inline-block;padding:2px 7px;border-radius:6px;font-size:.72rem;font-weight:700;color:#fff;background:#0284c7">Sarbagita · S1B</span> <span>Titik resmi satelit Dishub Bali / BRT Nusantara ('+s[1].toFixed(5)+', '+s[2].toFixed(5)+')</span></div>'+
+  '<div style="margin:5px 0 8px 0;font-size:.78rem"><span style="display:inline-block;padding:2px 7px;border-radius:6px;font-size:.72rem;font-weight:700;color:#fff;background:#0284c7">Sarbagita · S1B</span> <span>Koordinat halte: ('+s[1].toFixed(5)+', '+s[2].toFixed(5)+')</span></div>'+
   '<a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination='+s[1]+','+s[2]+'"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg> Petunjuk arah</a>'+
   '<a class="alt" target="_blank" rel="noopener" href="'+gm(s)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> Buka di Google Maps</a></div>';
  return h+'</div>'}
@@ -392,7 +392,7 @@ function stops(){var L=D[st.cor][st.dir],r=st.rg,lo=r?r[0]:0,hi=r?r[1]:L.length-
    '<div class="sn"><b>'+(i+1)+'.</b> '+esc(s[0])+'</div>'+
    '<div style="font-size:.76rem;opacity:.8;margin-top:2px"><b style="color:var(--b)">Sarbagita · S1B</b> · Arah: '+arahNama+(statusBadge?' · <i>'+statusBadge+'</i>':'')+'</div>';
   if(i===st.sel)h+='<div class="det">'+nbLine(st.dir,i)+
-   '<div style="margin:5px 0 8px 0;font-size:.78rem"><span style="display:inline-block;padding:2px 7px;border-radius:6px;font-size:.72rem;font-weight:700;color:#fff;background:#0284c7">Sarbagita · S1B</span> <span>Titik resmi satelit Dishub Bali / BRT Nusantara ('+s[1].toFixed(5)+', '+s[2].toFixed(5)+')</span></div>'+
+   '<div style="margin:5px 0 8px 0;font-size:.78rem"><span style="display:inline-block;padding:2px 7px;border-radius:6px;font-size:.72rem;font-weight:700;color:#fff;background:#0284c7">Sarbagita · S1B</span> <span>Koordinat halte: ('+s[1].toFixed(5)+', '+s[2].toFixed(5)+')</span></div>'+
    '<a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination='+s[1]+','+s[2]+'"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg> Petunjuk arah</a>'+
    '<a class="alt" target="_blank" rel="noopener" href="'+gm(s)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> Buka di Google Maps</a></div>';
   h+='</div>'}
@@ -470,6 +470,44 @@ function ecInit(){if(EC)return EC;var A=sCum("a"),B=sCum("b"),la=A[A.length-1],d
 function eta(r,d,i){var E=ecInit(),t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]),bl=typeof BLAY==="number"?BLAY:10,v=(E.LA-E.DS+E.LB)/Math.max(1,t3-t1-bl);
  if(d==="a"){var c=E.A[i];return c<=E.DS?t0+(t1-t0)*c/E.DS:t1+(c-E.DS)/v}
  return t1+(E.LA-E.DS)/v+bl+E.B[i]/v}
+function gpsBearing(a,b){var r=Math.PI/180,y=Math.sin((b[2]-a[2])*r)*Math.cos(b[1]*r),x=Math.cos(a[1]*r)*Math.sin(b[1]*r)-Math.sin(a[1]*r)*Math.cos(b[1]*r)*Math.cos((b[2]-a[2])*r);return (Math.atan2(y,x)*180/Math.PI+360)%360}
+function gpsDirectionHint(t){t=String(t||"").toLowerCase();if(/gwk|garuda|wisnu|jimbaran|ungasan/.test(t))return "a";if(/gor|ngurah rai|denpasar|kota|sanur/.test(t))return "b";return ""}
+function gpsStamp(t){if(!t)return 0;if(typeof t==="number"||/^\d{10,13}$/.test(String(t))){var n=Number(t);return n<1e12?n*1000:n}var s=String(t);if(!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(s))return 0;var p=Date.parse(s.replace(" ","T"));return Number.isFinite(p)?p:0}
+function gpsEtaCandidate(bus,cs){
+ var L=D.c1[cs.d],E=ecInit(),coords=L[cs.i],lat=Number(bus.lat),lng=Number(bus.lng),speed=Number(bus.speed),angle=Number(bus.angle),hint=gpsDirectionHint(bus.toward),now=Date.now(),stamp=gpsStamp(bus.updated);
+ if(!coords||!coords[1]||!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180)return null;
+ if(stamp&&(now-stamp>180000||stamp-now>120000))return null;
+ if(hint&&hint!==cs.d)return null;
+ var hasAngle=bus.angle!==""&&bus.angle!=null&&Number.isFinite(angle),best=null,rad=Math.PI/180,cos=Math.cos(lat*rad);
+ for(var i=0;i<L.length-1;i++){
+  var a=L[i],b=L[i+1];if(!a[1]||!b[1])continue;
+  var ax=(a[2]-lng)*111320*cos,ay=(a[1]-lat)*111320,bx=(b[2]-lng)*111320*cos,by=(b[1]-lat)*111320,dx=bx-ax,dy=by-ay,len2=dx*dx+dy*dy;
+  if(!len2)continue;
+  var t=Math.max(0,Math.min(1,-(ax*dx+ay*dy)/len2)),px=ax+t*dx,py=ay+t*dy,cross=Math.sqrt(px*px+py*py),course=gpsBearing(a,b),diff=Math.abs(((angle-course+540)%360)-180);
+  if(hint!==cs.d&&!hasAngle)continue;
+  if(!hint&&(!hasAngle||diff>85))continue;
+  if(cross>850)continue;
+  if(!best||cross<best.cross)best={cross:cross,along:(E[cs.d==="a"?"A":"B"][i]||0)+t*((E[cs.d==="a"?"A":"B"][i+1]||0)-(E[cs.d==="a"?"A":"B"][i]||0))};
+ }
+ if(!best)return null;
+ var target=E[cs.d==="a"?"A":"B"][cs.i],remaining=target-best.along;
+ if(remaining < -200)return null;
+ return {bus:bus,remaining:Math.max(0,remaining),speed:Number.isFinite(speed)?Math.min(60,Math.max(0,speed)):0,cross:best.cross};
+}
+function renderGpsEta(){
+ var box=$("gpsEta");if(!box)return;
+ var en=document.documentElement.lang==="en",cs=cardStop(),fresh=homeGpsState==="ready"&&Date.now()-homeGpsReceivedAt<25000;
+ function msg(main,detail,stale){box.classList.toggle("stale",!!stale);box.innerHTML='<span class="gdot"></span><span>'+main+(detail?'<small>'+detail+'</small>':"")+'</span>'}
+ if(!fresh){var reason=homeGpsState==="loading"?(en?"Waiting for bus GPS data. The timetable above is the temporary reference.":"Menunggu data GPS bus. Jadwal di atas menjadi acuan sementara."):homeGpsState==="error"?(en?"GPS data is unavailable. The timetable above remains the reference.":"Data GPS sedang tidak tersedia. Jadwal di atas tetap menjadi acuan."):(en?"The latest GPS data is stale. The timetable above remains the reference.":"Data GPS terakhir sudah usang. Jadwal di atas tetap menjadi acuan.");msg(reason,"",true);return}
+ if(!homeLiveBuses.length){msg(en?"No active bus GPS data. The timetable above remains the reference.":"Belum ada bus GPS aktif. Jadwal di atas menjadi acuan.","",true);return}
+ var matches=homeLiveBuses.map(function(b){return gpsEtaCandidate(b,cs)}).filter(Boolean),moving=matches.filter(function(x){return x.speed>=2}).sort(function(a,b){return a.remaining/Math.max(a.speed,2)-b.remaining/Math.max(b.speed,2)}),stopped=matches.filter(function(x){return x.speed<2}).sort(function(a,b){return a.remaining-b.remaining}),when="";
+ try{when=new Intl.DateTimeFormat(en?"en-GB":"id-ID",{timeZone:"Asia/Makassar",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(homeGpsReceivedAt))}catch(e){when=new Date(homeGpsReceivedAt).toLocaleTimeString().slice(0,5)}
+ var received=en?"GPS data received "+when+" WITA.":"Data GPS diterima pukul "+when+" WITA.";
+ if(!moving.length){if(stopped.length){var stop=stopped[0],plate=esc(stop.bus.plate||stop.bus.name||"bus");if(stop.remaining<=250)msg((en?"GPS bus "+plate+" is near "+esc(cs.n)+".":"Bus GPS "+plate+" terdeteksi dekat "+esc(cs.n)+"."),(en?"Arrival time depends on how long it stops. ":"Waktu tiba bergantung pada durasi berhenti. ")+received,false);else msg((en?"GPS bus "+plate+" is stopped on this route.":"Bus GPS "+plate+" sedang berhenti di rute ini."),(en?"ETA is not available yet. ":"ETA belum dapat dihitung. ")+received,false);return}
+  msg(en?"No GPS bus is approaching this stop in the selected direction.":"Belum ada bus GPS menuju halte ini pada arah yang dipilih.",en?"The timetable above remains the reference. "+received:"Jadwal di atas tetap menjadi acuan. "+received,true);return}
+ var pick=moving[0],bus=pick.bus,plate=esc(bus.plate||bus.name||"bus"),dest=cs.d==="a"?"GWK":"GOR Ngurah Rai",mins=pick.remaining<=250?0:Math.max(1,Math.round((pick.remaining/1000)/pick.speed*60)),etaText=mins===0?(en?"is near the stop":"sudah dekat halte"):(en?"about "+mins+" min":"sekitar "+dr(mins));
+ msg((en?"GPS estimate · Bus "+plate+" towards "+dest:"Estimasi GPS · Bus "+plate+" menuju "+dest),(en?"To "+esc(cs.n)+": "+(mins===0?"bus is near":"about "+mins+" min away")+". "+received:"Ke "+esc(cs.n)+": "+(mins===0?"bus sudah dekat halte":"perkiraan tiba sekitar "+dr(mins))+". "+received),false);
+}
 /* Baris "bus berikutnya" di detail halte */
 function nbLine(d,i){if(typeof SJ==="undefined"||st.cor!=="c1"||!D.c1[d][i])return "";
  var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,first=d==="a"&&i===0,end=i===D.c1[d].length-1,
@@ -501,7 +539,7 @@ function nextBus(){
  var n=new Date(),m=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440,cs=cardStop(),gor=cs.d==="a"&&cs.i===0,h,
   T=SJ.map(function(r){return gor?hm(r[1]):eta(r,cs.d,cs.i)}),
   i=T.findIndex(function(x){return Math.round(x)>=m}),jl=' <a class="sjl" href="#sj">Lihat jadwal lengkap</a>';
- $("nxt1").textContent=gor?"Bus berikutnya dari GOR Ngurah Rai":"Perkiraan bus lewat di "+cs.n;
+ $("nxt1").textContent=gor?"Jadwal bus berikutnya dari GOR Ngurah Rai":"Jadwal bus lewat di "+cs.n;
  $("nxt2").textContent=(gor?"Halte awal · ":"")+(cs.f&&cs.f!==cs.n?"Seberang "+cs.f+" · ":"")+"Koridor 1 · arah "+(cs.d==="a"?"GWK":"Kota");
  document.querySelectorAll("#sjt tbody tr").forEach(function(r,k){r.classList.toggle("nx",k===i)});
  if(gor){
@@ -515,6 +553,7 @@ function nextBus(){
    h='<div class="nxv"><span class="t">'+timeHtml(mt(T[i]))+'</span><span class="w">'+(w2<=0?"segera tiba":"sekitar "+dr(w2)+" lagi")+'</span></div><div class="nxs">Berangkat dari GOR '+timeHtml(SJ[i][1])+(nx2?". Setelahnya sekitar: "+nx2:"")+'.'+jl+'</div>'}
   h+='<div class="nxs nxtip">Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.</div>'}
  $("nxb").innerHTML=h;
+ renderGpsEta();
  if(st.nr&&!$("near").hidden)nearCard();
  document.querySelectorAll(".stop.sel .nbl").forEach(function(e){var t=document.createElement("div");t.innerHTML=nbLine(st.dir,st.sel);if(t.firstChild)e.replaceWith(t.firstChild)});
  document.querySelectorAll(".sjl").forEach(function(a){a.onclick=function(e){e.preventDefault();show("info");$("sjd").open=true;$("sj").scrollIntoView({behavior:"smooth"})}})}
@@ -637,29 +676,8 @@ function shOpen(o){shbg.hidden=!o;document.body.style.overflow=o?"hidden":"";if(
  function lab(){$("lgBtn").textContent=en()?"ID":"EN"}lab(); new MutationObserver(lab).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]}); $("lgBtn").onclick=function(){$("lg").click()};$("thBtn").onclick=function(){$("th").click()};
 })();
 $("st").addEventListener("change",function(){st.dt=1;nextBus()});document.addEventListener("visibilitychange",nextBus);
-/* === Perkiraan posisi bus Koridor 1 dari jadwal (BUKAN GPS), sama seperti di peta.html ===
-   GOR -> Sudirman memakai waktu jadwal; sisanya dibagi menurut jarak, istirahat BLAY menit di GWK. */
-var BLAY=10,BP=null,BICO='<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/></svg>';
-function bdt(t){return t.replace(":",".")}
-function wita(){var n=new Date();return ((n.getUTCHours()+8)%24)*60+n.getUTCMinutes()+n.getUTCSeconds()/60}
-function bpath(k){var p=[],c=0;D.c1[k].forEach(function(s,i){if(!s[1])return;var ll=L.latLng(s[1],s[2]);if(p.length)c+=p[p.length-1].ll.distanceTo(ll);p.push({ll:ll,c:c,i:i})});return p}
-function binit(){if(BP)return BP;var A=bpath("a"),B=bpath("b"),la=A[A.length-1].c,ds=la*.35;
- A.some(function(x){if(/^Sudirman/.test(D.c1.a[x.i][0])){ds=x.c;return true}});
- return BP={A:A,B:B,LA:la,LB:B[B.length-1].c,DS:ds}}
-function bat(p,d){for(var j=1;j<p.length;j++)if(p[j].c>=d){var a=p[j-1],b=p[j],f=(d-a.c)/Math.max(1,b.c-a.c);return {ll:L.latLng(a.ll.lat+(b.ll.lat-a.ll.lat)*f,a.ll.lng+(b.ll.lng-a.ll.lng)*f),nx:b.i}}var e=p[p.length-1];return {ll:e.ll,nx:e.i}}
-function snapLL(ll,d){var c=D.c1,G=(c.line||[]).concat(c["l"+d]||[],c["d"+d]||[]),k=Math.cos(ll.lat*Math.PI/180),best=null,bd=1e9;
- G.forEach(function(g){for(var j=1;j<g.length;j++){var ax=g[j-1][1]*k,ay=g[j-1][0],bx=g[j][1]*k,by=g[j][0],px=ll.lng*k,py=ll.lat,dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/l)):0,qx=ax+t*dx,qy=ay+t*dy,e=(px-qx)*(px-qx)+(py-qy)*(py-qy);if(e<bd){bd=e;best=[qy,qx/k]}}});
- return best&&Math.sqrt(bd)*111320<500?L.latLng(best[0],best[1]):ll}
-function bpos(r,m){var b=bpos0(r,m);if(b&&b.p&&b.p.ll)b.p={ll:snapLL(b.p.ll,b.d),nx:b.p.nx};return b}
-function bpos0(r,m){var P=binit(),t0=hm(r[1]),t1=hm(r[2]),t3=hm(r[3]);if(m<t0||m>=t3)return null;
- if(m<t1)return {d:"a",p:bat(P.A,P.DS*(m-t0)/(t1-t0))};
- var v=(P.LA-P.DS+P.LB)/Math.max(1,t3-t1-BLAY),tg=t1+(P.LA-P.DS)/v;
- if(m<tg)return {d:"a",p:bat(P.A,P.DS+(m-t1)*v)};
- if(m<tg+BLAY)return {d:"a",p:{ll:P.A[P.A.length-1].ll},w:1};
- return {d:"b",p:bat(P.B,(m-tg-BLAY)*v)}}
-function busDraw(m){if(m&&m.bus)m.bus.clearLayers();if(m&&m.note&&m.note._map)m.note.remove()}
-function busTick(){}
-setInterval(busTick,15000);document.addEventListener("visibilitychange",busTick);
+/* Waktu istirahat bus di GWK dipakai pada estimasi jam bus di halte. */
+var BLAY=10,homeLiveBuses=[],homeGpsState="loading",homeGpsReceivedAt=0;
 
 /* Dibuka dari toolbar halaman peta: ./#halte atau ./#info langsung ke tab itu. */
 (function(){var v={"#halte":"stops","#info":"info"}[location.hash];if(!v)return;show(v);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}})();
@@ -676,6 +694,7 @@ setInterval(busTick,15000);document.addEventListener("visibilitychange",busTick)
 var LK="sarbagita-lang",ON=false,TI=document.title,
  EX={"Tutup":"Close","Halte":"Stops","Peta":"Map","Beranda":"Home","Pasang":"Install","dan":"and","Tarif":"Fare","Gratis":"Free","Rit":"Trip","Tiba":"Arrive","Berangkat":"Depart","Informasi":"Information","Tukar":"Swap","Kembali":"Back","Telepon":"Call","Titik halte Udayana 4A, Nirmala, Fakultas Pertanian, Rumah Berdaya, Bandung Collection, Prima Medika, dan Grand Sudirman dicocokkan dari peta aplikasi Trans Metro Dewata dan OpenStreetMap (selisih ±20–40 m).":"Stop positions for Udayana 4A, Nirmala, Fakultas Pertanian, Rumah Berdaya, Bandung Collection, Prima Medika and Grand Sudirman were cross-checked against the Trans Metro Dewata app map and OpenStreetMap (±20–40 m).","Penjelasan waktu":"About these times","Data cuaca: ":"Weather data: ",", berdasarkan koordinat halte.":", based on stop coordinates.","Chat WhatsApp":"Chat on WhatsApp","Hubungi call centre":"Contact call centre","Pakai kuota internet":"Uses mobile data","Pakai pulsa, untuk keadaan darurat":"Phone credit, for emergencies","Hari operasi":"Service days","Setiap hari":"Every day","Jam berangkat":"Departures","Jadwal:":"Timetable:","Tarif gratis:":"Free fare:","Sumber lainnya":"Other sources","tanpa keterangan":"no label","Selamat datang":"Welcome","Semua Halte":"All stops"},
  T=[
+ ["Pantau Bus Sarbagita","Track Sarbagita buses"],["Memuat posisi bus · Lihat peta →","Loading bus locations · View map →"],[/^● (\d+) bus terdeteksi · Lihat peta →$/,"● $1 buses detected · View map →"],["● Belum ada bus terdeteksi · Lihat peta →","● No buses detected · View map →"],["● Data GPS belum tersedia · Lihat peta →","● GPS data is unavailable · View map →"],
  ["Pantau Bus Sarbagita","Track Sarbagita buses"],["Memuat posisi bus · Lihat peta →","Loading bus locations · View map →"],[/^● (\d+) bus terdeteksi · Lihat peta →$/,"● $1 buses detected · View map →"],["● Belum ada bus terdeteksi · Lihat peta →","● No buses detected · View map →"],
  [/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar tujuan atau pilih koridor lain\./,"No direct route from $1 to $2 on $3. Try swapping the destination or picking another corridor."],[/Tidak ada rute langsung dari (.+) ke (.+) di (.+?)\. Coba tukar asal dan tujuan\./,"No direct route from $1 to $2 on $3. Try swapping the start and destination."],
  [/Halte asal terdekat: (.+?) \((.+?)\) · (.+?)\. Pilih tujuan, lalu cari rute\./,"Nearest starting stop: $1 ($2) · $3. Pick a destination, then find the route."],
@@ -707,9 +726,12 @@ var LK="sarbagita-lang",ON=false,TI=document.title,
  ["Mencari lokasi dan halte terdekat…","Finding your location and nearest stop…"],["Mencari lokasi","Finding location"],
  ["Anda cukup jauh dari rute ini (","You're quite far from this route ("],["📍 Terdekat dari lokasi Anda · ","📍 Nearest to you · "],["Terdekat: ","Nearest: "],
  ["Lihat jadwal lengkap (20 keberangkatan)","See full timetable (20 departures)"],["Lihat jadwal lengkap","See full timetable"],
+ ["Jadwal bus berikutnya dari GOR Ngurah Rai","Next scheduled bus from GOR Ngurah Rai"],["Jadwal bus lewat di ","Scheduled bus at "],
+ ["Menunggu data GPS bus. Jadwal di atas menjadi acuan sementara.","Waiting for bus GPS data. The timetable above is the temporary reference."],["Data GPS sedang tidak tersedia. Jadwal di atas tetap menjadi acuan.","GPS data is unavailable. The timetable above remains the reference."],["Data GPS terakhir sudah usang. Jadwal di atas tetap menjadi acuan.","The latest GPS data is stale. The timetable above remains the reference."],["Belum ada bus GPS aktif. Jadwal di atas menjadi acuan.","No active bus GPS data. The timetable above remains the reference."],["Belum ada bus GPS menuju halte ini pada arah yang dipilih.","No GPS bus is approaching this stop in the selected direction."],
+ [/^Estimasi GPS · Bus (.+) menuju (.+)$/,"GPS estimate · Bus $1 towards $2"],[/^Ke (.+): perkiraan tiba sekitar (.+)\. Data GPS diterima pukul (.+) WITA\.$/,"To $1: estimated in about $2. GPS data received $3 WITA."],[/^Ke (.+): bus sudah dekat halte\. Data GPS diterima pukul (.+) WITA\.$/,"To $1: the bus is near. GPS data received $2 WITA."],[/^Bus GPS (.+) terdeteksi dekat (.+)\.$/,"GPS bus $1 detected near $2."],[/^Bus GPS (.+) sedang berhenti di rute ini\.$/,"GPS bus $1 is stopped on this route."],[/^Waktu tiba bergantung pada durasi berhenti\. Data GPS diterima pukul (.+) WITA\.$/,"Arrival time depends on how long it stops. GPS data received $1 WITA."],[/^ETA belum dapat dihitung\. Data GPS diterima pukul (.+) WITA\.$/,"ETA is not available yet. GPS data received $1 WITA."],[/^Jadwal di atas tetap menjadi acuan\. Data GPS diterima pukul (.+) WITA\.$/,"The timetable above remains the reference. GPS data received $1 WITA."],
  ["Bus berikutnya dari ","Next bus from "],["Bus berikutnya berangkat pukul ","Next bus leaves at "],["Bus berikutnya lewat sekitar ","Next bus passes around "],["Bus berikutnya tiba sekitar ","Next bus arrives around "],["Bus berikutnya berangkat sekitar ","Next bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat sekitar ","No more buses today. Tomorrow's first bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat pukul ","No more buses today. Tomorrow's first bus leaves at "],["Bus hari ini sudah habis. Besok bus pertama lewat sekitar ","No more buses today. Tomorrow's first bus passes around "],["Bus hari ini sudah habis. Besok bus pertama tiba sekitar ","No more buses today. Tomorrow's first bus arrives around "],[/^ \((.+) lagi\)/," (in $1)"],[" (sekarang)"," (now)"],["perkiraan dari jadwal, bukan GPS","estimated from the timetable, not GPS"],["Perkiraan bus lewat di ","Estimated bus at "],["Halte awal · ","First stop · "],[/^Seberang (.+?) · /,"Across from $1 · "],["Ini jam berangkat dari halte awal. Di halte lain bus lewat lebih lambat; pilih halte asal di atas untuk melihat perkiraannya.","This is the departure time from the first stop. Buses reach other stops later; pick your starting stop above to see an estimate."],["Bus terakhir hari ini sudah lewat di halte ini. Besok bus pertama lewat sekitar","Today's last bus has passed this stop. Tomorrow's first bus comes around"],["Berangkat dari GOR ","Leaves GOR at "],[". Setelahnya sekitar: ",". Then around: "],["Perkiraan dari jadwal, bukan GPS; bisa meleset beberapa menit.","Estimated from the timetable, not GPS; may be a few minutes off."],["segera tiba","arriving soon"],[/^sekitar (.+) lagi$/,"in about $1"],["Tiba di Sudirman sekitar","Arrives at Sudirman around"],[". Setelahnya:",". Then:"],["berangkat sekarang","leaving now"],
  ["Istirahat di GWK sebelum kembali","Resting at GWK before heading back"],["Perkiraan dari jadwal, bukan posisi GPS.","Estimated from the timetable, not GPS."],
- ["Berangkat GOR","Leaves GOR"],["Tiba Sudirman","At Sudirman"],["Kembali di GOR","Back at GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
+ ["Koordinat halte: ","Stop coordinates: "],["Berangkat GOR","Leaves GOR"],["Tiba Sudirman","At Sudirman"],["Kembali di GOR","Back at GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
  ["Halte terdekat ditemukan di bawah. Pilih tujuan jika ingin melihat rute.","Nearest stops are shown below. Pick a destination if you want to see a route."],["Halte terdekat dari Anda","Nearest stops to you"],["Mau ke halte tertentu? Pilih tujuan di atas, lalu tekan Lihat rute.","Going somewhere specific? Pick a destination above, then tap See route."],["Arah GWK","Towards GWK"],["Arah Kota","Towards City"],["Lihat di peta","View on map"],["Bagikan aplikasi","Share app"],["Salin tautan","Copy link"],["Lainnya","More"],["Bagikan","Share"],["Info & sumber data","Info & data sources"],["Asal / lokasi Anda","From / your location"],["Lokasi Anda atau halte asal","Your location or starting stop"],["Pakai lokasi saya","Use my location"],["Tujuan halte","Destination stop"],["Lihat rute","See route"],["Cari halte","Search stops"],
  ["Pasang aplikasi","Install the app"],["Buka lebih cepat dari layar utama, tanpa browser.","Open it faster from your home screen, no browser needed."],
  ["jalur perkiraan","approximate path"],["Peta Rute","Route map"],["Lihat semua halte","See all stops"],["Peta penuh","Full map"],["perkiraan dari jadwal","estimated from timetable"],
@@ -744,10 +766,18 @@ $("lg").onclick=function(){set(!ON)};
 if(pref==="en")set(true);
 })();
 
-/* === Live GPS Status Banner untuk Beranda (Direct Satellite) === */
+/* === Status GPS bus untuk banner beranda === */
 (function() {
   var AES_KEY = "Tr4N5m3tR0B4l1csNusAnt4r41n0vas1";
   var gpsDirectToken = null;
+  var gpsPollBusy = false;
+
+  function showGpsStatus(text, color) {
+    var sub = $("homeGpsSub");
+    if (!sub) return;
+    sub.textContent = text;
+    sub.style.color = color;
+  }
 
   async function aesEncrypt(plaintext) {
     var enc = new TextEncoder();
@@ -774,6 +804,8 @@ if(pref==="en")set(true);
   }
 
   async function pollDirectGps() {
+    if (gpsPollBusy) return;
+    gpsPollBusy = true;
     try {
       if (!gpsDirectToken) {
         var userJson = JSON.stringify({ id: "0", email: "" });
@@ -783,6 +815,7 @@ if(pref==="en")set(true);
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ value: encBody })
         });
+        if (!authRes.ok) throw new Error("GPS authentication unavailable");
         var cipher = await authRes.text();
         var parsed = JSON.parse(await aesDecrypt(cipher));
         gpsDirectToken = parsed.data.token;
@@ -795,20 +828,32 @@ if(pref==="en")set(true);
       });
       if (res.status === 401 || res.status === 403) {
         gpsDirectToken = null;
-        return;
+        throw new Error("GPS token expired");
       }
+      if (!res.ok) throw new Error("GPS service unavailable");
       var json = await res.json();
-      if (json && json.data) {
-        var live = json.data.filter(function(b) { return b.pref === "14" && b.lat && b.lng; });
-        var sub = $("homeGpsSub");
-        if (sub) {
-          sub.textContent = live.length
-            ? "● " + live.length + " bus terdeteksi · Lihat peta →"
-            : "● Belum ada bus terdeteksi · Lihat peta →";
-          sub.style.color = "#16a34a";
-        }
-      }
-    } catch(e) {}
+      if (!json || !Array.isArray(json.data)) throw new Error("Invalid GPS response");
+      var live = json.data.filter(function(b) {
+        var lat=Number(b.lat),lng=Number(b.lng);
+        return b.pref === "14" && Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      }).map(function(b) {
+        var angle=b.angle==null||b.angle===""?null:Number(b.angle),speed=Number(b.speed);
+        return {id:b.id,lat:Number(b.lat),lng:Number(b.lng),angle:Number.isFinite(angle)?angle:null,speed:Number.isFinite(speed)?speed:0,toward:b.toward||"",plate:b.plate_number||b.name||"",updated:b.dt_tracker||""};
+      });
+      homeLiveBuses=live;
+      homeGpsState="ready";
+      homeGpsReceivedAt=Date.now();
+      if (live.length) showGpsStatus("● " + live.length + " bus terdeteksi · Lihat peta →", "#16a34a");
+      else showGpsStatus("● Belum ada bus terdeteksi · Lihat peta →", "#64748b");
+      renderGpsEta();
+    } catch(e) {
+      homeGpsState="error";
+      homeLiveBuses=[];
+      showGpsStatus("● Data GPS belum tersedia · Lihat peta →", "#b45309");
+      renderGpsEta();
+    } finally {
+      gpsPollBusy = false;
+    }
   }
 
   pollDirectGps();
