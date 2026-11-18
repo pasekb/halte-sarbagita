@@ -518,17 +518,12 @@ function buses(){
     return;
   }
 
-  // JALUR 2: Fallback ke simulasi jadwal jika backend belum terhubung
+  // JALUR 2: Jika server GPS belum terhubung atau tidak ada armada aktif di jalan
+  for(var k in BM){bl.removeLayer(BM[k]);delete BM[k]}
   if (gPill) gPill.className = "gps-floating is-offline glass";
-  if (gTxt) gTxt.innerHTML = "Posisi jadwal · Hubungkan GPS ⚙️";
-  if(cor==="c1")SJ.forEach(function(r,k){var b=pos(r,m);if(!b||(b.d!==dir&&!b.w))return;n++;seen[k]=1;
-  var h="<b>Bus "+r[0]+" &middot; rit "+(k+1)+"</b><small>"+(b.w?"Istirahat di GWK sebelum kembali":"Menuju "+esc(D.c1[b.d][b.p.nx][0]))+"<br>Berangkat GOR "+dt(r[1])+" &middot; kembali di GOR "+dt(r[3])+"<br><i>Perkiraan dari jadwal, bukan posisi GPS.</i></small>";
-  if(BM[k]){BM[k].setLatLng(b.p.ll).setPopupContent(h)}
-  else BM[k]=L.marker(b.p.ll,{zIndexOffset:1500,icon:L.divIcon({className:"",html:'<div class="bus">'+BUS+'</div>',iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-16]})}).bindPopup(h).addTo(bl)});
- for(var k in BM)if(!seen[k]){bl.removeLayer(BM[k]);delete BM[k]}
- if(cor!=="c1"){if(e) e.innerHTML="Perkiraan posisi bus baru tersedia untuk Koridor 1.";return}
- var nx=SJ.filter(function(r){return hm(r[1])>m})[0];
- if(e) e.innerHTML='<span class="bi">'+BUS+'</span><span>'+(n?"<b>"+n+" bus</b> di arah ini":"Belum ada bus di arah ini")+(nx?". Berangkat berikutnya dari GOR "+dt(nx[1])+" WITA":". Keberangkatan hari ini sudah selesai, besok mulai "+dt(SJ[0][1])+" WITA")+'.<br><small style="cursor:pointer" onclick="promptGpsApi()" title="Klik untuk hubungkan server GPS">Posisi perkiraan jadwal (bukan GPS). Hubungkan GPS ⚙️</small></span>'}
+  if (gTxt) gTxt.innerHTML = "Memeriksa GPS satelit...";
+  if(e) e.innerHTML = '<span class="bi">' + BUS + '</span><span><b>Tracking Bus Satelit</b><br><small>Menghubungkan ke satelit GPS realtime...</small></span>';
+}
 setInterval(buses,15000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
