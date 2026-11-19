@@ -332,6 +332,7 @@ function redraw(){if(st.view==="stops")stops();else if(st.view==="home")home()}
 function drawMap(v,hi){var box=v.parentNode,on=live()||LP,u="peta?c="+st.cor+"&d="+st.dir;box.classList.toggle("live",on);
  $("full").href=u;$("navp").href=u;
  if(on){if(typeof L!=="undefined")drawLeaf(v.id,box.querySelector(".lmap"),hi)}else drawSvg(v,hi)}
+function focusStopMap(i){var s=D[st.cor][st.dir][i];if(!s||s[1]==null||s[2]==null)return;requestAnimationFrame(function(){var m=LM.map2;if(!m||!m.map||!m.map.getContainer().offsetWidth)return;m.map.invalidateSize();var target=L.latLng(s[1],s[2]),zoom=Math.max(m.map.getZoom(),17),reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches,center=m.map.getCenter();if(m.map.getZoom()>=17&&center.distanceTo(target)<=2)return;if(reduce)m.map.setView(target,zoom,{animate:false});else m.map.flyTo(target,zoom,{duration:.65,easeLinearity:.25})})}
 function drawLeaf(id,el,hi){
  if(!el.offsetWidth)return;
  var m=LM[id];
@@ -352,23 +353,23 @@ function drawLeaf(id,el,hi){
   var mkr=L.marker([s[1],s[2]],{zIndexOffset:sel?2000:(e?1000:0),icon:L.divIcon({className:"",html:'<div class="'+mkClass+'">'+(i+1)+'</div>',iconSize:sz,iconAnchor:anc,popupAnchor:[0,-10]})}).addTo(m.g);
   mkr.on("click",function(){pick(i)});
   mkr.bindTooltip((i+1)+". "+s[0],{permanent:sel,direction:"top",offset:[0,-8],className:"lt"});if(sel)top=mkr});
- if(top)top.bringToFront();
+ if(top)top.setZIndexOffset(3000);
  var key=st.cor+st.dir+(hi?hi.join("-"):""),selected=st.sel>=0?Ls[st.sel]:null,hasFocus=!!(selected&&selected[1]!=null&&selected[2]!=null),reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
- function focusStop(){var ll=[selected[1],selected[2]],zoom=Math.max(m.map.getZoom(),16);if(reduceMotion)m.map.setView(ll,zoom,{animate:false});else m.map.flyTo(ll,zoom,{duration:.7,easeLinearity:.25})}
- if(m.key!==key){m.key=key;if(hasFocus)focusStop();else{var b=L.latLngBounds(hi&&pts.length>1?pts:[]);if(!b.isValid())segs().forEach(function(sg){b.extend(sg)});var pd=el.offsetWidth<220?8:20;m.map.fitBounds(b,{padding:[pd,pd],animate:false})}}
- else if(hasFocus&&m.sel!==st.sel)focusStop();
+ function focusStop(){var ll=L.latLng(selected[1],selected[2]),zoom=Math.max(m.map.getZoom(),17);if(reduceMotion)m.map.setView(ll,zoom,{animate:false});else m.map.flyTo(ll,zoom,{duration:.7,easeLinearity:.25})}
+ if(m.key!==key){m.key=key;if(!hasFocus){var b=L.latLngBounds(hi&&pts.length>1?pts:[]);if(!b.isValid())segs().forEach(function(sg){b.extend(sg)});var pd=el.offsetWidth<220?8:20;m.map.fitBounds(b,{padding:[pd,pd],animate:false})}}
+ if(hasFocus){var center=m.map.getCenter(),target=L.latLng(selected[1],selected[2]);if(m.map.getZoom()<17||center.distanceTo(target)>2)focusStop()}
  m.sel=hasFocus?st.sel:-1;
  if(m.bus)m.bus.clearLayers();if(m.note&&m.note._map)m.note.remove()}
 window.addEventListener("offline",redraw);window.addEventListener("online",function(){tileFail=false;TERR=0;redraw()});
-function drawSvg(v,hi){v.innerHTML="";v.setAttribute("viewBox","0 0 "+W+" "+H);
- segs().forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:"#c9d5f5","stroke-width":9,"stroke-linecap":"round","stroke-linejoin":"round"},v)});
+function drawSvg(v,hi){v.innerHTML="";var L=D[st.cor][st.dir],focus=st.sel>=0?L[st.sel]:null,rect=v.getBoundingClientRect(),factor=focus&&focus[1]!=null&&focus[2]!=null?5:1,ar=rect.width/Math.max(1,rect.height),vw=factor===1?W:W/factor,vh=factor===1?H:vw/ar,cx=focus&&focus[2]!=null?X(focus[2]):W/2,cy=focus&&focus[1]!=null?Y(focus[1]):H/2;v.setAttribute("viewBox",(cx-vw/2)+" "+(cy-vh/2)+" "+vw+" "+vh);
+ segs().forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:"#c9d5f5","stroke-width":9/factor,"stroke-linecap":"round","stroke-linejoin":"round"},v)});
  var L=D[st.cor][st.dir],a=hi?hi[0]:0,z=hi?hi[1]:L.length-1;
  L.forEach(function(s,i){if(!s[1]||i===st.sel)return;var e=i===a||i===z,inr=i>=a&&i<=z;
-  var c=el("circle",{cx:X(s[2]),cy:Y(s[1]),r:e?10:inr?6:3.5,fill:e?(i===a?"#ff7a1a":"#0a78e6"):inr?"#fff":"#b7c3dc",stroke:e?"#fff":inr?"#0a78e6":"none","stroke-width":3,style:"cursor:pointer"},v);
+  var c=el("circle",{cx:X(s[2]),cy:Y(s[1]),r:(e?10:inr?6:3.5)/factor,fill:e?(i===a?"#ff7a1a":"#0a78e6"):inr?"#fff":"#b7c3dc",stroke:e?"#fff":inr?"#0a78e6":"none","stroke-width":3/factor,style:"cursor:pointer"},v);
   c.onclick=function(){pick(i)}});
  if(st.sel>=0&&L[st.sel][1]){var s=L[st.sel],x=X(s[2]),y=Y(s[1]);
-  el("circle",{cx:x,cy:y,r:17,fill:"#0a78e6",opacity:.18},v);el("circle",{cx:x,cy:y,r:9,fill:"#0a78e6",stroke:"#fff","stroke-width":3},v);
-  var t=el("text",{x:x>W*.55?x-18:x+18,y:y+5,"font-size":15,"font-weight":700,fill:"#14213d","text-anchor":x>W*.55?"end":"start","paint-order":"stroke",stroke:"#fff","stroke-width":5},v);t.textContent=s[0]}}
+  el("circle",{cx:x,cy:y,r:17/factor,fill:"#0a78e6",opacity:.18},v);el("circle",{cx:x,cy:y,r:9/factor,fill:"#0a78e6",stroke:"#fff","stroke-width":3/factor},v);
+  var t=el("text",{x:x>W*.55?x-18/factor:x+18/factor,y:y+5/factor,"font-size":15/factor,"font-weight":700,fill:"#14213d","text-anchor":x>W*.55?"end":"start","paint-order":"stroke",stroke:"#fff","stroke-width":5/factor},v);t.textContent=s[0]}}
 function fillSel(){var n=names(st.cor),h="";n.forEach(function(x){h+="<option>"+x+"</option>"});$("sf").innerHTML=h;$("st").innerHTML=h;var a=D[st.cor].a;$("sf").value=a[0][0];locNote("");$("st").value=a[a.length-1][0]}
 function setCor(c){st.cor=c;st.dir="a";st.sel=-1;st.rg=null;fillSel();routeMessage("","");home();if(st.view==="stops")stops()}
 function setDir(d){st.dir=d;st.sel=-1;stops()}
@@ -407,8 +408,8 @@ function stops(){var L=D[st.cor][st.dir],r=st.rg,lo=r?r[0]:0,hi=r?r[1]:L.length-
    '<a class="alt" target="_blank" rel="noopener" href="'+gm(s)+'"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg> Buka di Google Maps</a></div>';
   h+='</div>'}
  $("ls").innerHTML=h||'<div class="det" style="padding:12px">Halte tidak ditemukan.</div>';drawMap($("map2"),r)}
-function pick(i){if(st.view==="home"){st.sel=i;st.rg=null;show("stops");var e0=document.querySelector("#ls .stop.sel");if(e0&&e0.scrollIntoView)e0.scrollIntoView({block:"center"});return}
- st.sel=st.sel===i?-1:i;var h=false;stops();var e=document.querySelector((h?"#ls1":"#ls")+" .stop.sel");if(e&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})}
+function pick(i){if(st.view==="home"){st.sel=i;st.rg=null;show("stops");focusStopMap(i);var e0=document.querySelector("#ls .stop.sel");if(e0&&e0.scrollIntoView)e0.scrollIntoView({block:"center"});return}
+ st.sel=st.sel===i?-1:i;var h=false;stops();if(st.sel>=0)focusStopMap(st.sel);var e=document.querySelector((h?"#ls1":"#ls")+" .stop.sel");if(e&&e.scrollIntoView)e.scrollIntoView({block:"nearest",behavior:"smooth"})}
 function show(v){st.view=v;setTimeout(function(){window.abTop&&abTop()},0);["home","stops","info"].forEach(function(x){$("v-"+x).className="view"+(x===v?" on":"")});
  document.querySelectorAll("#nav button").forEach(function(b){b.className=b.dataset.v===v?"on":""});window.scrollTo(0,0);if(v==="stops")stops();if(v==="home")home()}
 $("ls").onclick=function(e){if(e.target.tagName==="A")return;var s=e.target.closest(".stop");if(s)pick(+s.dataset.i)};
