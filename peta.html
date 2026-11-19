@@ -143,7 +143,12 @@ button,input{font:inherit;color:inherit}
 .leaflet-popup-content .bus-pop-meta{font-size:.7rem;color:var(--mut)!important;margin-top:4px;border-top:1px solid var(--ln);padding-top:4px}
 :root[data-theme="dark"] .leaflet-popup-content .bus-pop,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-head,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-plate,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-detail,:root[data-theme="dark"] .leaflet-popup-content .bus-pop-detail b{color:#f1f5f9!important}
 :root[data-theme="dark"] .leaflet-popup-content .bus-pop-meta{color:#cbd5e1!important}
-.leaflet-popup-content small{color:var(--mut)}.dleg{display:flex;align-items:center;gap:6px;background:var(--card);color:var(--b);font-size:.7rem;font-weight:600;padding:5px 9px;border-radius:10px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}.dleg span{color:var(--mut)}.nbp{margin-top:8px;padding:7px 10px;border-radius:10px;background:var(--bs);font-size:.8rem;line-height:1.45}.nbp strong{color:var(--b);font-weight:800}
+.leaflet-popup-content small{color:var(--mut)}
+.dleg{display:grid;gap:5px;background:var(--card);color:var(--mut);font-size:.66rem;font-weight:600;padding:7px 9px;border-radius:10px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
+.dleg-row{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.dleg-line{display:block;flex:none;width:20px;height:0;border-top:3px solid;border-radius:2px}
+.dleg-line.alt,.dleg-line.approx{border-top-style:dashed}
+.nbp{margin-top:8px;padding:7px 10px;border-radius:10px;background:var(--bs);font-size:.8rem;line-height:1.45}.nbp strong{color:var(--b);font-weight:800}
 .leaflet-popup-content a.gm.alt{background:var(--bs);color:var(--b)!important}.gm .ic{width:14px;height:14px}.gm{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--b);color:#fff!important;text-decoration:none;font-weight:600;font-size:.8rem}
 .leaflet-control-zoom{border:1px solid var(--ln)!important;border-radius:14px!important;overflow:hidden;box-shadow:var(--sh)!important}
 .leaflet-control-zoom a{width:40px!important;height:40px!important;line-height:40px!important;background:var(--glass)!important;color:var(--tx)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--ln)!important}
@@ -546,14 +551,27 @@ function buses(){
   if(e) e.innerHTML = '<span class="bi">' + BUS + '</span><span><b>' + (isLiveGps?'Data GPS tidak diperbarui':'Menghubungkan ke GPS bus') + '</b><br><small>' + (isLiveGps?'Mencoba menyambungkan ulang…':'Mengambil posisi bus…') + '</small></span>';
 }
 setInterval(buses,5000);document.addEventListener("visibilitychange",function(){if(!document.hidden)buses()});
+/* Jalur alternatif GPS yang didigitasi dari panduan gambar untuk ruas GOR–Sudirman. */
+var GPS_ALT_PATHS={c1:{a:[
+ [-8.6567588,115.2222435],[-8.6567207,115.2199792],[-8.6604684,115.2199333],
+ [-8.6610614,115.2198473],[-8.6612334,115.2184160],[-8.6635413,115.2183926],
+ [-8.6645790,115.2182636],[-8.6655532,115.2181559],[-8.6668237,115.2180907],
+ [-8.6680941,115.2180683],[-8.6689410,115.2180462]
+]}};
+function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{})[d];if(!p)return null;var out=p.slice();if(c==="c1"&&d==="a"&&D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return out}
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
- var lc=dark?"#4ade80":"#15803d";
+ var S=D[cor][dir],lc=dark?"#4ade80":"#15803d",altColor=dark?"#86efac":"#16a34a",altPath=gpsAltPath(cor,dir);
  D[cor].line.concat(D[cor]["l"+dir]||[]).forEach(function(sg){L.polyline(sg,{color:"#fff",weight:10,opacity:dark?.15:.9}).addTo(lg);L.polyline(sg,{color:lc,weight:5,opacity:.9,lineCap:"round",lineJoin:"round"}).addTo(lg)});
  (D[cor]["d"+dir]||[]).forEach(function(sg){L.polyline(sg,{color:lc,weight:4,opacity:.75,dashArray:"6 9",lineCap:"round",interactive:false}).addTo(lg)});
- if(!window.DLEG&&(D[cor]["d"+dir]||[]).length){DLEG=L.control({position:"bottomright"});DLEG.onAdd=function(){var d=L.DomUtil.create("div","dleg");d.innerHTML='<svg width="22" height="6" viewBox="0 0 22 6" aria-hidden="true"><path d="M1 3h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 4"/></svg><span>jalur perkiraan</span>';return d};DLEG.addTo(map)}
- if(window.DLEG)DLEG.getContainer().style.display=(D[cor]["d"+dir]||[]).length?"":"none";
- var S=D[cor][dir],q=$("q").value.trim().toLowerCase(),ls=$("ls"),n=0;ls.innerHTML="";
+ if(altPath&&altPath.length>1){L.polyline(altPath,{color:"#fff",weight:9,opacity:dark?.2:.65,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(lg);L.polyline(altPath,{color:altColor,weight:4.5,opacity:.98,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(lg)}
+ if(!window.DLEG){DLEG=L.control({position:"bottomright"});DLEG.onAdd=function(){return L.DomUtil.create("div","dleg")};DLEG.addTo(map)}
+ var approx=(D[cor]["d"+dir]||[]).length;
+ DLEG.getContainer().innerHTML='<div class="dleg-row"><i class="dleg-line" style="border-color:'+lc+'"></i><span>Jalur resmi</span></div>'+
+  (altPath&&altPath.length?'<div class="dleg-row"><i class="dleg-line alt" style="border-color:'+altColor+'"></i><span>Jalur alternatif GPS</span></div>':"")+
+  (approx?'<div class="dleg-row"><i class="dleg-line approx" style="border-color:'+lc+'"></i><span>jalur perkiraan</span></div>':"");
+ DLEG.getContainer().style.display="";
+ var q=$("q").value.trim().toLowerCase(),ls=$("ls"),n=0;ls.innerHTML="";
  var dd=dir;
  var arahNama=dd==="a"?"Garuda Wisnu Kencana":"GOR Ngurah Rai";
  var routeStart=S[0][0].replace("Garuda Wisnu Kencana (GWK)","GWK"),routeEnd=S[S.length-1][0].replace("Garuda Wisnu Kencana (GWK)","GWK");
@@ -641,6 +659,7 @@ try{var SI=QS&&QS.get("s");if(SI!==null&&SI!==""&&mk[+SI]){mark(+SI);map.setView
 var LK="sarbagita-lang",ON=false,TI=document.title,
  EX={"Halte":"Stops","Peta":"Map","Beranda":"Home","dan":"and","Daftar Halte":"Stop list","Lokasi Anda":"Your location","Halte awal":"First stop","Halte akhir":"Last stop","Coba kata kunci lain.":"Try another keyword."},
  T=[
+ ["Jalur resmi","Official route"],["Jalur alternatif GPS","GPS alternative route"],
  ["Belum ada bus terdeteksi","No buses detected"],[/^([0-9]+) bus Sarbagita aktif$/,"$1 active Sarbagita buses"],[" di rute ini"," on this route"],["Di luar jam layanan","Outside service hours"],["Lokasi bus disembunyikan sampai layanan dimulai.","Bus locations are hidden until service starts."],["Layanan bus hari ini sudah berakhir","Bus service has ended for today"],["Bus mulai beroperasi hari ini pukul","Bus service starts today at"],[/^Posisi bus realtime tersedia mulai pukul (.+) WITA\. Lokasi halte dan jadwal tetap bisa dicek\.$/,"Live bus locations will be available from $1 WITA. Stops and timetable remain available."],[/^Mulai lagi besok pukul (.+) WITA\. Lokasi halte dan jadwal tetap bisa dicek\.$/,"Service resumes tomorrow at $1 WITA. Stops and timetable remain available."],["Posisi GPS bus sudah usang","GPS bus position is stale"],["Bus disembunyikan karena pembaruan lebih dari 10 menit.","Bus hidden because the last update is over 10 minutes old."],["Tujuan:","Destination:"],["Kecepatan:","Speed:"],["● GPS aktif · posisi diperbarui berkala","● GPS active · positions update periodically"],["Data GPS tidak diperbarui","GPS data is out of date"],["Mencoba menyambungkan ulang…","Trying to reconnect…"],["Menghubungkan ke GPS bus","Connecting to bus GPS"],["Mengambil posisi bus…","Loading bus positions…"],["GPS realtime","Live GPS"],
  ["jalur perkiraan","approximate path"], ["Bus berikutnya berangkat pukul ","Next bus leaves at "],["Bus berikutnya lewat sekitar ","Next bus passes around "],["Bus berikutnya tiba sekitar ","Next bus arrives around "],["Bus berikutnya berangkat sekitar ","Next bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat sekitar ","No more buses today. Tomorrow's first bus leaves around "],["Bus hari ini sudah habis. Besok bus pertama berangkat pukul ","No more buses today. Tomorrow's first bus leaves at "],["Bus hari ini sudah habis. Besok bus pertama lewat sekitar ","No more buses today. Tomorrow's first bus passes around "],["Bus hari ini sudah habis. Besok bus pertama tiba sekitar ","No more buses today. Tomorrow's first bus arrives around "],[/^ \((.+) lagi\)/," (in $1)"],[" (sekarang)"," (now)"],["perkiraan dari jadwal, bukan GPS","estimated from the timetable, not GPS"],[/(\d+) jam/g,"$1 h"],[/(\d+) menit/g,"$1 min"],
  ["Peta halte bus listrik Trans Sarbagita di Bali: Koridor 1 GOR Ngurah Rai–GWK. Lokasi halte mengacu pada peta resmi","Map of Trans Sarbagita electric bus stops in Bali: Corridor 1 GOR Ngurah Rai–GWK. Stop locations follow the official map of"],

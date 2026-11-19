@@ -227,7 +227,7 @@ html[lang="en"] .period{display:none}
 .bus{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#16a34a,#22c55e);border:2px solid #fff;box-shadow:0 5px 14px -4px rgba(22,163,74,.75)}
 .bus svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bus.sm{width:18px;height:18px;border-radius:6px;border-width:1.5px;box-shadow:none;margin-right:5px}.bus.sm svg{width:11px;height:11px}
-.dleg{gap:6px;padding:4px 8px!important;color:var(--b)}.dleg span{color:var(--mut)}.bnote{display:flex;align-items:center;background:var(--card);color:var(--mut);font-size:.66rem;font-weight:600;padding:3px 8px 3px 3px;border-radius:9px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
+.dleg{display:grid;gap:4px;padding:5px 7px!important;color:var(--mut)}.dleg span{color:var(--mut)}.dleg-row{display:flex;align-items:center;gap:5px;white-space:nowrap}.dleg-line{display:block;flex:none;width:16px;height:0;border-top:2.5px solid}.dleg-line.alt,.dleg-line.approx{border-top-style:dashed}.bnote{display:flex;align-items:center;background:var(--card);color:var(--mut);font-size:.66rem;font-weight:600;padding:3px 8px 3px 3px;border-radius:9px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
 .bpop .leaflet-popup-content{margin:10px 12px;font-size:.78rem;line-height:1.45}.bpop small{color:#5b6b85}
 .leaflet-tooltip.lt{background:var(--card);color:var(--tx);border:0;border-radius:9px;padding:3px 9px;font-weight:700;font-size:.72rem;box-shadow:0 6px 16px -6px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}.leaflet-tooltip.lt::before{display:none}
 .full{position:absolute;z-index:2;top:18px;left:18px;display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:11px;font-size:.75rem;font-weight:700;color:var(--tx);text-decoration:none;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--gb);box-shadow:var(--sh)}
@@ -327,6 +327,13 @@ var LP=navigator.onLine!==false&&typeof L==="undefined";
 function segs(){return D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[],D[st.cor]["d"+st.dir]||[])}
 /* Ruas yang jalurnya belum dipastikan: digambar putus-putus */
 function dsegs(){return D[st.cor]["d"+st.dir]||[]}
+var GPS_ALT_PATHS={c1:{a:[
+ [-8.6567588,115.2222435],[-8.6567207,115.2199792],[-8.6604684,115.2199333],
+ [-8.6610614,115.2198473],[-8.6612334,115.2184160],[-8.6635413,115.2183926],
+ [-8.6645790,115.2182636],[-8.6655532,115.2181559],[-8.6668237,115.2180907],
+ [-8.6680941,115.2180683],[-8.6689410,115.2180462]
+]}};
+function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{})[d];if(!p)return null;var out=p.slice();if(c==="c1"&&d==="a"&&D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return out}
 function live(){return typeof L!=="undefined"&&navigator.onLine!==false&&!tileFail}
 function redraw(){if(st.view==="stops")stops();else if(st.view==="home")home()}
 function drawMap(v,hi){var box=v.parentNode,on=live()||LP,u="peta?c="+st.cor+"&d="+st.dir;box.classList.toggle("live",on);
@@ -341,11 +348,15 @@ function drawLeaf(id,el,hi){
   tl.on("tileload",function(){TOK++});tl.on("tileerror",function(){TERR++;if(TERR>=3&&!TOK&&!tileFail){tileFail=true;redraw()}});
   m=LM[id]={map:mp,g:L.layerGroup().addTo(mp),key:"",sel:-1}}
  m.map.invalidateSize();m.g.clearLayers();
- var dk=document.documentElement.getAttribute("data-theme")==="dark",bc=dk?"#4ade80":"#15803d";
+ var dk=document.documentElement.getAttribute("data-theme")==="dark",bc=dk?"#4ade80":"#15803d",altColor=dk?"#86efac":"#16a34a",altPath=gpsAltPath(st.cor,st.dir);
  D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[]).forEach(function(sg){L.polyline(sg,{color:"#fff",weight:9,opacity:dk?.18:.9,interactive:false}).addTo(m.g);L.polyline(sg,{color:bc,weight:4,opacity:.9,interactive:false}).addTo(m.g)});
  dsegs().forEach(function(sg){L.polyline(sg,{color:bc,weight:3.5,opacity:.75,dashArray:"5 8",lineCap:"round",interactive:false}).addTo(m.g)});
- if(!m.dleg&&dsegs().length){m.dleg=L.control({position:"bottomright"});m.dleg.onAdd=function(){var d=L.DomUtil.create("div","bnote dleg");d.innerHTML='<svg width="22" height="6" viewBox="0 0 22 6" aria-hidden="true"><path d="M1 3h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 4"/></svg><span>jalur perkiraan</span>';return d};m.dleg.addTo(m.map)}
- if(m.dleg)m.dleg.getContainer().style.display=dsegs().length?"":"none";
+ if(altPath&&altPath.length>1){L.polyline(altPath,{color:"#fff",weight:8,opacity:dk?.2:.65,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(m.g);L.polyline(altPath,{color:altColor,weight:4,opacity:.98,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(m.g)}
+ if(!m.dleg&&(dsegs().length||altPath)){m.dleg=L.control({position:"bottomright"});m.dleg.onAdd=function(){return L.DomUtil.create("div","bnote dleg")};m.dleg.addTo(m.map)}
+ if(m.dleg){m.dleg.getContainer().innerHTML='<div class="dleg-row"><i class="dleg-line" style="border-color:'+bc+'"></i><span>Jalur resmi</span></div>'+
+  (altPath?'<div class="dleg-row"><i class="dleg-line alt" style="border-color:'+altColor+'"></i><span>Alternatif GPS</span></div>':"")+
+  (dsegs().length?'<div class="dleg-row"><i class="dleg-line approx" style="border-color:'+bc+'"></i><span>jalur perkiraan</span></div>':"");
+  m.dleg.getContainer().style.display=""}
  var Ls=D[st.cor][st.dir],a=hi?hi[0]:0,z=hi?hi[1]:Ls.length-1,pts=[],top=null;
  Ls.forEach(function(s,i){if(!s[1])return;var e=i===a||i===z,inr=i>=a&&i<=z,sel=i===st.sel;if(inr)pts.push([s[1],s[2]]);
   var mkClass="mk"+(e?" e":"")+(sel?" sel":"");
@@ -361,8 +372,10 @@ function drawLeaf(id,el,hi){
  m.sel=hasFocus?st.sel:-1;
  if(m.bus)m.bus.clearLayers();if(m.note&&m.note._map)m.note.remove()}
 window.addEventListener("offline",redraw);window.addEventListener("online",function(){tileFail=false;TERR=0;redraw()});
-function drawSvg(v,hi){v.innerHTML="";var L=D[st.cor][st.dir],focus=st.sel>=0?L[st.sel]:null,rect=v.getBoundingClientRect(),factor=focus&&focus[1]!=null&&focus[2]!=null?5:1,ar=rect.width/Math.max(1,rect.height),vw=factor===1?W:W/factor,vh=factor===1?H:vw/ar,cx=focus&&focus[2]!=null?X(focus[2]):W/2,cy=focus&&focus[1]!=null?Y(focus[1]):H/2;v.setAttribute("viewBox",(cx-vw/2)+" "+(cy-vh/2)+" "+vw+" "+vh);
- segs().forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:"#c9d5f5","stroke-width":9/factor,"stroke-linecap":"round","stroke-linejoin":"round"},v)});
+function drawSvg(v,hi){v.innerHTML="";var L=D[st.cor][st.dir],focus=st.sel>=0?L[st.sel]:null,rect=v.getBoundingClientRect(),factor=focus&&focus[1]!=null&&focus[2]!=null?5:1,ar=rect.width/Math.max(1,rect.height),vw=factor===1?W:W/factor,vh=factor===1?H:vw/ar,cx=focus&&focus[2]!=null?X(focus[2]):W/2,cy=focus&&focus[1]!=null?Y(focus[1]):H/2,dk=document.documentElement.getAttribute("data-theme")==="dark",routeColor=dk?"#4ade80":"#15803d",altColor=dk?"#86efac":"#16a34a",altPath=gpsAltPath(st.cor,st.dir);v.setAttribute("viewBox",(cx-vw/2)+" "+(cy-vh/2)+" "+vw+" "+vh);
+ D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[]).forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:routeColor,"stroke-width":7/factor,"stroke-linecap":"round","stroke-linejoin":"round"},v)});
+ dsegs().forEach(function(sg){el("polyline",{points:sg.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:routeColor,"stroke-width":5/factor,"stroke-dasharray":(5/factor)+" "+(8/factor),"stroke-linecap":"round","stroke-linejoin":"round"},v)});
+ if(altPath)el("polyline",{points:altPath.map(function(p){return X(p[1]).toFixed(1)+","+Y(p[0]).toFixed(1)}).join(" "),fill:"none",stroke:altColor,"stroke-width":4/factor,"stroke-dasharray":(7/factor)+" "+(8/factor),"stroke-linecap":"round","stroke-linejoin":"round"},v);
  var L=D[st.cor][st.dir],a=hi?hi[0]:0,z=hi?hi[1]:L.length-1;
  L.forEach(function(s,i){if(!s[1]||i===st.sel)return;var e=i===a||i===z,inr=i>=a&&i<=z;
   var c=el("circle",{cx:X(s[2]),cy:Y(s[1]),r:(e?10:inr?6:3.5)/factor,fill:e?(i===a?"#ff7a1a":"#0a78e6"):inr?"#fff":"#b7c3dc",stroke:e?"#fff":inr?"#0a78e6":"none","stroke-width":3/factor,style:"cursor:pointer"},v);
@@ -753,7 +766,7 @@ var LK="sarbagita-lang",ON=false,TI=document.title,
  ["Koordinat halte: ","Stop coordinates: "],["Berangkat GOR","Leaves GOR"],["Tiba Sudirman","At Sudirman"],["Kembali di GOR","Back at GOR"],["kembali di GOR","back at GOR"],["Menuju ","Heading to "],
  ["Halte terdekat ditemukan di bawah. Pilih tujuan jika ingin melihat rute.","Nearest stops are shown below. Pick a destination if you want to see a route."],["Halte terdekat dari Anda","Nearest stops to you"],["Mau ke halte tertentu? Pilih tujuan di atas, lalu tekan Lihat rute.","Going somewhere specific? Pick a destination above, then tap See route."],["Arah GWK","Towards GWK"],["Arah Kota","Towards City"],["Lihat di peta","View on map"],["Bagikan aplikasi","Share app"],["Salin tautan","Copy link"],["Lainnya","More"],["Bagikan","Share"],["Info & sumber data","Info & data sources"],["Asal / lokasi Anda","From / your location"],["Lokasi Anda atau halte asal","Your location or starting stop"],["Pakai lokasi saya","Use my location"],["Tujuan halte","Destination stop"],["Lihat rute","See route"],["Cari halte","Search stops"],
  ["Pasang aplikasi","Install the app"],["Buka lebih cepat dari layar utama, tanpa browser.","Open it faster from your home screen, no browser needed."],
- ["jalur perkiraan","approximate path"],["Peta Rute","Route map"],["Lihat semua halte","See all stops"],["Peta penuh","Full map"],["perkiraan dari jadwal","estimated from timetable"],
+ ["Jalur resmi","Official route"],["Alternatif GPS","GPS alternative"],["jalur perkiraan","approximate path"],["Peta Rute","Route map"],["Lihat semua halte","See all stops"],["Peta penuh","Full map"],["perkiraan dari jadwal","estimated from timetable"],
  ["Daftar Halte","Stop list"],["lokasi perkiraan","approx. location"],["koordinat belum ada","no coordinates yet"],["Halte terdekat","Nearest stop"],
  ["Tarif & jadwal","Fares & timetable,"],["Jam berangkat","Departures"],
  ["Sumber data & bantuan","Data sources & help"],["Dari mana data halte ini?","Where does the stop data come from?"],["Lokasi halte diambil dari peta resmi","Stop locations come from the official map of"],["Dishub Provinsi Bali","Bali Provincial Transport Agency (Dishub)"],
