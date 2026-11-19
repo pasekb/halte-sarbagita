@@ -1,0 +1,148 @@
+/* Preset Vice City adalah tema neon gelap dan tidak mengikuti mode siang/malam. */
+:root[data-visual-preset="vice-city"] {
+  color-scheme: dark;
+  --b: #ff55c8;
+  --b2: #43dcff;
+  --bs: rgba(255, 85, 200, .15);
+  --or: #ff78c9;
+  --tx: #f4f2ff;
+  --mut: #aaa9c5;
+  --ln: rgba(210, 205, 255, .12);
+  --bg: #090a1b;
+  --card: rgba(34, 27, 59, .86);
+  --soft: rgba(255, 255, 255, .07);
+  --glass: rgba(15, 17, 42, .68);
+  --gb: rgba(150, 202, 255, .18);
+  --sh: 0 1px 2px rgba(0,0,0,.42), 0 14px 34px -12px rgba(0,0,0,.68);
+  --sh2: 0 12px 30px -14px rgba(255,65,190,.62), 0 0 18px -10px rgba(67,220,255,.52);
+  --bl1: rgba(48,133,255,.36);
+  --bl2: rgba(255,54,174,.3);
+  --bl3: rgba(135,72,255,.22);
+}
+
+:root[data-visual-preset="vice-city"] .app-icon-day,
+:root[data-visual-preset="vice-city"] .bus-marker-day { opacity: 0; }
+:root[data-visual-preset="vice-city"] .app-icon-night,
+:root[data-visual-preset="vice-city"] .bus-marker-night { opacity: 1; }
+:root[data-visual-preset="vice-city"] .gic {
+  color: var(--b2);
+  background: color-mix(in srgb, var(--b2) 15%, transparent);
+  border-color: color-mix(in srgb, var(--b2) 48%, transparent);
+  box-shadow: inset 0 0 8px color-mix(in srgb, var(--b2) 15%, transparent), 0 0 10px color-mix(in srgb, var(--b2) 24%, transparent);
+}
+:root[data-visual-preset="vice-city"] .gic svg,
+:root[data-visual-preset="vice-city"] .wxi svg {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--b2) 60%, transparent));
+}
+:root[data-visual-preset="vice-city"] .wxi {
+  color: var(--b2);
+  background: color-mix(in srgb, var(--b2) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--b2) 38%, transparent);
+}
+:root .vice-theme-toggle {
+  isolation: isolate;
+  transition: transform .14s cubic-bezier(.2,.8,.2,1);
+}
+:root .vice-theme-toggle::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  width: 76px;
+  height: 62px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,48,190,.62) 0%, rgba(158,48,255,.36) 40%, rgba(34,221,255,.26) 64%, transparent 82%);
+  filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  transition: opacity .2s ease, transform .16s cubic-bezier(.2,.8,.2,1);
+}
+:root .vice-theme-toggle[aria-pressed="true"]::before { opacity: 1; }
+:root .vice-theme-image {
+  z-index: 1;
+  transition: filter .2s ease, transform .16s cubic-bezier(.2,.8,.2,1);
+}
+:root .vice-theme-toggle[aria-pressed="true"] .vice-theme-image {
+  filter: drop-shadow(0 0 3px rgba(255,73,190,.68)) drop-shadow(0 0 8px rgba(255,73,190,.56)) drop-shadow(0 0 13px rgba(67,220,255,.34));
+}
+:root .vice-theme-toggle:active { transform: scale(.78); }
+:root .vice-theme-toggle:active::before { opacity: 1; transform: translate(-50%,-50%) scale(1.12); }
+:root .vice-theme-toggle:active .vice-theme-image {
+  transform: translate(-50%,-50%) scale(.92);
+  filter: drop-shadow(0 0 5px rgba(255,73,190,.9)) drop-shadow(0 0 13px rgba(255,73,190,.78)) drop-shadow(0 0 20px rgba(67,220,255,.62));
+}
+html.theme-transitioning #app .vice-theme-toggle:not(.hero-photo) {
+  transition-property: transform;
+  transition-duration: .18s;
+  transition-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+
+/* Tampilkan pilihan mode secara jelas, meski palet Vice City tetap gelap. */
+:root[data-visual-preset="vice-city"] #th[aria-pressed="false"],
+:root[data-visual-preset="vice-city"] #thBtn[aria-pressed="false"] {
+  color: #65e8ff;
+  transition: color .22s ease, background-color .22s ease, border-color .22s ease, box-shadow .22s ease;
+  background: rgba(67,220,255,.13);
+  border-color: rgba(67,220,255,.4);
+  box-shadow: inset 0 0 10px rgba(67,220,255,.12), 0 0 14px rgba(67,220,255,.16);
+}
+:root[data-visual-preset="vice-city"] #th[aria-pressed="true"],
+:root[data-visual-preset="vice-city"] #thBtn[aria-pressed="true"] {
+  color: #ff78d4;
+  transition: color .22s ease, background-color .22s ease, border-color .22s ease, box-shadow .22s ease;
+  background: rgba(255,85,200,.13);
+  border-color: rgba(255,85,200,.42);
+  box-shadow: inset 0 0 10px rgba(255,85,200,.12), 0 0 14px rgba(255,85,200,.16);
+}
+/* Tampilan khusus GTA tetap gelap selama preset Vice City aktif. */
+:root[data-visual-preset="vice-city"] .pills button.on,
+:root[data-visual-preset="vice-city"] .seg button.on { color: #090a1b; }
+:root[data-visual-preset="vice-city"] .lmap .leaflet-tile-pane,
+:root[data-visual-preset="vice-city"].osm .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) saturate(.4) brightness(.85) contrast(.9);
+}
+:root[data-visual-preset="vice-city"] .facts .fact.lf,
+:root[data-visual-preset="vice-city"] .ledp {
+  background-color: #100d29;
+  background-image: radial-gradient(rgba(255,85,200,.09) 1px, transparent 1.4px);
+  box-shadow: inset 0 0 0 1px rgba(67,220,255,.25), inset 0 3px 14px rgba(0,0,0,.7), 0 8px 20px -12px rgba(255,55,190,.58);
+}
+:root[data-visual-preset="vice-city"] .facts .lf small,
+:root[data-visual-preset="vice-city"] .led .ledp .lh,
+:root[data-visual-preset="vice-city"] .led .lt .pe,
+:root[data-visual-preset="vice-city"] .led .lt .period { color: #c8c5ef; opacity: .78; }
+:root[data-visual-preset="vice-city"] .facts .lf b,
+:root[data-visual-preset="vice-city"] .lt,
+:root[data-visual-preset="vice-city"] .ls,
+:root[data-visual-preset="vice-city"] .lz {
+  color: #69e4ff;
+  text-shadow: 0 0 5px rgba(67,220,255,.82), 0 0 13px rgba(255,55,190,.48);
+}
+:root[data-visual-preset="vice-city"] .abar.ontop .gic {
+  background: color-mix(in srgb, var(--gc) 30%, rgba(10,16,34,.6));
+  border-color: color-mix(in srgb, var(--gc) 42%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+:root[data-visual-preset="vice-city"] #nav div {
+  background: rgba(22,18,48,.78);
+  box-shadow: 0 12px 36px -8px rgba(0,0,0,.65), inset 0 1px 0 var(--gb);
+}
+:root[data-visual-preset="vice-city"] .leaflet-popup-content-wrapper,
+:root[data-visual-preset="vice-city"] .leaflet-popup-tip { background: #21183b; }
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop,
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop-head,
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop-plate,
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop-detail,
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop-detail b {
+  color: #f4f2ff !important;
+}
+:root[data-visual-preset="vice-city"] .leaflet-popup-content .bus-pop-meta { color: #cbc8e2 !important; }
+:root[data-visual-preset="vice-city"] #side { background: rgba(18,14,39,.94); }
+@media (prefers-reduced-motion: reduce) {
+  :root .vice-theme-toggle,
+  :root .vice-theme-toggle::before,
+  :root .vice-theme-image { transition: none; }
+}
