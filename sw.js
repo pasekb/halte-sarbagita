@@ -1,7 +1,7 @@
 /* Bus Trans Sarbagita © 2026 Yoga Purnama. All rights reserved. ID: sgt-yg-fd69d51a */
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v150";
+var VERSION = "sarbagita-v162";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest",
   "icons/Lightning%20Bolt%20Bus%20Icon.png",
@@ -69,6 +69,8 @@ function saved(req) {
 self.addEventListener("fetch", function (e) {
   var req = e.request; if (req.method !== "GET") return;
   var url = new URL(req.url);
+  /* Jangan simpan potongan video Cloudinary di cache app shell; media sering diminta dengan Range. */
+  if (url.hostname === "res.cloudinary.com" && /\.(mp4|webm)$/i.test(url.pathname)) return;
   if (url.origin === location.origin) {
     /* File app: jaringan dulu supaya selalu terbaru; simpanan saat offline atau jaringan lambat. */
     e.respondWith(new Promise(function (resolve, reject) {
