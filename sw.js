@@ -1,9 +1,10 @@
 /* Bus Trans Sarbagita © 2026 Yoga Purnama. All rights reserved. ID: sgt-yg-fd69d51a */
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v167";
+var VERSION = "sarbagita-v168";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest",
+  "image/Jason_and_Lucia_Robbery_With_Logo_portrait.jpg",
   "icons/Lightning%20Bolt%20Bus%20Icon.png",
   "icons/neon-vice-bus-marker.png",
   "icons/GTA-6-Logo-PNG-from-Grand-Theft-Auto-VI-Transparent.png",
