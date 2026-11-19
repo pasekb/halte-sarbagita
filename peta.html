@@ -71,8 +71,11 @@ button,input{font:inherit;color:inherit}
 .ph-t{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .ph-t b{font-size:1.05rem;font-weight:800;letter-spacing:-.01em}
 #cnt{font-size:.75rem;font-weight:600;color:var(--mut);background:var(--soft);padding:4px 9px;border-radius:99px}
-#route{font-size:.8rem;color:var(--mut);margin:-4px 0 10px;display:flex;align-items:center;gap:6px}
-#route i{width:8px;height:8px;border-radius:50%;display:inline-block}
+#route{font-size:.8rem;color:var(--mut);margin:-4px 0 10px;display:block}
+#route .route-line{display:flex;align-items:center;gap:7px;min-width:0}
+#route .route-line i{display:block;flex:0 0 8px;width:8px;height:8px;border-radius:50%}
+#route .route-line b{min-width:0;font-weight:600}
+#route .route-line span{flex:none;opacity:.5}
 .q{position:relative}
 .q svg{position:absolute;left:13px;top:50%;margin-top:-9px;width:18px;height:18px;color:var(--mut)}
 #q{width:100%;padding:11px 12px 11px 40px;border:1px solid var(--ln);border-radius:14px;background:var(--card);outline:none;transition:border-color .2s,box-shadow .2s}
@@ -553,7 +556,8 @@ function draw(){
  var S=D[cor][dir],q=$("q").value.trim().toLowerCase(),ls=$("ls"),n=0;ls.innerHTML="";
  var dd=dir;
  var arahNama=dd==="a"?"Garuda Wisnu Kencana":"GOR Ngurah Rai";
- $("route").innerHTML='<i style="background:var(--or)"></i><b>'+esc(S[0][0])+'</b> <span style="opacity:.5">→</span> <b>'+esc(S[S.length-1][0])+'</b><div style="font-size:11.5px;margin-top:3px;opacity:.85">Arah: <b>'+esc(arahNama)+'</b> (Sarbagita · S1B)</div>';
+ var routeStart=S[0][0].replace("Garuda Wisnu Kencana (GWK)","GWK"),routeEnd=S[S.length-1][0].replace("Garuda Wisnu Kencana (GWK)","GWK");
+ $("route").innerHTML='<div class="route-line"><i style="background:var(--or)"></i><b>'+esc(routeStart)+'</b><span>→</span><b>'+esc(routeEnd)+'</b></div>';
  S.forEach(function(s,i){
   var end=i==0||i==S.length-1;
   var statusBadge=end?(i==0?"Halte awal":"Halte akhir"):"";
