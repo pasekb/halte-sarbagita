@@ -291,7 +291,29 @@ html.night-splash-active .night-splash{display:block}
 .night-splash.is-closing{opacity:0;pointer-events:none}
 @media (min-width:768px),(pointer:fine){.night-splash{display:none!important}}
 @media (prefers-reduced-motion:reduce){.night-splash{transition:none}}
-</style><link rel="stylesheet" href="vice-city-theme.css">
+</style><link rel="stylesheet" href="vice-city-theme.css"><style id="compact-mobile-header">
+@media (max-width:430px){
+  .abar{gap:6px;padding-left:10px;padding-right:10px}
+  .ag{flex:1 1 auto;gap:7px}
+  .ag>div{flex:1 1 auto;min-width:0}
+  .ag b{font-size:clamp(.84rem,4vw,1rem)}
+  .ag small#clock{max-width:100%;font-size:clamp(.58rem,3vw,.72rem);line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+  .vice-theme-mobile{width:34px;height:32px}
+  .vice-theme-mobile .vice-theme-image{width:50px;height:40px}
+  .aa{padding:2px}
+  .ab{width:34px;height:32px}
+  .ab .ic{width:18px;height:18px}
+}
+@media (max-width:360px){
+  .abar{gap:4px;padding-left:8px;padding-right:8px}
+  .ag{gap:5px}
+  .ag b{font-size:.84rem}
+  .ag small#clock{font-size:.56rem}
+  .vice-theme-mobile{width:30px}
+  .vice-theme-mobile .vice-theme-image{width:45px;height:38px}
+  .ab{width:31px}
+}
+</style>
 </head><body>
 <div class="night-splash" id="nightSplash" aria-hidden="true"><img src="image/Jason_and_Lucia_Robbery_With_Logo_portrait.jpg" alt="" width="1800" height="3900" fetchpriority="high" decoding="async"></div>
 <div id="app">
