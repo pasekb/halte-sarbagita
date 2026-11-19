@@ -47,6 +47,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"></noscript>
 <meta name="theme-color" content="#0a78e6">
 <script>(function(){function w(){var n=new Date(Date.now()+288e5),m=n.getUTCHours()*60+n.getUTCMinutes(),k=m>=1110||m<360,d=m<360?new Date(n.getTime()-864e5):n;return{n:k,p:d.toISOString().slice(0,10)+(k?"N":"D")}}window.sgtTheme=function(){var x=w(),o=null;try{o=JSON.parse(sessionStorage.getItem("sarbagita-theme-v3")||"null")}catch(e){}return o&&o.p===x.p?o.t==="dark":x.n};window.sgtSave=function(dk){try{sessionStorage.setItem("sarbagita-theme-v3",JSON.stringify({t:dk?"dark":"light",p:w().p}))}catch(e){}};try{localStorage.removeItem("sarbagita-theme-v3");localStorage.removeItem("sarbagita-theme-v2")}catch(e){}if(sgtTheme())document.documentElement.setAttribute("data-theme","dark")})()</script>
+<script>(function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=document.documentElement.getAttribute("data-theme")==="dark"?"#21103f":"#0a78e6"})()</script>
 <script>(function(){var root=document.documentElement,mobile=window.matchMedia&&window.matchMedia("(max-width: 767px) and (pointer: coarse)").matches;if(!mobile||root.getAttribute("data-theme")!=="dark")return;var now=new Date(Date.now()+288e5),mins=now.getUTCHours()*60+now.getUTCMinutes(),nightDate=new Date(now);if(mins<360)nightDate.setUTCDate(nightDate.getUTCDate()-1);var key="sarbagita-night-splash:"+nightDate.toISOString().slice(0,10),seen=false;try{seen=localStorage.getItem(key)==="1";if(!seen)localStorage.setItem(key,"1")}catch(e){try{seen=sessionStorage.getItem(key)==="1";if(!seen)sessionStorage.setItem(key,"1")}catch(e2){}}if(!seen)root.classList.add("night-splash-active")})()</script>
 <style>
 :root{color-scheme:light;--sgt-id:"sgt-yg-fd69d51a";--b:#0a78e6;--b2:#0e9ccf;--bs:rgba(10,120,230,.11);--or:#ff7a1a;--tx:#0f172a;--mut:#4a5873;--ln:rgba(15,23,42,.08);--bg:#e9effb;--card:rgba(255,255,255,.85);--soft:rgba(15,23,42,.05);--glass:rgba(255,255,255,.55);--gb:rgba(255,255,255,.8);--sh:0 1px 2px rgba(15,23,42,.04),0 14px 34px -12px rgba(30,50,110,.22);--sh2:0 18px 40px -12px rgba(10,120,230,.4);--bl1:rgba(0,150,255,.42);--bl2:rgba(255,122,26,.3);--bl3:rgba(3,247,218,.4);--r:22px}
@@ -295,7 +296,7 @@ html.theme-transitioning body::before{transition:--bl1 var(--theme-duration) cub
 .abar .theme-toggle-vi:hover,.abar .theme-toggle-vi:focus:not(:focus-visible){background:transparent!important;box-shadow:none!important}
 </style>
 <style>
-.night-splash{position:fixed;inset:0;z-index:99999;display:none;overflow:hidden;background:#21103f;opacity:1;transition:opacity .35s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.night-splash{position:fixed;inset:0;z-index:99999;display:none;overflow:hidden;background:#21103f;opacity:1;transition:opacity .65s cubic-bezier(.22,.61,.36,1);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .night-splash img{display:block;width:100%;height:100%;height:100dvh;object-fit:cover;object-position:center}
 html.night-splash-active .night-splash{display:block}
 .night-splash.is-closing{opacity:0;pointer-events:none}
@@ -506,7 +507,7 @@ $("nb").onclick=function(){var m=$("nm");m.textContent="Mencari lokasi...";
   if(best<0){m.textContent="Tidak ada halte berkoordinat.";return}
   m.textContent=bd>40?"Anda cukup jauh dari rute ini ("+Math.round(bd)+" km).":"Terdekat: "+L[best][0]+", "+(bd<1?Math.round(bd*1000)+" m":bd.toFixed(1)+" km");
   pick(best)},function(){m.textContent="Izin lokasi tidak tersedia. Ketuk halte di daftar untuk melihat jam bus berikutnya."},{timeout:10000})}catch(e){m.textContent="Lokasi tidak didukung."}};
-function tcol(){var dk=document.documentElement.getAttribute("data-theme")==="dark",m=document.querySelector('meta[name="theme-color"]'),f32=$("favicon32"),f192=$("favicon192");if(m)m.content=dk?"#090a1b":"#0a78e6";if(f32)f32.href=dk?"icons/neon-icon-32.png":"icons/icon-32.png?v=2";if(f192)f192.href=dk?"icons/neon-icon-192.png":"icons/icon-192.png?v=2"}tcol();
+function tcol(){var dk=document.documentElement.getAttribute("data-theme")==="dark",m=document.querySelector('meta[name="theme-color"]'),f32=$("favicon32"),f192=$("favicon192");if(m)m.content=dk?"#21103f":"#0a78e6";if(f32)f32.href=dk?"icons/neon-icon-32.png":"icons/icon-32.png?v=2";if(f192)f192.href=dk?"icons/neon-icon-192.png":"icons/icon-192.png?v=2"}tcol();
 var HERO_TRANSITIONS={dark:"https://res.cloudinary.com/dqqdjhb2x/video/upload/v1795086361/Day_to_Vice_City_v5cyfx.mp4"},heroTransitionToken=0,heroTransitionTimer=0,heroLaunchTimer=0,heroCleanupTimer=0,heroPlaying=false,heroStableDark=document.documentElement.getAttribute("data-theme")==="dark",themeUiTimer=0,themeRedrawTimer=0;
 function heroStill(dark){var e=document.querySelector(dark?".hero-photo-night":".hero-photo-day");return e?(e.currentSrc||e.src):""}
 function queueHeroTransition(){clearTimeout(heroLaunchTimer);var v=$("heroTransition"),h=document.querySelector(".hero"),reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(reduce||!v){heroStableDark=true;if(h)h.classList.remove("pending-dark-video");return}if(!heroPlaying&&!heroStableDark&&h)h.classList.add("pending-dark-video");heroLaunchTimer=setTimeout(function(){if(!heroPlaying&&!heroStableDark&&document.documentElement.getAttribute("data-theme")==="dark")startHeroTransition(true,false)},180)}
@@ -960,6 +961,7 @@ if(pref==="en")set(true);
       homeLiveBuses=live;
       homeGpsState="ready";
       homeGpsReceivedAt=Date.now();
+      setHomeServiceAppearance(live.length === 0);
       if (live.length) showGpsStatus("● " + live.length + " bus terdeteksi · Lihat peta →", "#16a34a");
       else showGpsStatus("● Belum ada bus terdeteksi · Lihat peta →", "#64748b");
       renderGpsEta();
@@ -967,6 +969,7 @@ if(pref==="en")set(true);
       if (syncServiceHours()) return;
       homeGpsState="error";
       homeLiveBuses=[];
+      setHomeServiceAppearance(true);
       showGpsStatus("● Data GPS belum tersedia · Lihat peta →", "#b45309");
       renderGpsEta();
     } finally {
@@ -983,8 +986,8 @@ if(pref==="en")set(true);
 (function(){
   var root=document.documentElement,splash=document.getElementById("nightSplash");
   if(!splash||!root.classList.contains("night-splash-active"))return;
-  var closed=false,timer=setTimeout(closeSplash,1300);
-  function closeSplash(){if(closed)return;closed=true;clearTimeout(timer);splash.classList.add("is-closing");setTimeout(function(){root.classList.remove("night-splash-active");splash.remove()},360)}
+  var closed=false,timer=setTimeout(closeSplash,2300);
+  function closeSplash(){if(closed)return;closed=true;clearTimeout(timer);splash.classList.add("is-closing");setTimeout(function(){root.classList.remove("night-splash-active");splash.remove()},660)}
   splash.addEventListener("pointerdown",closeSplash,{once:true});
 })();
 </script>

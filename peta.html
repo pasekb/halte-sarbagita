@@ -38,10 +38,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sarbagita">
+<meta name="theme-color" content="#0a78e6">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script>(function(){function w(){var n=new Date(Date.now()+288e5),m=n.getUTCHours()*60+n.getUTCMinutes(),k=m>=1110||m<360,d=m<360?new Date(n.getTime()-864e5):n;return{n:k,p:d.toISOString().slice(0,10)+(k?"N":"D")}}window.sgtTheme=function(){var x=w(),o=null;try{o=JSON.parse(sessionStorage.getItem("sarbagita-theme-v3")||"null")}catch(e){}return o&&o.p===x.p?o.t==="dark":x.n};window.sgtSave=function(dk){try{sessionStorage.setItem("sarbagita-theme-v3",JSON.stringify({t:dk?"dark":"light",p:w().p}))}catch(e){}};try{localStorage.removeItem("sarbagita-theme-v3");localStorage.removeItem("sarbagita-theme-v2")}catch(e){}if(sgtTheme())document.documentElement.setAttribute("data-theme","dark")})()</script>
+<script>(function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=document.documentElement.getAttribute("data-theme")==="dark"?"#21103f":"#0a78e6"})()</script>
 <style>
 :root{color-scheme:light;--sgt-id:"sgt-yg-fd69d51a";--b:#0a78e6;--b2:#0e9ccf;--bs:rgba(10,120,230,.11);--or:#ff7a1a;--tx:#0f172a;--mut:#4a5873;--ln:rgba(15,23,42,.09);--bg:#eef1f7;--card:rgba(255,255,255,.88);--soft:rgba(15,23,42,.06);--glass:rgba(255,255,255,.6);--gb:rgba(255,255,255,.8);--sh:0 1px 2px rgba(15,23,42,.05),0 16px 44px -12px rgba(15,23,42,.3)}
 :root[data-theme="dark"]{color-scheme:dark;--b:#ff55c8;--b2:#43dcff;--bs:rgba(255,85,200,.16);--or:#ff78c9;--tx:#f4f2ff;--mut:#aaa9c5;--ln:rgba(210,205,255,.13);--bg:#090a1b;--card:rgba(34,27,59,.88);--soft:rgba(255,255,255,.07);--glass:rgba(15,17,42,.72);--gb:rgba(150,202,255,.19);--sh:0 1px 2px rgba(0,0,0,.44),0 16px 44px -12px rgba(0,0,0,.76)}
@@ -230,7 +232,7 @@ var cor="c1",dir="a",sel=-1,D={"c1":{"a":[["GOR Ngurah Rai",-8.649398,115.223423
 /* Koridor 2 (bus konvensional) disembunyikan sementara. Ubah K2 jadi true untuk menampilkannya lagi. */
 var K2=false;if(!K2)delete D.c2;
 try{var QS=new URLSearchParams(location.search);if(QS.get("c")==="c2"&&D.c2)cor="c2";if(QS.get("d")==="b")dir="b"}catch(e){}
-var dark=document.documentElement.getAttribute("data-theme")==="dark";function setFavicon(){var f32=$("favicon32"),f192=$("favicon192");if(f32)f32.href=dark?"icons/neon-icon-32.png":"icons/icon-32.png?v=2";if(f192)f192.href=dark?"icons/neon-icon-192.png":"icons/icon-192.png?v=2"}setFavicon();
+var dark=document.documentElement.getAttribute("data-theme")==="dark";function setFavicon(){var f32=$("favicon32"),f192=$("favicon192"),m=document.querySelector('meta[name="theme-color"]');if(m)m.content=dark?"#21103f":"#0a78e6";if(f32)f32.href=dark?"icons/neon-icon-32.png":"icons/icon-32.png?v=2";if(f192)f192.href=dark?"icons/neon-icon-192.png":"icons/icon-192.png?v=2"}setFavicon();
 var map=L.map("map",{zoomControl:false}).setView([-8.72,115.19],12);
 L.control.zoom({position:"topright"}).addTo(map);
 /* === PILIH PENYEDIA PETA: cukup ubah PROVIDER (dan KEY jika perlu) === */

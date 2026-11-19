@@ -10,3 +10,6 @@
 # Service worker selalu dicek ulang supaya versi baru cepat sampai.
 /sw.js
   Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
