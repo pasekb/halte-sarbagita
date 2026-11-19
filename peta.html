@@ -124,6 +124,9 @@ button,input{font:inherit;color:inherit}
 #th .sun,:root[data-theme="dark"] #th .moon{display:none}:root[data-theme="dark"] #th .sun{display:block}
 .leaflet-popup-content-wrapper{border-radius:16px;box-shadow:var(--sh);background:var(--card);color:var(--tx)}
 .leaflet-popup-tip{background:var(--card)}
+/* Gestur pada detail bus diteruskan ke peta; tombol tutup tetap menerima ketukan. */
+.leaflet-popup.bus-detail-popup{pointer-events:none}
+.leaflet-popup.bus-detail-popup .leaflet-popup-close-button{pointer-events:auto}
 :root[data-theme="dark"] .leaflet-popup-content-wrapper,:root[data-theme="dark"] .leaflet-popup-tip{background:#18233a}
 .leaflet-popup-content{margin:14px 16px;font-size:.88rem;line-height:1.45}
 .leaflet-popup-content b{display:block;font-size:.95rem;font-weight:800;margin-bottom:2px}
@@ -507,7 +510,7 @@ function buses(){
         existing.animating = true;
       } else {
         var marker = L.marker([b.lat, b.lng], { zIndexOffset: 1500, icon: liveBusIcon(angle) })
-          .bindPopup(h)
+          .bindPopup(h, { className: "bus-detail-popup", autoPan: false })
           .addTo(bl);
         liveAnimStates.set(b.id, {
           marker: marker,
