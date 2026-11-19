@@ -341,7 +341,7 @@ function drawLeaf(id,el,hi){
   tl.on("tileload",function(){TOK++});tl.on("tileerror",function(){TERR++;if(TERR>=3&&!TOK&&!tileFail){tileFail=true;redraw()}});
   m=LM[id]={map:mp,g:L.layerGroup().addTo(mp),key:"",sel:-1}}
  m.map.invalidateSize();m.g.clearLayers();
- var dk=document.documentElement.getAttribute("data-theme")==="dark",bc=dk?"#5cc8ff":"#0a78e6";
+ var dk=document.documentElement.getAttribute("data-theme")==="dark",bc=dk?"#4ade80":"#15803d";
  D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[]).forEach(function(sg){L.polyline(sg,{color:"#fff",weight:9,opacity:dk?.18:.9,interactive:false}).addTo(m.g);L.polyline(sg,{color:bc,weight:4,opacity:.9,interactive:false}).addTo(m.g)});
  dsegs().forEach(function(sg){L.polyline(sg,{color:bc,weight:3.5,opacity:.75,dashArray:"5 8",lineCap:"round",interactive:false}).addTo(m.g)});
  if(!m.dleg&&dsegs().length){m.dleg=L.control({position:"bottomright"});m.dleg.onAdd=function(){var d=L.DomUtil.create("div","bnote dleg");d.innerHTML='<svg width="22" height="6" viewBox="0 0 22 6" aria-hidden="true"><path d="M1 3h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 4"/></svg><span>jalur perkiraan</span>';return d};m.dleg.addTo(m.map)}
