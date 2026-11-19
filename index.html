@@ -324,16 +324,16 @@ function pills(id,items,cur,fn){var e=$(id);e.innerHTML="";items.forEach(functio
 /* === Peta: Leaflet saat online, kembali ke SVG saat offline atau gambar peta gagal dimuat === */
 var LM={},tileFail=false,TOK=0,TERR=0;
 var LP=navigator.onLine!==false&&typeof L==="undefined";
-function segs(){return D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[],D[st.cor]["d"+st.dir]||[])}
+function segs(){return D[st.cor].line.concat(D[st.cor]["l"+st.dir]||[],dsegs())}
 /* Ruas yang jalurnya belum dipastikan: digambar putus-putus */
-function dsegs(){return D[st.cor]["d"+st.dir]||[]}
+function dsegs(){return st.cor==="c1"&&st.dir==="b"?[]:(D[st.cor]["d"+st.dir]||[])}
 var GPS_ALT_PATHS={c1:{a:[
  [-8.6567588,115.2222435],[-8.6567207,115.2199792],[-8.6604684,115.2199333],
  [-8.6610614,115.2198473],[-8.6612334,115.2184160],[-8.6635413,115.2183926],
  [-8.6645790,115.2182636],[-8.6655532,115.2181559],[-8.6668237,115.2180907],
  [-8.6680941,115.2180683],[-8.6689410,115.2180462]
 ]}};
-function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{})[d];if(!p)return null;var out=p.slice();if(c==="c1"&&d==="a"&&D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return out}
+function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{}).a;if(!p||c!=="c1"||(d!=="a"&&d!=="b"))return null;var out=p.slice();if(D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return d==="b"?out.reverse():out}
 function live(){return typeof L!=="undefined"&&navigator.onLine!==false&&!tileFail}
 function redraw(){if(st.view==="stops")stops();else if(st.view==="home")home()}
 function drawMap(v,hi){var box=v.parentNode,on=live()||LP,u="peta?c="+st.cor+"&d="+st.dir;box.classList.toggle("live",on);

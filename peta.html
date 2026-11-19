@@ -558,15 +558,16 @@ var GPS_ALT_PATHS={c1:{a:[
  [-8.6645790,115.2182636],[-8.6655532,115.2181559],[-8.6668237,115.2180907],
  [-8.6680941,115.2180683],[-8.6689410,115.2180462]
 ]}};
-function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{})[d];if(!p)return null;var out=p.slice();if(c==="c1"&&d==="a"&&D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return out}
+function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{}).a;if(!p||c!=="c1"||(d!=="a"&&d!=="b"))return null;var out=p.slice();if(D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return d==="b"?out.reverse():out}
+function approxSegments(){return cor==="c1"&&dir==="b"?[]:(D[cor]["d"+dir]||[])}
 function draw(){
  g.clearLayers();lg.clearLayers();mk={};
  var S=D[cor][dir],lc=dark?"#4ade80":"#15803d",altColor=dark?"#86efac":"#16a34a",altPath=gpsAltPath(cor,dir);
  D[cor].line.concat(D[cor]["l"+dir]||[]).forEach(function(sg){L.polyline(sg,{color:"#fff",weight:10,opacity:dark?.15:.9}).addTo(lg);L.polyline(sg,{color:lc,weight:5,opacity:.9,lineCap:"round",lineJoin:"round"}).addTo(lg)});
- (D[cor]["d"+dir]||[]).forEach(function(sg){L.polyline(sg,{color:lc,weight:4,opacity:.75,dashArray:"6 9",lineCap:"round",interactive:false}).addTo(lg)});
+ approxSegments().forEach(function(sg){L.polyline(sg,{color:lc,weight:4,opacity:.75,dashArray:"6 9",lineCap:"round",interactive:false}).addTo(lg)});
  if(altPath&&altPath.length>1){L.polyline(altPath,{color:"#fff",weight:9,opacity:dark?.2:.65,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(lg);L.polyline(altPath,{color:altColor,weight:4.5,opacity:.98,dashArray:"7 8",lineCap:"round",lineJoin:"round",interactive:false}).addTo(lg)}
  if(!window.DLEG){DLEG=L.control({position:"bottomright"});DLEG.onAdd=function(){return L.DomUtil.create("div","dleg")};DLEG.addTo(map)}
- var approx=(D[cor]["d"+dir]||[]).length;
+ var approx=approxSegments().length;
  DLEG.getContainer().innerHTML='<div class="dleg-row"><i class="dleg-line" style="border-color:'+lc+'"></i><span>Jalur resmi</span></div>'+
   (altPath&&altPath.length?'<div class="dleg-row"><i class="dleg-line alt" style="border-color:'+altColor+'"></i><span>Jalur alternatif GPS</span></div>':"")+
   (approx?'<div class="dleg-row"><i class="dleg-line approx" style="border-color:'+lc+'"></i><span>jalur perkiraan</span></div>':"");
