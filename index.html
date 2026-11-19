@@ -333,7 +333,7 @@ var GPS_ALT_PATHS={c1:{a:[
  [-8.6645790,115.2182636],[-8.6655532,115.2181559],[-8.6668237,115.2180907],
  [-8.6680941,115.2180683],[-8.6689410,115.2180462]
 ]}};
-function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{}).a;if(!p||c!=="c1"||(d!=="a"&&d!=="b"))return null;var out=p.slice();if(D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));return d==="b"?out.reverse():out}
+function gpsAltPath(c,d){var p=(GPS_ALT_PATHS[c]||{}).a;if(!p||c!=="c1"||(d!=="a"&&d!=="b"))return null;var out=p.slice();if(D[c].la&&D[c].la[5])out=out.concat(D[c].la[5].slice(20));if(d==="a")return out;var back=out.reverse(),gorRoad=D[c].la&&D[c].la[0];if(gorRoad)back=back.concat(gorRoad.slice(0,15).reverse());return back}
 function live(){return typeof L!=="undefined"&&navigator.onLine!==false&&!tileFail}
 function redraw(){if(st.view==="stops")stops();else if(st.view==="home")home()}
 function drawMap(v,hi){var box=v.parentNode,on=live()||LP,u="peta?c="+st.cor+"&d="+st.dir;box.classList.toggle("live",on);
