@@ -1,14 +1,14 @@
 /* Bus Trans Sarbagita © 2026 Yoga Purnama. All rights reserved. ID: sgt-yg-fd69d51a */
 /* Service worker Bus Trans Sarbagita.
    Naikkan angka VERSION setiap kali file app diubah, supaya pengguna mendapat versi baru. */
-var VERSION = "sarbagita-v186";
+var VERSION = "sarbagita-v188";
 var CORE = [
   "./", "index.html", "peta.html", "manifest.webmanifest", "manifest-classic.webmanifest",
   "theme-config.js", "vice-city-theme.css",
-  "image/Jason_and_Lucia_Robbery_With_Logo_portrait.jpg",
+  "image/neon-gta-vi-bus-bali-sunset.webp",
   "icons/Lightning%20Bolt%20Bus%20Icon.png",
   "icons/neon-vice-bus-marker.png",
-  "icons/GTA-6-Logo-PNG-from-Grand-Theft-Auto-VI-Transparent.png",
+  "icons/gta-vi-logo-transparent-v2.png",
   "icons/neon-icon-32.png", "icons/neon-icon-64.png", "icons/neon-apple-touch-icon.png",
   "icons/neon-icon-192.png", "icons/neon-icon-512.png", "icons/neon-icon-maskable-512.png",
   "icons/icon-32.png?v=2", "icons/icon-64.png?v=2", "icons/icon-192.png?v=2",
