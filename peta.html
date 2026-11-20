@@ -730,12 +730,38 @@ $("q").onfocus=function(){if(innerWidth<=760)size("max")};
 $("q").oninput=draw;$("fit").onclick=fit;
 $("viceThemeBtnMap").onclick=function(){setMapPreset(!VICE_CITY_ENABLED,true)};$("th").onclick=function(){var nextMode=!modeDark;restoreClassicPreset();modeDark=nextMode;var r=document.documentElement;if(modeDark)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");sgtSave(modeDark);dark=VICE_CITY_ENABLED||modeDark;syncModeButton();syncPresetButton();setFavicon();tiles();draw()};
 function autoTheme(){var dk=sgtTheme();if(dk!==modeDark){modeDark=dk;var r=document.documentElement;if(modeDark)r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");dark=VICE_CITY_ENABLED||modeDark;syncModeButton();setFavicon();tiles();draw()}}setInterval(autoTheme,60000);document.addEventListener("visibilitychange",function(){if(!document.hidden)autoTheme()});
-$("loc").onclick=function(){if(!navigator.geolocation)return toast("Lokasi tidak didukung di perangkat ini.");
- navigator.geolocation.getCurrentPosition(function(p){var ll=[p.coords.latitude,p.coords.longitude];
-  if(me)me.setLatLng(ll);else me=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[18,18]}),zIndexOffset:2000}).addTo(map).bindPopup("<b>Lokasi Anda</b>");
-  var S=D[cor][dir],best=-1,bd=1e9;S.forEach(function(s,i){if(!s[1])return;var d=map.distance(ll,[s[1],s[2]]);if(d<bd){bd=d;best=i}});
-  if(best>=0&&bd<40000){map.flyToBounds(L.latLngBounds([ll,[S[best][1],S[best][2]]]),{padding:[80,80],maxZoom:16});mark(best);mk[best].openPopup()}else{map.flyTo(ll,14);me.openPopup()}
- },function(){toast("Izin lokasi tidak tersedia. Aktifkan izin lokasi di browser, atau ketuk halte di daftar untuk melihat jam bus berikutnya.")},{timeout:10000})};
+function getUserOrFallbackLocation(onComplete){
+ if(window.userPos&&window.userPos.length===2){onComplete(window.userPos,window.userPosLabel||"Lokasi Anda");return}
+ function fallbackIpOrTerminus(){
+  fetch("https://ipwho.is/").then(function(r){return r.json()}).then(function(res){
+   if(res&&res.success&&res.latitude&&res.longitude){
+    var ll=[res.latitude,res.longitude];window.userPos=ll;window.userPosLabel="Denpasar ("+(res.city||"Jaringan")+")";
+    onComplete(ll,window.userPosLabel);
+   }else{var S=D[cor][dir],st0=[S[0][1],S[0][2]];onComplete(st0,S[0][0])}
+  }).catch(function(){var S=D[cor][dir],st0=[S[0][1],S[0][2]];onComplete(st0,S[0][0])});
+ }
+ if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(function(p){
+   var ll=[p.coords.latitude,p.coords.longitude];
+   window.userPos=ll;window.userPosLabel="Lokasi Anda";
+   onComplete(ll,"Lokasi Anda");
+  },function(){
+   fallbackIpOrTerminus();
+  },{enableHighAccuracy:false,timeout:3500,maximumAge:180000});
+ }else{fallbackIpOrTerminus()}
+}
+
+$("loc").onclick=function(){
+ getUserOrFallbackLocation(function(ll,label){
+  if(me)me.setLatLng(ll);else me=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[18,18]}),zIndexOffset:2000}).addTo(map);
+  me.bindPopup("<b>"+esc(label)+"</b><br><small>Titik acuan rute ke halte</small>");
+  var S=D[cor][dir],best=-1,bd=1e9;
+  S.forEach(function(s,i){if(!s[1])return;var d=map.distance(ll,[s[1],s[2]]);if(d<bd){bd=d;best=i}});
+  if(best>=0&&bd<40000){map.flyToBounds(L.latLngBounds([ll,[S[best][1],S[best][2]]]),{padding:[80,80],maxZoom:16});mark(best);mk[best].openPopup()}
+  else{map.flyTo(ll,14);me.openPopup()}
+  if(label.indexOf("Denpasar")>=0)toast("📍 Menampilkan lokasi perkiraan Denpasar (jaringan)");
+ });
+};
 /* === PWA: service worker + tombol pasang === */
 var dp=null,isApp=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
 if("serviceWorker" in navigator&&location.protocol!=="file:")window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(function(){})});
@@ -788,7 +814,7 @@ function updateNavCardUI(distMeters,durSec,destName,startName,mode,stopData){
  }
 }
 function executeRouteOSRM(start,dest,destName,startName,mode,stopData){
- currentNav.startCoord=start;currentNav.startName=startName;
+ currentNav.startCoord=start;currentNav.startName=startName;currentNav.mode=mode;
  var osrmProfile=mode==="driving"?"driving":"foot";
  var url="https://router.project-osrm.org/route/v1/"+osrmProfile+"/"+start[1]+","+start[0]+";"+dest[1]+","+dest[0]+"?overview=full&geometries=geojson";
  fetch(url).then(function(r){return r.json()}).then(function(data){
@@ -796,11 +822,15 @@ function executeRouteOSRM(start,dest,destName,startName,mode,stopData){
   var route=data.routes[0];
   var coords=route.geometry.coordinates.map(function(pt){return [pt[1],pt[0]]});
   renderNavRouteOnMap(coords,start,dest,startName,destName);
-  updateNavCardUI(route.distance,route.duration,destName,startName,mode,stopData);
+  var distM=route.distance;
+  /* Jalan kaki: ~4.8 km/jam (1.33 m/s). Motor/Mobil di Bali: ~28 km/jam (7.8 m/s) + buffer lalu lintas */
+  var durSec=mode==="foot"?Math.round(distM/1.33):Math.max(60,Math.round((distM/7.8)+45));
+  updateNavCardUI(distM,durSec,destName,startName,mode,stopData);
  }).catch(function(err){
-  var straight=[start,dest],dist=map.distance(start,dest),estSec=mode==="driving"?dist/11:dist/1.3;
+  var straight=[start,dest],distM=map.distance(start,dest);
+  var durSec=mode==="foot"?Math.round(distM/1.33):Math.max(60,Math.round((distM/7.8)+45));
   renderNavRouteOnMap(straight,start,dest,startName,destName);
-  updateNavCardUI(dist,estSec,destName,startName,mode,stopData);
+  updateNavCardUI(distM,durSec,destName,startName,mode,stopData);
  });
 }
 function navRouteTo(idx,forceMode){
@@ -812,24 +842,19 @@ function navRouteTo(idx,forceMode){
  document.querySelectorAll(".mk.nav-dest").forEach(function(e){e.classList.remove("nav-dest")});
  if(mk[idx]&&mk[idx]._icon){var mkDiv=mk[idx]._icon.querySelector(".mk");if(mkDiv)mkDiv.classList.add("nav-dest")}
  var card=document.getElementById("navCard");if(card){
-  card.hidden=false;document.getElementById("navDestName").textContent=destName;document.getElementById("navTime").textContent="Menghitung rute…";document.getElementById("navDist").textContent="";document.getElementById("navFromLabel").innerHTML='<span class="nav-from-dot"></span>Mencari lokasi…';
+  card.hidden=false;document.getElementById("navDestName").textContent=destName;document.getElementById("navTime").textContent="Menghitung rute…";document.getElementById("navDist").textContent="";document.getElementById("navFromLabel").innerHTML='<span class="nav-from-dot"></span>Menyiapkan rute…';
  }
- if(window.userPos&&window.userPos.length===2){
-  var dist=map.distance(window.userPos,dest);
-  if(dist<80000){executeRouteOSRM(window.userPos,dest,destName,"Lokasi Anda",mode,s);return}
- }
- if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(function(p){
-   var ll=[p.coords.latitude,p.coords.longitude];window.userPos=ll;
-   if(me)me.setLatLng(ll);else me=L.marker(ll,{icon:L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[18,18]}),zIndexOffset:2000}).addTo(map).bindPopup("<b>Lokasi Anda</b>");
-   var d=map.distance(ll,dest);
-   if(d<=80000)executeRouteOSRM(ll,dest,destName,"Lokasi Anda",mode,s);
-   else{toast("Lokasi Anda di luar area bus Sarbagita (> 80 km). Menampilkan rute dari titik awal jalur.");executeRouteOSRM([S[0][1],S[0][2]],dest,destName,S[0][0],mode,s)}
-  },function(err){
-   toast("Izin lokasi tidak aktif. Menampilkan rute dari titik awal jalur ("+S[0][0]+")");
-   executeRouteOSRM([S[0][1],S[0][2]],dest,destName,S[0][0],mode,s);
-  },{enableHighAccuracy:true,timeout:8000});
- }else{executeRouteOSRM([S[0][1],S[0][2]],dest,destName,S[0][0],mode,s)}
+ getUserOrFallbackLocation(function(originCoord,originLabel){
+  var d=map.distance(originCoord,dest);
+  if(d<=80000){
+   if(me)me.setLatLng(originCoord);else me=L.marker(originCoord,{icon:L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[18,18]}),zIndexOffset:2000}).addTo(map);
+   me.bindPopup("<b>"+esc(originLabel)+"</b><br><small>Titik acuan rute ke halte</small>");
+   executeRouteOSRM(originCoord,dest,destName,originLabel,mode,s);
+  }else{
+   var st0=[S[0][1],S[0][2]];
+   executeRouteOSRM(st0,dest,destName,S[0][0],mode,s);
+  }
+ });
 }
 window.navRouteTo=navRouteTo;window.clearNavRoute=clearNavRoute;
 document.getElementById("navCloseBtn").onclick=function(){clearNavRoute()};
