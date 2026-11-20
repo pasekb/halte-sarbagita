@@ -645,11 +645,11 @@ function draw(){
         '<span class="pop-route-dist" id="popRouteDist">'+distText+'</span>'+
        '</div>'+
        '<div class="pop-mode-toggle">'+
-        '<button type="button" class="pop-mode '+(currentMode==="foot"?"on":"")+'" id="popModeFoot" onclick="window.navRouteTo('+i+','foot');return false;">'+
+        '<button type="button" class="pop-mode '+(currentMode==="foot"?"on":"")+'" id="popModeFoot" onclick="window.navRouteTo('+i+',0);return false;">'+
          '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M10 22v-5l-2-3 2-4 2 3v9M14 10l2 4-2 3v5"/></svg>'+
          '<span>Jalan</span>'+
         '</button>'+
-        '<button type="button" class="pop-mode '+(currentMode==="driving"?"on":"")+'" id="popModeDrive" onclick="window.navRouteTo('+i+','driving');return false;">'+
+        '<button type="button" class="pop-mode '+(currentMode==="driving"?"on":"")+'" id="popModeDrive" onclick="window.navRouteTo('+i+',1);return false;">'+
          '<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="8" rx="2"/><path d="M7 11V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4M7 15h.01M17 15h.01"/></svg>'+
          '<span>Motor/Mobil</span>'+
         '</button>'+
@@ -806,7 +806,7 @@ function executeRouteOSRM(start,dest,destName,startName,mode,stopData){
 function navRouteTo(idx,forceMode){
  var S=D[cor][dir];if(!S||!S[idx]||!S[idx][1])return;
  var s=S[idx],dest=[s[1],s[2]],destName=(idx+1)+". "+s[0];
- var mode=forceMode||currentNav.mode||"foot";
+ var mode=(forceMode===1||forceMode==="driving")?"driving":(forceMode===0||forceMode==="foot")?"foot":(currentNav.mode||"foot");
  currentNav.stopIndex=idx;currentNav.destCoord=dest;currentNav.destName=destName;currentNav.mode=mode;
  if(innerWidth<=760&&typeof size==="function")size("min");
  document.querySelectorAll(".mk.nav-dest").forEach(function(e){e.classList.remove("nav-dest")});
